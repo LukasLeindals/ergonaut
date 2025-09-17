@@ -7,11 +7,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{9334BF58-C97
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Core", "Core", "{BBC48F1C-A9BD-4CA8-9885-CAE5800193C5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ergonaut.Core", "src\Core\Ergonaut.Core\Ergonaut.Core.csproj", "{593BD800-1C68-4396-A9AB-9709B11B3B95}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ergonaut.Core", "src\Ergonaut.Core\Ergonaut.Core.csproj", "{593BD800-1C68-4396-A9AB-9709B11B3B95}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sentinel", "Sentinel", "{300343C0-06CC-4147-911D-BF5DFE473678}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ergonaut.Sentinel", "src\Sentinel\Ergonaut.Sentinel\Ergonaut.Sentinel.csproj", "{BFBB92CB-B4D0-42DD-B3EB-613ABD3DC113}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ergonaut.Sentinel", "src\Sentinel\Sentinel.csproj", "{BFBB92CB-B4D0-42DD-B3EB-613ABD3DC113}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

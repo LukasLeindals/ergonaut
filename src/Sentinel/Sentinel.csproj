@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Core\Ergonaut.Core\Ergonaut.Core.csproj" />
+    <ProjectReference Include="..\..\Ergonaut.Core\Ergonaut.Core.csproj" />
   </ItemGroup>
 
   <PropertyGroup>

@@ -5,7 +5,7 @@ using System.Text.RegularExpressions;
 using Ergonaut.Core.Models;
 using Ergonaut.Core.Utilities;
 
-namespace Ergonaut.Sentinel.Services
+namespace Sentinel.Services
 {
     /// <summary>
     /// Service responsible for processing logs and extracting actionable tasks.
@@ -18,30 +18,15 @@ namespace Ergonaut.Sentinel.Services
         /// <summary>
         /// Initializes a new instance of the LogProcessor class.
         /// </summary>
-        public LogProcessor()
+        public interface ILogProcessor
         {
-            _taskGenerator = new TaskGenerator();
-            _processedLogs = new List<LogEntry>();
-            Logger.LogInfo("LogProcessor initialized");
+            void ProcessLog();
         }
 
-        /// <summary>
-        /// Processes a single log entry and extracts potential tasks.
-        /// </summary>
-        /// <param name="logContent">The log content to process.</param>
-        /// <returns>A collection of tasks extracted from the log.</returns>
-        public IEnumerable<TaskItem> ProcessLogEntry(string logContent)
+        public class LogProcessor : ILogProcessor
         {
-            if (string.IsNullOrWhiteSpace(logContent))
-            {
-                Logger.LogWarning("Empty log content received for processing");
-                return Enumerable.Empty<TaskItem>();
-            }
-
-            var logEntry = new LogEntry
-            {
-                Id = Guid.NewGuid(),
-                Content = logContent,
+            public void ProcessLog() { }
+        }
                 ProcessedAt = DateTime.UtcNow
             };
 
