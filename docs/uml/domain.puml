@@ -1,0 +1,56 @@
+@startuml domain
+title Ergonaut - Domain
+
+package "Ergonaut.Core" {
+
+  class Project {
+    +Id: Guid
+    +Title: string
+    +Description: string?
+    +CreatedAt: DateTime
+    +CreatedBy: Guid
+  }
+  Project "1" o-- "many" Task
+  Project "many" -- "1" User : created by
+
+  class Task {
+    +Id: Guid
+    +ProjectId: Guid
+    +Title: string
+    +Description: string?
+    +CreatedAt: DateTime
+    +CreatedBy: Guid
+    +AssignedTo: Guid?
+    +Status: TaskStatus
+    +DueDate: DateTime?
+  }
+  Task "many" -- "1" User : created by
+  Task "many" -- "0..1" User : assigned to
+
+
+
+  class User {
+    +Id: Guid
+    +Username: string
+    +Role: UserRole
+  }
+}
+
+package "Enums" {
+enum TaskStatus {
+  Todo
+  InProgress
+  Done
+}
+
+enum UserRole {
+   Member
+  Admin
+}
+}
+
+
+
+
+
+@enduml

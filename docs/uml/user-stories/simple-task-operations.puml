@@ -1,0 +1,28 @@
+!include ../components.puml
+@startuml simple-task-operations
+title Ergonaut — Simple Task Operations
+autonumber
+
+actor User
+participant UI
+participant API
+database DB
+
+== Create Task ==
+User -> UI : Click "New Task"\nenter title/fields
+UI -> API : POST /projects/{projectId}/tasks\n{ title, description?, dueDate?, assignedTo? }
+API -> API : Resolve currentUserId
+API -> DB : INSERT Task(\n  projectId,\n  title,\n  description?,\n  dueDate?,\n  assignedTo?,\n  status=TaskStatus.Todo,\n  createdBy=currentUserId,\n  createdAt\n)
+DB --> API : Task { id, projectId, title, description?, status=TaskStatus.Todo,\n  dueDate?, assignedTo?, createdAt, createdBy }
+API --> UI : 201 Created + TaskDto
+UI --> User : Show task details
+
+== Edit Task (Details) ==
+User -> UI : Open task • edit field(s)
+UI -> API : PATCH /projects/{projectId}/tasks/{id}\n{ title?, description?, status?, assignedTo?, dueDate? }
+API -> DB : UPDATE Task SET\n  title = ?,\n  description = ?,\n  status = ?,\n  assignedTo = ?,\n  dueDate = ?\nWHERE id = {id}
+DB --> API : Task { id, projectId, title, description?, status, assignedTo?, dueDate?, createdAt, createdBy }
+API --> UI : 200 OK + TaskDto
+UI --> User : Render updated task
+
+@enduml

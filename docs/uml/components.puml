@@ -1,0 +1,19 @@
+@startuml components
+title Ergonaut - Component Interactions
+
+actor User
+
+participant "Blazor Web UI <<UI>>" as UI_FULL
+participant "ASP.NET Core API <<API>>" as API_FULL
+database "EF Core <<DB>>" as DB_FULL
+
+!define UI "UI"
+!define API "API"
+!define DB "DB"
+
+' --- Interactions ---
+User <-> UI_FULL : interacts
+UI_FULL <-> API_FULL : REST calls (JSON)
+API_FULL <-> DB_FULL : CRUD operations
+
+@enduml
