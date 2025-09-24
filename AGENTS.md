@@ -1,4 +1,8 @@
-# Ergonaut Agents
+#  AGENTS
+
+This document outlines the principles and guidelines for building and interacting with AI agents in the Ergonaut project. These agents are designed to assist developers by providing context-aware suggestions, code reviews, and architectural guidance.
+
+Keep this document updated as we refine our approach to AI-assisted development.
 
 ## Architecture
 - **Design First:** Apply proven patterns, enforce separation of concerns, and keep modules decoupled.
