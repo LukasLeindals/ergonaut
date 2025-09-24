@@ -35,7 +35,7 @@ dotnet_sort_system_directives_first = true
 
 # Naming styles
 [*.cs]
-dotnet_naming_rule.private_instance_fields_should_be_camel_case.severity = warning
+# dotnet_naming_rule.private_instance_fields_should_be_camel_case.severity = warning
 dotnet_naming_rule.private_instance_fields_should_be_camel_case.symbols = private_instance_fields
 dotnet_naming_rule.private_instance_fields_should_be_camel_case.style = camel_case_style
 

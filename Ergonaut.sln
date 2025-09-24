@@ -15,6 +15,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ergonaut.Sentinel", "src\Er
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ergonaut.UI", "src\Ergonaut.UI\Ergonaut.UI.csproj", "{F3C8CADA-6584-44DF-A288-2C39FFB81142}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ergonaut.Infrastructure", "src\Ergonaut.Infrastructure\Ergonaut.Infrastructure.csproj", "{457BC775-CEA4-477A-91D8-191F548F2A02}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -61,6 +63,18 @@ Global
 		{F3C8CADA-6584-44DF-A288-2C39FFB81142}.Release|x64.Build.0 = Release|Any CPU
 		{F3C8CADA-6584-44DF-A288-2C39FFB81142}.Release|x86.ActiveCfg = Release|Any CPU
 		{F3C8CADA-6584-44DF-A288-2C39FFB81142}.Release|x86.Build.0 = Release|Any CPU
+		{457BC775-CEA4-477A-91D8-191F548F2A02}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{457BC775-CEA4-477A-91D8-191F548F2A02}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{457BC775-CEA4-477A-91D8-191F548F2A02}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{457BC775-CEA4-477A-91D8-191F548F2A02}.Debug|x64.Build.0 = Debug|Any CPU
+		{457BC775-CEA4-477A-91D8-191F548F2A02}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{457BC775-CEA4-477A-91D8-191F548F2A02}.Debug|x86.Build.0 = Debug|Any CPU
+		{457BC775-CEA4-477A-91D8-191F548F2A02}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{457BC775-CEA4-477A-91D8-191F548F2A02}.Release|Any CPU.Build.0 = Release|Any CPU
+		{457BC775-CEA4-477A-91D8-191F548F2A02}.Release|x64.ActiveCfg = Release|Any CPU
+		{457BC775-CEA4-477A-91D8-191F548F2A02}.Release|x64.Build.0 = Release|Any CPU
+		{457BC775-CEA4-477A-91D8-191F548F2A02}.Release|x86.ActiveCfg = Release|Any CPU
+		{457BC775-CEA4-477A-91D8-191F548F2A02}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -71,5 +85,6 @@ Global
 		{300343C0-06CC-4147-911D-BF5DFE473678} = {9334BF58-C97A-4E79-8B09-A49CAB62F1DF}
 		{BFBB92CB-B4D0-42DD-B3EB-613ABD3DC113} = {300343C0-06CC-4147-911D-BF5DFE473678}
 		{F3C8CADA-6584-44DF-A288-2C39FFB81142} = {9334BF58-C97A-4E79-8B09-A49CAB62F1DF}
+		{457BC775-CEA4-477A-91D8-191F548F2A02} = {9334BF58-C97A-4E79-8B09-A49CAB62F1DF}
 	EndGlobalSection
 EndGlobal
