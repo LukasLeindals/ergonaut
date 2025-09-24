@@ -19,8 +19,6 @@ package "Ergonaut.Core" {
     +Title: string
     +Description: string?
     +CreatedAt: DateTime
-    +CreatedBy: Guid
-    +AssignedTo: Guid?
     +Status: TaskStatus
     +DueDate: DateTime?
   }
@@ -44,7 +42,7 @@ enum TaskStatus {
 }
 
 enum UserRole {
-   Member
+  Member
   Admin
 }
 }
