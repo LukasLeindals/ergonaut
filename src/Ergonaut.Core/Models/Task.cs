@@ -1,11 +1,10 @@
-using System;
 
 namespace Ergonaut.Core.Models
 {
     /// <summary>
     /// Represents a task item in the Ergonaut task management system.
     /// </summary>
-    public class TaskItem
+    public class Task
     {
         /// <summary>
         /// Gets or sets the unique identifier for the task.
@@ -48,9 +47,9 @@ namespace Ergonaut.Core.Models
         public DateTime? DueDate { get; set; }
 
         /// <summary>
-        /// Initializes a new instance of the TaskItem class.
+        /// Initializes a new instance of the Task class.
         /// </summary>
-        public TaskItem()
+        public Task()
         {
             Id = Guid.NewGuid();
             CreatedAt = DateTime.UtcNow;
@@ -58,17 +57,6 @@ namespace Ergonaut.Core.Models
             Status = TaskStatus.Created;
             Priority = TaskPriority.Medium;
         }
-    }
-
-    /// <summary>
-    /// Defines the priority levels for tasks.
-    /// </summary>
-    public enum TaskPriority
-    {
-        Low = 1,
-        Medium = 2,
-        High = 3,
-        Critical = 4
     }
 
     /// <summary>

@@ -1,0 +1,15 @@
+{
+  "editor.formatOnSave": true,
+  "[csharp]": {
+    "editor.defaultFormatter": "ms-dotnettools.csharp"
+  },
+  "[razor]": {
+    "editor.defaultFormatter": "ms-dotnettools.csharp"
+  },
+  "[plaintext]": {
+    "editor.defaultFormatter": null
+  },
+  "prettier.requireConfig": true,
+  "files.insertFinalNewline": true,
+  "files.trimTrailingWhitespace": true
+}
