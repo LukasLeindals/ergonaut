@@ -1,5 +1,6 @@
 using Ergonaut.UI.Components;
 using Ergonaut.Infrastructure.DependencyInjection;
+using Ergonaut.UI.Features.Projects;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,6 +9,7 @@ builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
 builder.Services.AddInfrastructure(builder.Configuration);
+builder.Services.AddScoped<IProjectService, ProjectService>();
 
 var app = builder.Build();
 

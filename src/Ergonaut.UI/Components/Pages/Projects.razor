@@ -1,64 +1,113 @@
-﻿@page "/projects"
+@page "/projects"
 @attribute [StreamRendering]
+@inject IProjectService ProjectService
+@inject ILogger<ProjectService> Logger
 
 <PageTitle>Projects</PageTitle>
 
-<h1>Projects</h1>
+<h1 class="mb-4">Projects</h1>
 
-<p>This component demonstrates showing data.</p>
+<EditForm Model="_form" FormName="create-project" OnValidSubmit="CreateProjectAsync"
+    OnInvalidSubmit="HandleInvalidSubmit">
+    <DataAnnotationsValidator />
+    <div class="row gy-2 align-items-center">
+        <div class="col-auto">
+            <InputText @bind-Value="_form.Title" @bind-Value:event="oninput" class="form-control"
+                placeholder="Project name" />
+        </div>
+        <div class="col-auto">
+            <button class="btn btn-primary" disabled="@_isSubmitting" type="submit">Create</button>
+        </div>
+    </div>
+    <ValidationSummary />
+</EditForm>
 
-@if (forecasts == null)
+@if (!string.IsNullOrWhiteSpace(_errorMessage))
 {
-    <p><em>Loading...</em></p>
+    <div class="alert alert-danger mt-3">@_errorMessage</div>
+}
+
+@if (_projects is null)
+{
+    <p class="mt-4"><em>Loading...</em></p>
+}
+else if (_projects.Count == 0)
+{
+    <p class="mt-4"><em>No projects yet—create your first one above.</em></p>
 }
 else
 {
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Date</th>
-                <th aria-label="Temperature in Celsius">Temp. (C)</th>
-                <th aria-label="Temperature in Farenheit">Temp. (F)</th>
-                <th>Summary</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var forecast in forecasts)
-            {
-                <tr>
-                    <td>@forecast.Date.ToShortDateString()</td>
-                    <td>@forecast.TemperatureC</td>
-                    <td>@forecast.TemperatureF</td>
-                    <td>@forecast.Summary</td>
-                </tr>
-            }
-        </tbody>
-    </table>
+    <ul class="list-group mt-4">
+        @foreach (var project in _projects)
+        {
+            <li class="list-group-item d-flex justify-content-between">
+                <span>@project.Title</span>
+                <small class="text-muted">Created @project.CreatedAt.ToLocalTime()</small>
+            </li>
+        }
+    </ul>
 }
 
 @code {
-    private WeatherForecast[]? forecasts;
+    private CreateProjectRequest _form = new();
+    private List<ProjectSummary>? _projects;
+    private bool _isSubmitting;
+    private string? _errorMessage;
 
     protected override async Task OnInitializedAsync()
     {
-        // Simulate asynchronous loading to demonstrate streaming rendering
-        await Task.Delay(500);
-
-        var startDate = DateOnly.FromDateTime(DateTime.Now);
-        var summaries = new[] { "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching" };
-        forecasts = Enumerable.Range(1, 5).Select(index => new WeatherForecast
-        {
-            Date = startDate.AddDays(index),
-            TemperatureC = Random.Shared.Next(-20, 55),
-            Summary = summaries[Random.Shared.Next(summaries.Length)]
-        }).ToArray();
+        ResetForm();
+        await LoadProjectsAsync();
     }
 
-    private class WeatherForecast
+    private void ResetForm()
     {
-        public DateOnly Date { get; set; }
-        public int TemperatureC { get; set; }
-        public string? Summary { get; set; }
-        public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
+        _form = new CreateProjectRequest();
+    }
+
+    private async Task LoadProjectsAsync()
+    {
+        Logger.LogInformation("Loading projects...");
+        try
+        {
+            _projects = (await ProjectService.ListAsync(CancellationToken.None)).ToList();
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Failed to load projects");
+            _errorMessage = "We couldn’t load your projects. Please retry.";
+        }
+    }
+
+    private async Task CreateProjectAsync()
+    {
+        if (_isSubmitting) return;
+        _isSubmitting = true;
+        _errorMessage = null;
+
+        Logger.LogInformation("Creating project {ProjectTitle}", _form.Title);
+
+        try
+        {
+            var created = await ProjectService.CreateAsync(_form, CancellationToken.None);
+            _projects ??= new();
+            _projects.Insert(0, created);
+            ResetForm(); // clears model + validation state
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Failed to create project");
+            _errorMessage = "We couldn’t create the project. Double-check the name and try again.";
+        }
+        finally
+        {
+            _isSubmitting = false;
+        }
+    }
+
+    private void HandleInvalidSubmit(EditContext context)
+    {
+        Logger.LogInformation($"Invalid form submission: {_form.Title}");
+        Logger.LogWarning("Invalid submit; errors: {Errors}", string.Join(", ", context.GetValidationMessages()));
     }
 }
