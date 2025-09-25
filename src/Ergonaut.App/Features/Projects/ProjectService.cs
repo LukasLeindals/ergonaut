@@ -1,6 +1,6 @@
 using Ergonaut.Infrastructure.Repositories;
 
-namespace Ergonaut.UI.Features.Projects;
+namespace Ergonaut.App.Features.Projects;
 
 public interface IProjectService
 {
@@ -14,7 +14,7 @@ public interface IProjectService
     Task<ProjectSummary?> GetAsync(Guid id, CancellationToken ct = default); // DTO return type
 }
 
-internal sealed class ProjectService(IProjectRepository repository) : IProjectService
+public sealed class ProjectService(IProjectRepository repository) : IProjectService
 {
     public async Task<IReadOnlyList<ProjectSummary>> ListAsync(CancellationToken ct = default) =>
         (await repository.ListAsync(ct))

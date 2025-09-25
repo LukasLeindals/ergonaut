@@ -4,7 +4,7 @@ Ergonaut: A modular C# framework for intelligent task generation, planning, and 
 ## Project Structure
 ```
 Ergonaut/
-│── src/                          # Application source code
+│── src/
 │   ├── Ergonaut.Core/            # Core domain models & abstractions
 │   │   ├── Models/               # Task, Project, LogEvent entities
 │   │   ├── Interfaces/           # Repository & service contracts

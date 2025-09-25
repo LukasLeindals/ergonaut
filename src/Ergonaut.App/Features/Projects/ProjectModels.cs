@@ -1,7 +1,7 @@
 using DomainProject = Ergonaut.Core.Models.Project;
 using System.ComponentModel.DataAnnotations;
 
-namespace Ergonaut.UI.Features.Projects;
+namespace Ergonaut.App.Features.Projects;
 
 public sealed record ProjectSummary(Guid Id, string Title, DateTime CreatedAt, DateTime UpdatedAt)
 {

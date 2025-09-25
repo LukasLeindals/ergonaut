@@ -1,6 +1,6 @@
 using Ergonaut.UI.Components;
 using Ergonaut.Infrastructure.DependencyInjection;
-using Ergonaut.UI.Features.Projects;
+using Ergonaut.App.Features.Projects;
 
 var builder = WebApplication.CreateBuilder(args);
 
