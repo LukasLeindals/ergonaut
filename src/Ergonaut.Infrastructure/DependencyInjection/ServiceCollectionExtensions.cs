@@ -4,6 +4,8 @@ using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Hosting;
+
 
 
 
@@ -13,16 +15,16 @@ public static class ServiceCollectionExtensions
 {
     public static IServiceCollection AddInfrastructure(
         this IServiceCollection services,
-        IConfiguration configuration)
+        IConfiguration configuration, IHostEnvironment environment)
     {
         services.AddDbContext<ErgonautDbContext>(options =>
-            options.UseSqlite(BuildConnectionString(configuration)));
+            options.UseSqlite(BuildConnectionString(configuration, environment)));
 
         services.AddScoped<IProjectRepository, ProjectRepository>();
         return services;
     }
 
-    private static string BuildConnectionString(IConfiguration configuration)
+    private static string BuildConnectionString(IConfiguration configuration, IHostEnvironment environment)
     {
         var raw = configuration.GetConnectionString("Ergonaut") ?? throw new InvalidOperationException("Connection string 'Ergonaut' not found.");
 
@@ -31,7 +33,7 @@ public static class ServiceCollectionExtensions
 
         if (!Path.IsPathRooted(dataSource))
         {
-            var absolute = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, dataSource));
+            var absolute = Path.GetFullPath(Path.Combine(environment.ContentRootPath, dataSource));
             Directory.CreateDirectory(Path.GetDirectoryName(absolute)!);
             builder.DataSource = absolute;
         }

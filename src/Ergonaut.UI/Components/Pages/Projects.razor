@@ -1,7 +1,9 @@
 @page "/projects"
+@rendermode InteractiveServer
 @attribute [StreamRendering]
 @inject Ergonaut.App.Features.Projects.IProjectService ProjectService
 @inject ILogger<ProjectService> Logger
+
 
 <PageTitle>Projects</PageTitle>
 
@@ -12,7 +14,7 @@
     <DataAnnotationsValidator />
     <div class="row gy-2 align-items-center">
         <div class="col-auto">
-            <InputText @bind-Value="_form.Title" @bind-Value:event="oninput" class="form-control"
+            <input @bind-Value="_form.Title" @bind-Value:event="oninput" class="form-control"
                 placeholder="Project name" />
         </div>
         <div class="col-auto">

@@ -10,8 +10,6 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
-builder.Services.AddInfrastructure(builder.Configuration);
-
 builder.Services.Configure<ApiOptions>(builder.Configuration.GetSection("Api"));
 
 

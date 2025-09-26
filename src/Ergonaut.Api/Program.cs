@@ -65,7 +65,7 @@ builder.Services.AddAuthorization(options =>
 });
 
 
-builder.Services.AddInfrastructure(builder.Configuration);
+builder.Services.AddInfrastructure(builder.Configuration, builder.Environment);
 // reuse the shared application services
 builder.Services.AddScoped<IProjectService, ProjectService>();
 
