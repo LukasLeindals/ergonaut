@@ -24,8 +24,7 @@ public static class ServiceCollectionExtensions
 
     private static string BuildConnectionString(IConfiguration configuration)
     {
-        var raw = configuration.GetConnectionString("Ergonaut")
-                  ?? "Data Source=../data/ergonaut.db";
+        var raw = configuration.GetConnectionString("Ergonaut") ?? throw new InvalidOperationException("Connection string 'Ergonaut' not found.");
 
         var builder = new SqliteConnectionStringBuilder(raw);
         var dataSource = builder.DataSource;
