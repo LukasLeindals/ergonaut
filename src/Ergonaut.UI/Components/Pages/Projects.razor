@@ -9,20 +9,37 @@
 
 <h1 class="mb-4">Projects</h1>
 
-<EditForm Model="_form" FormName="create-project" OnValidSubmit="CreateProjectAsync"
-    OnInvalidSubmit="HandleInvalidSubmit">
-    <DataAnnotationsValidator />
-    <div class="row gy-2 align-items-center">
-        <div class="col-auto">
-            <input @bind-Value="_form.Title" @bind-Value:event="oninput" class="form-control"
-                placeholder="Project name" />
-        </div>
-        <div class="col-auto">
-            <button class="btn btn-primary" disabled="@_isSubmitting" type="submit">Create</button>
+<button class="btn btn-primary" @onclick="ShowCreateModal">Create</button>
+
+
+@if (_showCreateModal)
+{
+    <div class="modal fade show d-block" tabindex="-1" style="background-color: rgba(0,0,0,.5);" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">New Project</h5>
+                    <button type="button" class="btn-close" aria-label="Close" @onclick="HideCreateModal"></button>
+                </div>
+
+                <EditForm Model="_form" FormName="create-project" OnValidSubmit="CreateProjectAsync"
+                    OnInvalidSubmit="HandleInvalidSubmit">
+                    <DataAnnotationsValidator />
+                    <div class="modal-body">
+                        <input @bind-Value="_form.Title" @bind-Value:event="oninput" class="form-control"
+                            placeholder="Project name" />
+                        <ValidationSummary />
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-outline-secondary" @onclick="HideCreateModal">Cancel</button>
+                        <button type="submit" class="btn btn-primary" disabled="@_isSubmitting">Create</button>
+                    </div>
+                </EditForm>
+            </div>
         </div>
     </div>
-    <ValidationSummary />
-</EditForm>
+}
+
 
 @if (!string.IsNullOrWhiteSpace(_errorMessage))
 {
@@ -55,6 +72,7 @@ else
     private List<ProjectSummary>? _projects;
     private bool _isSubmitting;
     private string? _errorMessage;
+    private bool _showCreateModal;
 
     protected override async Task OnInitializedAsync()
     {
@@ -95,6 +113,7 @@ else
             _projects ??= new();
             _projects.Insert(0, created);
             ResetForm(); // clears model + validation state
+            HideCreateModal();
         }
         catch (Exception ex)
         {
@@ -111,5 +130,17 @@ else
     {
         Logger.LogInformation($"Invalid form submission: {_form.Title}");
         Logger.LogWarning("Invalid submit; errors: {Errors}", string.Join(", ", context.GetValidationMessages()));
+    }
+
+    private void ShowCreateModal()
+    {
+        ResetForm(); // fresh form each time
+        _errorMessage = null;
+        _showCreateModal = true;
+    }
+
+    private void HideCreateModal()
+    {
+        _showCreateModal = false;
     }
 }
