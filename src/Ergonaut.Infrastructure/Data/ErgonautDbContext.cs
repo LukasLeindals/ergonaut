@@ -1,5 +1,5 @@
 using DomainTask = Ergonaut.Core.Models.Task;
-using DomainProject = Ergonaut.Core.Models.Project;
+using Ergonaut.Core.Models.Project;
 using Microsoft.EntityFrameworkCore;
 
 namespace Ergonaut.Infrastructure.Data;
@@ -9,14 +9,14 @@ public class ErgonautDbContext : DbContext
     public ErgonautDbContext(DbContextOptions<ErgonautDbContext> options)
         : base(options) { }
 
-    public DbSet<DomainProject> Projects => Set<DomainProject>();
+    public DbSet<LocalProject> Projects => Set<LocalProject>();
     public DbSet<DomainTask> Tasks => Set<DomainTask>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
 
-        modelBuilder.Entity<DomainProject>(project =>
+        modelBuilder.Entity<LocalProject>(project =>
         {
             project.ToTable("Projects");
             project.HasKey(p => p.Id);

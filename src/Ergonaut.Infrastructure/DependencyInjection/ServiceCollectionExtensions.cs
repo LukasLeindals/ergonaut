@@ -20,7 +20,7 @@ public static class ServiceCollectionExtensions
         services.AddDbContext<ErgonautDbContext>(options =>
             options.UseSqlite(BuildConnectionString(configuration, environment)));
 
-        services.AddScoped<IProjectRepository, ProjectRepository>();
+        services.AddScoped<IProjectRepository, LocalProjectRepository>();
         return services;
     }
 

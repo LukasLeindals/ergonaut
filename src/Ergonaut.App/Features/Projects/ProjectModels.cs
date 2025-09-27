@@ -1,11 +1,11 @@
-using DomainProject = Ergonaut.Core.Models.Project;
+using IProject = Ergonaut.Core.Models.Project.IProject;
 using System.ComponentModel.DataAnnotations;
 
 namespace Ergonaut.App.Features.Projects;
 
 public sealed record ProjectSummary(Guid Id, string Title, DateTime CreatedAt, DateTime UpdatedAt)
 {
-    public static ProjectSummary FromDomain(DomainProject project) =>
+    public static ProjectSummary FromProject(IProject project) =>
         new(project.Id, project.Title, project.CreatedAt, project.UpdatedAt);
 }
 

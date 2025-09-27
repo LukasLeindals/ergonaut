@@ -5,6 +5,7 @@ end_of_line = lf
 insert_final_newline = true
 charset = utf-8
 trim_trailing_whitespace = true
+trim_trailing_blank_lines = true
 
 [*.sql]
 indent_style = space
@@ -13,7 +14,7 @@ indent_size = 2
 [*.cs]
 indent_style = space
 indent_size = 4
-max_line_length = 150
+max_line_length = 120
 csharp_new_line_before_open_brace = all
 csharp_new_line_before_else = true
 csharp_new_line_before_catch = true
@@ -53,4 +54,3 @@ dotnet_naming_style.camel_case_style.capitalization = camel_case
 
 dotnet_naming_style.all_caps_underscore_style.capitalization = all_upper
 dotnet_naming_style.all_caps_underscore_style.word_separator = _
-

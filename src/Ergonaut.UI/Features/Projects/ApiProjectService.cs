@@ -1,7 +1,7 @@
-using System.Net.Http.Json;
+
 using Ergonaut.App.Features.Projects;
 
-namespace Ergonaut.UI.Features;
+namespace Ergonaut.UI.Features.Projects;
 
 internal sealed class ApiProjectService(HttpClient client) : IProjectService
 {

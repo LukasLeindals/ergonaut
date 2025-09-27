@@ -1,7 +1,8 @@
 using Ergonaut.UI.Components;
 using Ergonaut.Infrastructure.DependencyInjection;
 using Ergonaut.App.Features.Projects;
-using Ergonaut.UI.Features;
+using Ergonaut.UI.Features.Auth;
+using Ergonaut.UI.Features.Projects;
 using Microsoft.Extensions.Options;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -22,8 +23,10 @@ builder.Services.AddHttpClient<IProjectService, ApiProjectService>((sp, client) 
         throw new InvalidOperationException("API base URL is not configured.");
     }
 
-    client.BaseAddress = new Uri(options.BaseUrl.TrimEnd('/') + "/");
+    client.BaseAddress = new Uri(options.BaseUrl);
 }).AddHttpMessageHandler<ApiTokenHandler>();
+
+builder.Services.AddScoped<ProjectInfoQuery>();
 
 var app = builder.Build();
 

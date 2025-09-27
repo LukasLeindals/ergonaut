@@ -1,8 +1,7 @@
 using System.Net.Http.Headers;
-using System.Net.Http.Json;
 using Microsoft.Extensions.Options;
 
-namespace Ergonaut.UI.Features;
+namespace Ergonaut.UI.Features.Auth;
 
 internal sealed class ApiTokenHandler : DelegatingHandler
 {
@@ -37,7 +36,7 @@ internal sealed class ApiTokenHandler : DelegatingHandler
                 throw new InvalidOperationException("API base URL is not configured.");
             }
 
-            var baseUri = new Uri(_options.BaseUrl.TrimEnd('/') + "/");
+            var baseUri = new Uri(_options.BaseUrl);
             using var client = new HttpClient { BaseAddress = baseUri };
             var response = await client.PostAsJsonAsync(_options.Auth.Endpoint, new
             {

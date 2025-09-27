@@ -1,6 +1,6 @@
-namespace Ergonaut.Core.Models
+namespace Ergonaut.Core.Models.Project
 {
-    public class Project
+    public class LocalProject : IProject
     {
         public Guid Id { get; init; } = Guid.NewGuid();
 
@@ -10,7 +10,9 @@ namespace Ergonaut.Core.Models
 
         public DateTime UpdatedAt { get; private set; } = DateTime.UtcNow;
 
-        public Project(string title)
+        public ProjectSource Source { get; init; } = ProjectSource.Local;
+
+        public LocalProject(string title)
         {
             Title = NormalizeTitle(title);
         }
