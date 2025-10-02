@@ -26,7 +26,6 @@ builder.Services.AddHttpClient<IProjectService, ApiProjectService>((sp, client) 
     client.BaseAddress = new Uri(options.BaseUrl);
 }).AddHttpMessageHandler<ApiTokenHandler>();
 
-builder.Services.AddScoped<ProjectInfoQuery>();
 
 var app = builder.Build();
 
