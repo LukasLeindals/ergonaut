@@ -7,7 +7,7 @@
 
 <h1 class="mb-4">Projects</h1>
 
-<button class="btn btn-primary" @onclick="ShowCreateModal">Create</button>
+
 
 
 @if (_showCreateModal)
@@ -54,13 +54,30 @@ else if (_projects.Count == 0)
 }
 else
 {
-    <ul class="list-group mt-4">
-        @foreach (var project in _projects)
-        {
-            <li class="list-group-item d-flex justify-content-between">
-                <span>@project.Title</span>
-                <small class="text-muted">Created @project.CreatedAt.ToLocalTime()</small>
-            </li>
-        }
-    </ul>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Created At</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var project in _projects)
+            {
+                <tr>
+                    <td>@project.Title</td>
+                    <td>@project.CreatedAt.ToLocalTime()</td>
+
+                <td class="text-end">
+                    <button class="btn btn-outline-danger btn-sm" disabled="@_isSubmitting"
+                        @onclick="() => DeleteProjectAsync(project)">
+                        Delete
+                    </button>
+                </td>
+                </tr>
+            }
+        </tbody>
+    </table>
 }
+
+<button class="btn btn-primary" @onclick="ShowCreateModal"> Create New Project</button>
