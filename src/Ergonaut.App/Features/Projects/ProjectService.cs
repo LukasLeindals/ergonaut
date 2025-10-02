@@ -17,6 +17,16 @@ public sealed class ProjectService(IProjectRepository repository, IProjectFactor
         return ProjectSummary.FromProject(saved);
     }
 
+    public async Task<DeletionResult> DeleteAsync(Guid id, CancellationToken ct = default)
+    {
+        var existing = await repository.GetAsync(id, ct);
+        if (existing is null)
+            return new DeletionResult(false, "Project not found.");
+
+        await repository.DeleteAsync(id, ct);
+        return new DeletionResult(true, "Project deleted successfully.");
+    }
+
     public async Task<ProjectSummary?> GetAsync(Guid id, CancellationToken ct = default)
     {
         var project = await repository.GetAsync(id, ct); // repository stays domain-focused

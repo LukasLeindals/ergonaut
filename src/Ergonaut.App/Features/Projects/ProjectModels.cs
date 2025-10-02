@@ -15,3 +15,6 @@ public sealed class CreateProjectRequest
     [StringLength(200, ErrorMessage = "Keep the name under 200 characters.")]
     public string Title { get; set; } = string.Empty;
 }
+
+public sealed record DeletionResult(bool Success, string Message);
+

@@ -25,6 +25,14 @@ public sealed class ProjectsController : ControllerBase
         return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
     }
 
+    [HttpDelete("{id:guid}")]
+    [Authorize(Policy = "ProjectsWrite")]
+    public async Task<ActionResult<DeletionResult>> Delete(Guid id, CancellationToken ct)
+    {
+        DeletionResult result = await _projectService.DeleteAsync(id, ct);
+        return result.Success ? NoContent() : NotFound(result.Message);
+    }
+
     [HttpGet("{id:guid}")]
     public async Task<ActionResult<ProjectSummary>> GetById(Guid id, CancellationToken ct)
     {
