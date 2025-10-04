@@ -1,0 +1,17 @@
+!include ../components.puml
+@startuml create-project
+
+title Create Project
+
+actor User
+participant UI
+participant API
+database DB
+
+User -> UI : New Project(Name)
+UI -> API : POST /projects {Name}
+API -> DB : insert Project
+DB --> API : Project(Id, Name, CreatedAt)
+API --> UI : 201 + Project
+UI --> User : Show Project
+@enduml

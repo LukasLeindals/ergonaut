@@ -1,0 +1,56 @@
+root = true
+
+[*]
+end_of_line = lf
+insert_final_newline = true
+charset = utf-8
+trim_trailing_whitespace = true
+trim_trailing_blank_lines = true
+
+[*.sql]
+indent_style = space
+indent_size = 2
+
+[*.cs]
+indent_style = space
+indent_size = 4
+max_line_length = 120
+csharp_new_line_before_open_brace = all
+csharp_new_line_before_else = true
+csharp_new_line_before_catch = true
+csharp_new_line_before_finally = true
+csharp_new_line_between_query_expression_clauses = true
+csharp_prefer_braces = true:suggestion
+csharp_preserve_single_line_statements = false
+csharp_style_namespace_declarations = file_scoped:silent
+
+[*.{razor,cshtml}]
+indent_style = space
+indent_size = 4
+max_line_length = 150
+csharp_prefer_braces = true:suggestion
+
+# Keep System.* directives grouped before others
+[*.{cs,razor,cshtml}]
+dotnet_sort_system_directives_first = true
+
+# Naming styles
+[*.cs]
+# dotnet_naming_rule.private_instance_fields_should_be_camel_case.severity = warning
+dotnet_naming_rule.private_instance_fields_should_be_camel_case.symbols = private_instance_fields
+dotnet_naming_rule.private_instance_fields_should_be_camel_case.style = camel_case_style
+
+dotnet_naming_rule.enum_members_should_be_uppercase.severity = warning
+dotnet_naming_rule.enum_members_should_be_uppercase.symbols = enum_members
+dotnet_naming_rule.enum_members_should_be_uppercase.style = all_caps_underscore_style
+
+dotnet_naming_symbols.private_instance_fields.applicable_kinds = field
+dotnet_naming_symbols.private_instance_fields.applicable_accessibilities = private
+dotnet_naming_symbols.private_instance_fields.required_modifiers = not_static
+
+dotnet_naming_symbols.enum_members.applicable_kinds = enum_member
+
+dotnet_naming_style.camel_case_style.capitalization = camel_case
+
+dotnet_naming_style.all_caps_underscore_style.capitalization = all_upper
+dotnet_naming_style.all_caps_underscore_style.word_separator = _

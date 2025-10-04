@@ -1,0 +1,24 @@
+{
+  "editor.formatOnSave": true,
+  "editor.acceptSuggestionOnCommitCharacter": false,
+  "[csharp]": {
+    "editor.defaultFormatter": "ms-dotnettools.csharp"
+  },
+  "[razor]": {
+    "editor.defaultFormatter": "ms-dotnettools.csharp"
+  },
+  "[plaintext]": {
+    "editor.defaultFormatter": null
+  },
+  "prettier.requireConfig": true,
+  "files.insertFinalNewline": true,
+  "files.trimTrailingWhitespace": true,
+  "sonarlint.rules": {
+    "csharpsquid:S4487": {
+      "level": "off"
+    },
+    "csharpsquid:S1144": {
+      "level": "off"
+    }
+  },
+}

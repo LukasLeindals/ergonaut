@@ -1,0 +1,24 @@
+{
+  "name": "ergonaut",
+  "version": "1.0.0",
+  "description": "Ergonaut: A modular C# framework for intelligent task generation, planning, and management.",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs",
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/LukasLeindals/ergonaut.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/LukasLeindals/ergonaut/issues"
+  },
+  "homepage": "https://github.com/LukasLeindals/ergonaut#readme"
+}
