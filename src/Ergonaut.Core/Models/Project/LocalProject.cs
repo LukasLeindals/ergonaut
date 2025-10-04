@@ -10,7 +10,7 @@ namespace Ergonaut.Core.Models.Project
 
         public DateTime UpdatedAt { get; private set; } = DateTime.UtcNow;
 
-        public ProjectSource Source { get; init; } = ProjectSource.Local;
+        public ProjectSource Source { get; } = ProjectSource.Local;
 
         public LocalProject(string title)
         {
