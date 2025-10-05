@@ -11,7 +11,7 @@ namespace Ergonaut.UI.Components.Pages;
 public partial class Tasks : ComponentBase
 {
     [Inject] private IProjectService projectApi { get; set; } = default!;
-    [Inject] private ITaskService taskApi { get; set; } = default!;
+    [Inject] private IProjectScopedTaskService _taskApi { get; set; } = default!;
     [Inject] private ILogger<Tasks> Logger { get; set; } = default!;
 
     private List<ProjectInfo>? _projects;
@@ -29,6 +29,21 @@ public partial class Tasks : ComponentBase
     {
         await LoadProjectsAsync();
         await LoadTasksAsync();
+    }
+
+    private IProjectScopedTaskService taskApi
+    {
+        get
+        {
+            if (SelectedProjectId is not Guid projectId)
+                throw new InvalidOperationException("No project selected; cannot access tasks.");
+
+            if (_taskApi is not IProjectScopedTaskService scoped)
+                throw new InvalidOperationException("Injected task service does not support project scoping.");
+
+            scoped.ProjectId = projectId;
+            return scoped;
+        }
     }
 
     private Guid? SelectedProjectId
@@ -77,7 +92,7 @@ public partial class Tasks : ComponentBase
         {
             _isLoadingTasks = true;
             _errorMessage = null;
-            _tasks = (await taskApi.ListByProjectAsync(projectId, CancellationToken.None)).ToList();
+            _tasks = (await taskApi.ListAsync(CancellationToken.None)).ToList();
             Logger.LogInformation("Loaded {TaskCount} tasks for project {ProjectId}", _tasks.Count, projectId);
         }
         catch (Exception ex)
@@ -110,7 +125,7 @@ public partial class Tasks : ComponentBase
 
         try
         {
-            TaskSummary created = await taskApi.CreateAsync(projectId, _taskForm, CancellationToken.None);
+            TaskSummary created = await taskApi.CreateAsync(_taskForm, CancellationToken.None);
             _tasks ??= new();
             _tasks.Insert(0, created);
             ResetTaskForm();

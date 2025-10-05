@@ -27,7 +27,7 @@ builder.Services.AddHttpClient<IProjectService, ApiProjectService>((sp, client) 
 
     client.BaseAddress = new Uri(options.BaseUrl);
 }).AddHttpMessageHandler<ApiTokenHandler>();
-builder.Services.AddHttpClient<ITaskService, ApiTaskService>((sp, client) =>
+builder.Services.AddHttpClient<IProjectScopedTaskService, ApiTaskService>((sp, client) =>
 {
     var options = sp.GetRequiredService<IOptions<ApiOptions>>().Value;
     if (string.IsNullOrWhiteSpace(options.BaseUrl))

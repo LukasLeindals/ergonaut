@@ -72,8 +72,7 @@ builder.Services.AddInfrastructure(builder.Configuration, builder.Environment);
 // reuse the shared application services
 builder.Services.AddScoped<IProjectService, ProjectService>();
 builder.Services.AddScoped<IProjectFactory, LocalProjectFactory>();
-builder.Services.AddScoped<ITaskService, LocalTaskService>();
-builder.Services.AddScoped<ITaskFactory, LocalTaskFactory>();
+builder.Services.AddScoped<IProjectScopedTaskService, LocalProjectScopedTaskService>();
 
 
 var app = builder.Build();
