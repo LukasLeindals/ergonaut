@@ -16,5 +16,5 @@ public sealed class CreateProjectRequest
     public string Title { get; set; } = string.Empty;
 }
 
-public sealed record DeletionResult(bool Success, string Message);
+
 

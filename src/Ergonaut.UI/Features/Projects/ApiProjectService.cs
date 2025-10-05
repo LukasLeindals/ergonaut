@@ -1,4 +1,4 @@
-
+using Ergonaut.App.Models;
 using Ergonaut.App.Features.Projects;
 
 namespace Ergonaut.UI.Features.Projects;

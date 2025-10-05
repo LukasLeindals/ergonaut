@@ -1,4 +1,4 @@
-using DomainTask = Ergonaut.Core.Models.Task;
+using Ergonaut.Core.Models.Task;
 using Ergonaut.Core.Models.Project;
 using Microsoft.EntityFrameworkCore;
 
@@ -10,7 +10,7 @@ public class ErgonautDbContext : DbContext
         : base(options) { }
 
     public DbSet<LocalProject> Projects => Set<LocalProject>();
-    public DbSet<DomainTask> Tasks => Set<DomainTask>();
+    public DbSet<LocalTask> Tasks => Set<LocalTask>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -25,7 +25,7 @@ public class ErgonautDbContext : DbContext
                    .HasMaxLength(200);
         });
 
-        modelBuilder.Entity<DomainTask>(task =>
+        modelBuilder.Entity<LocalTask>(task =>
         {
             task.ToTable("Tasks");
             task.HasKey(t => t.Id);
@@ -34,6 +34,8 @@ public class ErgonautDbContext : DbContext
                 .HasMaxLength(200);
             task.Property(t => t.ProjectId)
                 .IsRequired();
+            task.HasOne<LocalProject>().WithMany()
+                .HasForeignKey(t => t.ProjectId);
         });
     }
 }

@@ -21,6 +21,7 @@ public static class ServiceCollectionExtensions
             options.UseSqlite(BuildConnectionString(configuration, environment)));
 
         services.AddScoped<IProjectRepository, LocalProjectRepository>();
+        services.AddScoped<ITaskRepository, LocalTaskRepository>();
         return services;
     }
 

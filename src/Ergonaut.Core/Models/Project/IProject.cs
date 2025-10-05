@@ -1,3 +1,4 @@
+using Ergonaut.Core.Models;
 namespace Ergonaut.Core.Models.Project;
 
 public interface IProject
@@ -6,5 +7,5 @@ public interface IProject
     string Title { get; }
     DateTime CreatedAt { get; }
     DateTime UpdatedAt { get; }
-    ProjectSource Source { get; }
+    SourceLabel Source { get; }
 }

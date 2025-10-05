@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
+using Ergonaut.App.Models;
 using Ergonaut.App.Features.Projects;
 using Ergonaut.UI.Features.Projects;
 

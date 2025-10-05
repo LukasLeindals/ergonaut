@@ -17,7 +17,7 @@ update-db:
     @echo "Applying any pending database migrations..."
     @dotnet ef database update \
     --project src/Ergonaut.Infrastructure/Ergonaut.Infrastructure.csproj \
-    --startup-project src/Ergonaut.Api/Ergonaut.Api.csproj | grep "Done"
+    --startup-project src/Ergonaut.Api/Ergonaut.Api.csproj
 
 # Create a new EF Core migration after changing the model (entities, DbContext configuration, etc.). Requires a name (similar to git commit message).
 add-migration name:

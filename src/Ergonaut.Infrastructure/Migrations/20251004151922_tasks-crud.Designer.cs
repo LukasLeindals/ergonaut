@@ -3,6 +3,7 @@ using System;
 using Ergonaut.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Ergonaut.Infrastructure.Migrations
 {
     [DbContext(typeof(ErgonautDbContext))]
-    partial class ErgonautDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251004151922_tasks-crud")]
+    partial class taskscrud
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "9.0.9");
@@ -74,18 +77,7 @@ namespace Ergonaut.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ProjectId");
-
                     b.ToTable("Tasks", (string)null);
-                });
-
-            modelBuilder.Entity("Ergonaut.Core.Models.Task.LocalTask", b =>
-                {
-                    b.HasOne("Ergonaut.Core.Models.Project.LocalProject", null)
-                        .WithMany()
-                        .HasForeignKey("ProjectId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }
