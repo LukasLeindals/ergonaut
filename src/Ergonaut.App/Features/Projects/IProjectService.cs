@@ -1,3 +1,4 @@
+using Ergonaut.App.Models;
 namespace Ergonaut.App.Features.Projects;
 
 public interface IProjectService

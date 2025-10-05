@@ -28,7 +28,9 @@ public sealed class AuthController : ControllerBase
         {
             new Claim(JwtRegisteredClaimNames.Sub, request.Username),
             new Claim("scope", "projects:read"),
-            new Claim("scope", "projects:write")
+            new Claim("scope", "projects:write"),
+            new Claim("scope", "tasks:read"),
+            new Claim("scope", "tasks:write"),
         };
 
         var signingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtOptions.Secret));

@@ -1,4 +1,5 @@
 using Ergonaut.Infrastructure.Repositories;
+using Ergonaut.App.Models;
 
 namespace Ergonaut.App.Features.Projects;
 

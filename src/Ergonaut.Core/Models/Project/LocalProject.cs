@@ -1,3 +1,5 @@
+
+using Ergonaut.Core.Models;
 namespace Ergonaut.Core.Models.Project
 {
     public class LocalProject : IProject
@@ -10,7 +12,7 @@ namespace Ergonaut.Core.Models.Project
 
         public DateTime UpdatedAt { get; private set; } = DateTime.UtcNow;
 
-        public ProjectSource Source { get; } = ProjectSource.Local;
+        public SourceLabel Source { get; } = SourceLabel.Local;
 
         public LocalProject(string title)
         {

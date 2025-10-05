@@ -1,5 +1,6 @@
 using System.Text;
 using Ergonaut.App.Features.Projects;
+using Ergonaut.App.Features.Tasks;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Ergonaut.Api.Configuration;
@@ -62,6 +63,8 @@ builder.Services.AddAuthorization(options =>
 {
     options.AddPolicy("ProjectsRead", policy => policy.RequireClaim("scope", "projects:read"));
     options.AddPolicy("ProjectsWrite", policy => policy.RequireClaim("scope", "projects:write"));
+    options.AddPolicy("TasksRead", policy => policy.RequireClaim("scope", "tasks:read"));
+    options.AddPolicy("TasksWrite", policy => policy.RequireClaim("scope", "tasks:write"));
 });
 
 
@@ -69,6 +72,8 @@ builder.Services.AddInfrastructure(builder.Configuration, builder.Environment);
 // reuse the shared application services
 builder.Services.AddScoped<IProjectService, ProjectService>();
 builder.Services.AddScoped<IProjectFactory, LocalProjectFactory>();
+builder.Services.AddScoped<ITaskService, LocalTaskService>();
+builder.Services.AddScoped<ITaskFactory, LocalTaskFactory>();
 
 
 var app = builder.Build();

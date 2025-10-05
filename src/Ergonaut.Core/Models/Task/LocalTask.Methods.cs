@@ -1,8 +1,8 @@
 using System;
 
-namespace Ergonaut.Core.Models
+namespace Ergonaut.Core.Models.Task
 {
-    public partial class Task
+    public partial class LocalTask
     {
         public void UpdateTitle(string title)
         {
@@ -16,13 +16,13 @@ namespace Ergonaut.Core.Models
             UpdatedAt = DateTime.UtcNow;
         }
 
-        public void UpdatePriority(TaskPriority? priority)
+        public void UpdatePriority(LocalTaskPriority? priority)
         {
             Priority = priority;
             UpdatedAt = DateTime.UtcNow;
         }
 
-        public void UpdateStatus(TaskStatus status)
+        public void UpdateStatus(LocalTaskStatus status)
         {
             Status = status;
             UpdatedAt = DateTime.UtcNow;

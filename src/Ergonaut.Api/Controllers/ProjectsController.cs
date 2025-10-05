@@ -1,3 +1,4 @@
+using Ergonaut.App.Models;
 using Ergonaut.App.Features.Projects;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
