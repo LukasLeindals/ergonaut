@@ -16,13 +16,6 @@ internal sealed class ApiTaskService(HttpClient client) : IProjectScopedTaskServ
     {
         var response = await client.GetAsync($"api/v1/{ProjectId}/tasks", ct);
         response.EnsureSuccessStatusCode();
-        var tasks = await response.Content.ReadFromJsonAsync<List<TaskSummary>>(cancellationToken: ct);
-        return tasks ?? new List<TaskSummary>();
-    }
-    public async Task<IReadOnlyList<TaskSummary>> ListByProjectAsync(CancellationToken ct = default)
-    {
-        var response = await client.GetAsync($"api/v1/{ProjectId}/tasks", ct);
-        response.EnsureSuccessStatusCode();
 
         var tasks = await response.Content.ReadFromJsonAsync<List<TaskSummary>>(cancellationToken: ct);
         return tasks ?? new List<TaskSummary>();
