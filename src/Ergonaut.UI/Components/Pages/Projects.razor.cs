@@ -8,7 +8,6 @@ namespace Ergonaut.UI.Components.Pages;
 
 public partial class Projects : ComponentBase
 {
-    // [Inject] private ProjectInfoQuery _projectInfoQuery { get; set; } = default!;
     [Inject] private IProjectService projectApi { get; set; } = default!;
     [Inject] private ILogger<Projects> Logger { get; set; } = default!;
 
