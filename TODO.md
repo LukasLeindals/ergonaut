@@ -1,8 +1,5 @@
 # TODO by Project
 
-## Ergonaut.Api
-- Add a `GET /api/v1/tasks` collection endpoint (or update the UI client to call the project-scoped route) so `ApiTaskService.ListAsync` stops targeting a non-existent path.
-- Review connection-string handling in `ServiceCollectionExtensions` for any new host process so the SQLite DB resolves correctly outside the API.
 
 ## Ergonaut.UI
 - Plan how the UI should surface log-generated tasks (auto-refresh, badges, filters) once background automation is active.
@@ -36,4 +33,3 @@
 - **Enforce architectural rules with tests**
   - Add NetArchTest (or similar) checks to keep UI/API from referencing infrastructure directly.
   - Wire the arch tests into CI so violations fail builds immediately.
-

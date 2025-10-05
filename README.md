@@ -35,7 +35,7 @@ Work is underway to introduce a log-monitor worker that will:
 - Surface automation activity in the UI (see `TODO.md` for preparatory tasks).
 
 ## Local Development
-- **Database**: SQLite file lives under `data/sqlite/ergonaut.db`. Migrations are managed in `Ergonaut.Infrastructure`.
+- **Database**: SQLite file lives under `data/sqlite/ergonaut.db`. Migrations are managed in `Ergonaut.Infrastructure`. Override the data root for other hosts (e.g., Sentinel worker) via the `Ergonaut:DataRoot` configuration key or `ERGONAUT_DATA_ROOT` environment variable.
 - **API**: Run `dotnet run --project src/Ergonaut.Api` to expose the HTTP service on the configured port (defaults to `http://localhost:5075`).
 - **UI**: Run `dotnet run --project src/Ergonaut.UI` for the Blazor Server experience. The UI automatically requests a JWT using dev credentials (`dev` / `dev`).
 - **Authentication**: `AuthController` issues short-lived JWTs. Update `appsettings.json` for non-dev secrets before deploying.
