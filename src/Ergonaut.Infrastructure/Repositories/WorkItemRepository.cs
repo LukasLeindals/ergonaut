@@ -9,11 +9,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Ergonaut.Infrastructure.Repositories;
 
-public sealed class LocalWorkItemRepository : IWorkItemRepository
+public sealed class WorkItemRepository : IWorkItemRepository
 {
     private readonly ErgonautDbContext _db;
 
-    public LocalWorkItemRepository(ErgonautDbContext db) => _db = db;
+    public WorkItemRepository(ErgonautDbContext db) => _db = db;
 
     public async Task<IWorkItem?> GetAsync(Guid id, CancellationToken ct = default) =>
         await _db.WorkItems.AsNoTracking().FirstOrDefaultAsync(t => t.Id == id, ct);
@@ -24,13 +24,13 @@ public sealed class LocalWorkItemRepository : IWorkItemRepository
         await _db.WorkItems.AsNoTracking().Where(t => t.ProjectId == projectId).ToListAsync(ct);
     public async Task<IWorkItem> AddAsync(IWorkItem workItem, CancellationToken ct = default)
     {
-        _db.WorkItems.Add(workItem as LocalWorkItem ?? throw new NotSupportedException($"Expected {nameof(LocalWorkItem)} type but got {workItem.GetType().Name}."));
+        _db.WorkItems.Add(workItem as WorkItem ?? throw new NotSupportedException($"Expected {nameof(WorkItem)} type but got {workItem.GetType().Name}."));
         await _db.SaveChangesAsync(ct);
         return workItem;
     }
     public async Task UpdateAsync(IWorkItem workItem, CancellationToken ct = default)
     {
-        _db.WorkItems.Update((LocalWorkItem)workItem);
+        _db.WorkItems.Update((WorkItem)workItem);
         await _db.SaveChangesAsync(ct);
     }
     public async Task DeleteAsync(Guid id, CancellationToken ct = default)

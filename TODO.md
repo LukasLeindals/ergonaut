@@ -29,7 +29,7 @@
   - Sketch stub implementations so automation tests can start before the worker exists.
 - **Strengthen validation pipeline**
   - Add application-level validators (FluentValidation or manual) for work item/project commands.
-  - Extend `LocalWorkItem` with correlation identifiers or guards to prevent duplicate log-derived work items.
+  - Extend `WorkItem` with correlation identifiers or guards to prevent duplicate log-derived work items.
 - **Enforce architectural rules with tests**
   - Add NetArchTest (or similar) checks to keep UI/API from referencing infrastructure directly.
   - Wire the arch tests into CI so violations fail builds immediately.

@@ -2,6 +2,6 @@ namespace Ergonaut.Core.Models
 {
     public enum SourceLabel
     {
-        Local = 0
+        Ergonaut = 0
     }
 }

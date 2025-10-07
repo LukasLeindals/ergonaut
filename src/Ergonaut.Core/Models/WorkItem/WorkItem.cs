@@ -3,7 +3,7 @@ namespace Ergonaut.Core.Models.WorkItem
     /// <summary>
     /// Represents a work item in the Ergonaut planning system.
     /// </summary>
-    public partial class LocalWorkItem : IWorkItem
+    public partial class WorkItem : IWorkItem
     {
 
         public Guid Id { get; init; } = Guid.NewGuid();
@@ -17,12 +17,12 @@ namespace Ergonaut.Core.Models.WorkItem
         /// <summary>
         /// Gets or sets the priority level of the work item.
         /// </summary>
-        public LocalWorkItemPriority? Priority { get; private set; } = null;
+        public WorkItemPriority? Priority { get; private set; } = null;
 
         /// <summary>
         /// Gets or sets the current status of the work item.
         /// </summary>
-        public LocalWorkItemStatus Status { get; private set; } = LocalWorkItemStatus.New;
+        public WorkItemStatus Status { get; private set; } = WorkItemStatus.New;
 
         /// <summary>
         /// Gets or sets the date and time when the work item was created.
@@ -33,6 +33,7 @@ namespace Ergonaut.Core.Models.WorkItem
         /// Gets or sets the date and time when the work item was last updated.
         /// </summary>
         public DateTime UpdatedAt { get; private set; } = DateTime.UtcNow;
+        public SourceLabel Source { get; } = SourceLabel.Ergonaut;
 
         /// <summary>
         /// Gets or sets the due date for the work item.
@@ -44,7 +45,7 @@ namespace Ergonaut.Core.Models.WorkItem
         /// </summary>
         /// <param name="projectId">The identifier of the project this work item belongs to.</param>
         /// <param name="title">The title of the work item.</param>
-        public LocalWorkItem(Guid projectId, string title, string? description = null)
+        public WorkItem(Guid projectId, string title, string? description = null)
         {
             ProjectId = projectId;
             Title = NormalizeTitle(title);

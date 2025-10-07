@@ -2,7 +2,7 @@ using System;
 
 namespace Ergonaut.Core.Models.WorkItem
 {
-    public partial class LocalWorkItem
+    public partial class WorkItem
     {
         public void UpdateTitle(string title)
         {
@@ -16,13 +16,13 @@ namespace Ergonaut.Core.Models.WorkItem
             UpdatedAt = DateTime.UtcNow;
         }
 
-        public void UpdatePriority(LocalWorkItemPriority? priority)
+        public void UpdatePriority(WorkItemPriority? priority)
         {
             Priority = priority;
             UpdatedAt = DateTime.UtcNow;
         }
 
-        public void UpdateStatus(LocalWorkItemStatus status)
+        public void UpdateStatus(WorkItemStatus status)
         {
             Status = status;
             UpdatedAt = DateTime.UtcNow;

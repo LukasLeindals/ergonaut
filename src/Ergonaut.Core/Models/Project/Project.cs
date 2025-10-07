@@ -12,7 +12,7 @@ namespace Ergonaut.Core.Models.Project
 
         public DateTime UpdatedAt { get; private set; } = DateTime.UtcNow;
 
-        public SourceLabel Source { get; } = SourceLabel.Local;
+        public SourceLabel Source { get; } = SourceLabel.Ergonaut;
 
         public Project(string title)
         {

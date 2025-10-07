@@ -36,7 +36,7 @@ public sealed class ProjectScopedWorkItemService(IWorkItemRepository repository,
 
     public async Task<WorkItemSummary> CreateAsync(CreateWorkItemRequest request, CancellationToken ct = default)
     {
-        LocalWorkItem workItem = new LocalWorkItem(projectId: ProjectId, title: request.Title, description: request.Description);
+        WorkItem workItem = new WorkItem(projectId: ProjectId, title: request.Title, description: request.Description);
         var saved = await repository.AddAsync(workItem, ct);
         return WorkItemSummary.FromWorkItem(saved);
     }

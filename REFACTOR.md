@@ -32,7 +32,7 @@ This plan outlines the refactors needed to tighten Ergonaut’s modular boundari
 
 ## 6. Validation Pipeline
 - Add command validators (FluentValidation or custom) for `CreateProjectRequest` and `CreateWorkItemRequest`.
-- Extend `LocalWorkItem` to include optional correlation identifiers so log-driven work items can be de-duplicated.
+- Extend `WorkItem` to include optional correlation identifiers so log-driven work items can be de-duplicated.
 - Write unit tests ensuring duplicate detection prevents unintended work item creation.
 
 ## 7. Architectural Tests

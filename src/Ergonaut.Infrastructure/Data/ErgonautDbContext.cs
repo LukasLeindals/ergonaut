@@ -10,7 +10,7 @@ public class ErgonautDbContext : DbContext
         : base(options) { }
 
     public DbSet<Project> Projects => Set<Project>();
-    public DbSet<LocalWorkItem> WorkItems => Set<LocalWorkItem>();
+    public DbSet<WorkItem> WorkItems => Set<WorkItem>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -25,7 +25,7 @@ public class ErgonautDbContext : DbContext
                    .HasMaxLength(200);
         });
 
-        modelBuilder.Entity<LocalWorkItem>(workItem =>
+        modelBuilder.Entity<WorkItem>(workItem =>
         {
             workItem.ToTable("Tasks");
             workItem.HasKey(t => t.Id);

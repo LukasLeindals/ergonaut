@@ -40,8 +40,8 @@ public sealed class ProjectScopedWorkItemServiceTests
         IProjectScopedWorkItemService service = CreateService().UseProject(_existingProjectId);
 
         _workItems.Seed(
-            new LocalWorkItem(projectId: _existingProjectId, title: "Keep me"),
-            new LocalWorkItem(projectId: otherProjectId, title: "Ignore me"));
+            new WorkItem(projectId: _existingProjectId, title: "Keep me"),
+            new WorkItem(projectId: otherProjectId, title: "Ignore me"));
 
         var result = await service.ListAsync();
 
@@ -66,7 +66,7 @@ public sealed class ProjectScopedWorkItemServiceTests
     public async Task DeleteAsync_Removes_Task_When_Found()
     {
         IProjectScopedWorkItemService service = CreateService().UseProject(_existingProjectId);
-        var workItem = new LocalWorkItem(projectId: _existingProjectId, title: "Delete me");
+        var workItem = new WorkItem(projectId: _existingProjectId, title: "Delete me");
         _workItems.Seed(workItem);
 
         var result = await service.DeleteAsync(workItem.Id);

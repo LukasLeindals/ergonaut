@@ -16,7 +16,7 @@ Ergonaut/
 ```
 
 ## Layer Responsibilities
-- **Ergonaut.Core** – Owns the domain model (`LocalWorkItem`, `Project`, enums) and normalization helpers.
+- **Ergonaut.Core** – Owns the domain model (`WorkItem`, `Project`, enums) and normalization helpers.
 - **Ergonaut.App** – Implements use cases. Services such as `ProjectScopedWorkItemService` and the new `IProjectScopedWorkItemService` enforce project-level rules before calling repositories.
 - **Ergonaut.Infrastructure** – Hosts Entity Framework Core, migrations, and concrete repository classes. A DI extension wires SQLite paths relative to the host.
 - **Ergonaut.Api** – Exposes REST endpoints, handles JWT authentication/authorization, and delegates all business logic to the application layer. Includes project-scoped work item endpoints at `api/v1/{projectId}/work-items`.
@@ -26,7 +26,7 @@ Ergonaut/
 1. The UI resolves `IProjectScopedWorkItemService` for a selected project and calls `GET api/v1/{projectId}/work-items` to list work items.
 2. `ProjectScopedWorkItemsController` forwards the request to the project-scoped service, which validates the project and loads data via repositories.
 3. Creating a work item posts to the same route; on success the API responds with `201 Created` and the new work item payload.
-4. Repositories persist `LocalWorkItem` entities through `ErgonautDbContext`, keeping domain types at the center.
+4. Repositories persist `WorkItem` entities through `ErgonautDbContext`, keeping domain types at the center.
 
 ## Upcoming Automation ("Sentinel")
 Work is underway to introduce a log-monitor worker that will:
