@@ -1,3 +1,8 @@
+using Ergonaut.App.Features.WorkItems;
+using Ergonaut.Core.Models.Project;
+using Ergonaut.Core.Models.WorkItem;
+using Ergonaut.Core.Repositories;
+using Xunit;
 
 namespace Ergonaut.App.Tests;
 

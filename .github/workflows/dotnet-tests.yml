@@ -26,4 +26,4 @@ jobs:
         run: dotnet build --no-restore --configuration Release
 
       - name: Run Ergonaut.App tests
-        run: dotnet test  --no-build --configuration Release --verbosity normal --logger "console;verbosity=detailed"
+        run: dotnet test  --no-build --verbosity normal --logger "console;verbosity=detailed"
