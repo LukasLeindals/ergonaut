@@ -1,7 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
   <ItemGroup>
-    <ProjectReference Include="..\Ergonaut.Infrastructure\Ergonaut.Infrastructure.csproj" />
     <ProjectReference Include="..\Ergonaut.App\Ergonaut.App.csproj" />
   </ItemGroup>
 

@@ -6,7 +6,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Hosting;
 
-namespace Ergonaut.Infrastructure.DependencyInjection;
+namespace Ergonaut.Infrastructure.Extensions;
 
 public static class ServiceCollectionExtensions
 {
