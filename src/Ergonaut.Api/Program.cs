@@ -12,7 +12,7 @@ builder.Services.AddSwagger();
 builder.Services.AddPolicies();
 builder.Services.AddAuth(builder.Configuration);
 builder.Services.AddInfrastructure(builder.Configuration, builder.Environment);
-builder.Services.AddAppServices();
+builder.Services.AddApplicationServices();
 
 var app = builder.Build();
 

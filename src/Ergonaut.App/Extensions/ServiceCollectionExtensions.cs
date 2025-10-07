@@ -8,7 +8,7 @@ namespace Ergonaut.App.Extensions;
 public static class ServiceCollectionExtensions
 {
 
-    public static IServiceCollection AddAppServices(this IServiceCollection services)
+    public static IServiceCollection AddApplicationServices(this IServiceCollection services)
     {
         services.AddScoped<IProjectService, ProjectService>();
         services.AddScoped<IProjectFactory, ProjectFactory>();
