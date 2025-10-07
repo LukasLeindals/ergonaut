@@ -1,5 +1,4 @@
-using System.Linq;
-using Ergonaut.Infrastructure.Repositories;
+using Ergonaut.Core.Repositories;
 using Ergonaut.App.Models;
 
 namespace Ergonaut.App.Features.Projects;

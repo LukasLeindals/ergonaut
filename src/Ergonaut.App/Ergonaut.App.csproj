@@ -8,7 +8,11 @@
 
   <ItemGroup>
   <ProjectReference Include="..\Ergonaut.Core\Ergonaut.Core.csproj" />
-  <ProjectReference Include="..\Ergonaut.Infrastructure\Ergonaut.Infrastructure.csproj" />
   </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.9" />
+  </ItemGroup>
+
 
 </Project>

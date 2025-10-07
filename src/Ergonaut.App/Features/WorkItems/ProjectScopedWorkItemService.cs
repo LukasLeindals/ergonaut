@@ -1,12 +1,5 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using Ergonaut.Infrastructure.Repositories;
+using Ergonaut.Core.Repositories;
 using Ergonaut.App.Models;
-using Ergonaut.App.Features.Projects;
-using Ergonaut.Core.Models.Project;
 using Ergonaut.Core.Models.WorkItem;
 
 namespace Ergonaut.App.Features.WorkItems;

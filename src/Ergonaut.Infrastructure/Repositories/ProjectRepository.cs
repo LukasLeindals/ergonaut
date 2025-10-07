@@ -1,8 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
+using Ergonaut.Core.Repositories;
 using Ergonaut.Core.Models.Project;
 using Ergonaut.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;

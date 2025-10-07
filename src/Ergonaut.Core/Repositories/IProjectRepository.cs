@@ -1,5 +1,5 @@
 using Ergonaut.Core.Models.Project;
-namespace Ergonaut.Infrastructure.Repositories;
+namespace Ergonaut.Core.Repositories;
 
 public interface IProjectRepository
 {

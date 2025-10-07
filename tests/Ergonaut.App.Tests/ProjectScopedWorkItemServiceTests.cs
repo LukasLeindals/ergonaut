@@ -1,14 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using Ergonaut.App.Features.WorkItems;
-using Ergonaut.App.Models;
-using Ergonaut.Core.Models.Project;
-using Ergonaut.Core.Models.WorkItem;
-using Ergonaut.Infrastructure.Repositories;
-using Xunit;
 
 namespace Ergonaut.App.Tests;
 

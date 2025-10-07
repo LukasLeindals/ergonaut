@@ -1,10 +1,6 @@
-using System;
-using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
 using Ergonaut.Core.Models.WorkItem;
 
-namespace Ergonaut.Infrastructure.Repositories;
+namespace Ergonaut.Core.Repositories;
 
 public interface IWorkItemRepository
 {

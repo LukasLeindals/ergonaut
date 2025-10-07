@@ -1,3 +1,4 @@
+using Ergonaut.Core.Repositories;
 using Ergonaut.Infrastructure.Data;
 using Ergonaut.Infrastructure.Repositories;
 using Microsoft.Data.Sqlite;
