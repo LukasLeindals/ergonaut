@@ -19,7 +19,7 @@ public static class ServiceCollectionExtensions
             options.UseSqlite(BuildConnectionString(configuration, environment)));
 
         // Register repository abstractions; keep the application layer unaware of EF specifics.
-        services.AddScoped<IProjectRepository, LocalProjectRepository>();
+        services.AddScoped<IProjectRepository, ProjectRepository>();
         services.AddScoped<IWorkItemRepository, LocalWorkItemRepository>();
         return services;
     }

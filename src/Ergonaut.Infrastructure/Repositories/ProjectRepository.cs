@@ -1,14 +1,19 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using Ergonaut.Core.Models.Project;
 using Ergonaut.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 
 namespace Ergonaut.Infrastructure.Repositories;
 
-public sealed class LocalProjectRepository : IProjectRepository
+public sealed class ProjectRepository : IProjectRepository
 {
     private readonly ErgonautDbContext _db;
 
-    public LocalProjectRepository(ErgonautDbContext db) => _db = db;
+    public ProjectRepository(ErgonautDbContext db) => _db = db;
 
     public async Task<IProject?> GetAsync(Guid id, CancellationToken ct = default) =>
         await _db.Projects.AsNoTracking().FirstOrDefaultAsync(p => p.Id == id, ct);
@@ -20,14 +25,14 @@ public sealed class LocalProjectRepository : IProjectRepository
 
     public async Task<IProject> AddAsync(IProject project, CancellationToken ct = default)
     {
-        _db.Projects.Add(project as LocalProject ?? throw new NotSupportedException($"Expected {nameof(LocalProject)} type but got {project.GetType().Name}."));
+        _db.Projects.Add(project as Project ?? throw new NotSupportedException($"Expected {nameof(Project)} type but got {project.GetType().Name}."));
         await _db.SaveChangesAsync(ct);
         return project;
     }
 
     public async Task UpdateAsync(IProject project, CancellationToken ct = default)
     {
-        _db.Projects.Update((LocalProject)project);
+        _db.Projects.Update((Project)project);
         await _db.SaveChangesAsync(ct);
     }
 

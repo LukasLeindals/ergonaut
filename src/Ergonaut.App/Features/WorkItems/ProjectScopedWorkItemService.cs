@@ -11,7 +11,7 @@ using Ergonaut.Core.Models.WorkItem;
 
 namespace Ergonaut.App.Features.WorkItems;
 
-public sealed class LocalProjectScopedWorkItemService(IWorkItemRepository repository, IProjectRepository projectRepository) : IProjectScopedWorkItemService
+public sealed class ProjectScopedWorkItemService(IWorkItemRepository repository, IProjectRepository projectRepository) : IProjectScopedWorkItemService
 {
 
     private Guid? _projectId { get; set; }

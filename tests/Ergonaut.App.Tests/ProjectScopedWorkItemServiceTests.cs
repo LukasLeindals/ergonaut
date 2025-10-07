@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -11,15 +12,15 @@ using Xunit;
 
 namespace Ergonaut.App.Tests;
 
-public sealed class LocalProjectScopedWorkItemServiceTests
+public sealed class ProjectScopedWorkItemServiceTests
 {
     private readonly Guid _existingProjectId = Guid.NewGuid();
     private readonly FakeProjectRepository _projects = new();
     private readonly FakeWorkItemRepository _workItems = new();
 
-    public LocalProjectScopedWorkItemServiceTests()
+    public ProjectScopedWorkItemServiceTests()
     {
-        _projects.Add(new LocalProject("Existing") { Id = _existingProjectId });
+        _projects.Add(new Project("Existing") { Id = _existingProjectId });
     }
 
     [Fact(DisplayName = "Throws when binding to an unknown project")]
@@ -74,7 +75,7 @@ public sealed class LocalProjectScopedWorkItemServiceTests
         Assert.DoesNotContain(_workItems.Items, item => item.Id == workItem.Id);
     }
 
-    private IProjectScopedWorkItemService CreateService() => new LocalProjectScopedWorkItemService(_workItems, _projects);
+    private IProjectScopedWorkItemService CreateService() => new ProjectScopedWorkItemService(_workItems, _projects);
 
     private sealed class FakeProjectRepository : IProjectRepository
     {

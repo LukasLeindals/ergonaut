@@ -6,7 +6,7 @@
 - Update README and other docs that still reference `Ergonaut.Sentinel` to match the current solution layout or the planned worker implementation.
 
 ## Ergonaut.App / Infrastructure
-- Introduce automated tests, starting with `LocalProjectScopedWorkItemService` and log-ingestion scenarios, to guard domain rules.
+- Introduce automated tests, starting with `ProjectScopedWorkItemService` and log-ingestion scenarios, to guard domain rules.
 
 ## Sentinel / Automation
 - Decide how to host the upcoming log-monitor/Sentinel worker (inline background service vs dedicated project) and document the integration pattern.

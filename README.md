@@ -16,8 +16,8 @@ Ergonaut/
 ```
 
 ## Layer Responsibilities
-- **Ergonaut.Core** – Owns the domain model (`LocalWorkItem`, `LocalProject`, enums) and normalization helpers.
-- **Ergonaut.App** – Implements use cases. Services such as `LocalProjectScopedWorkItemService` and the new `IProjectScopedWorkItemService` enforce project-level rules before calling repositories.
+- **Ergonaut.Core** – Owns the domain model (`LocalWorkItem`, `Project`, enums) and normalization helpers.
+- **Ergonaut.App** – Implements use cases. Services such as `ProjectScopedWorkItemService` and the new `IProjectScopedWorkItemService` enforce project-level rules before calling repositories.
 - **Ergonaut.Infrastructure** – Hosts Entity Framework Core, migrations, and concrete repository classes. A DI extension wires SQLite paths relative to the host.
 - **Ergonaut.Api** – Exposes REST endpoints, handles JWT authentication/authorization, and delegates all business logic to the application layer. Includes project-scoped work item endpoints at `api/v1/{projectId}/work-items`.
 - **Ergonaut.UI** – Blazor Server front end that calls the API via typed HttpClient adapters, manages component state, and authenticates through an API token handler.

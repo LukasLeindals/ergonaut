@@ -17,7 +17,7 @@ namespace Ergonaut.Infrastructure.Migrations
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "9.0.9");
 
-            modelBuilder.Entity("Ergonaut.Core.Models.Project.LocalProject", b =>
+            modelBuilder.Entity("Ergonaut.Core.Models.Project.Project", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -81,7 +81,7 @@ namespace Ergonaut.Infrastructure.Migrations
 
             modelBuilder.Entity("Ergonaut.Core.Models.WorkItem.LocalWorkItem", b =>
                 {
-                    b.HasOne("Ergonaut.Core.Models.Project.LocalProject", null)
+                    b.HasOne("Ergonaut.Core.Models.Project.Project", null)
                         .WithMany()
                         .HasForeignKey("ProjectId")
                         .OnDelete(DeleteBehavior.Cascade)

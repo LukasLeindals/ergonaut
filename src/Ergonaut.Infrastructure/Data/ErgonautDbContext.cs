@@ -9,14 +9,14 @@ public class ErgonautDbContext : DbContext
     public ErgonautDbContext(DbContextOptions<ErgonautDbContext> options)
         : base(options) { }
 
-    public DbSet<LocalProject> Projects => Set<LocalProject>();
+    public DbSet<Project> Projects => Set<Project>();
     public DbSet<LocalWorkItem> WorkItems => Set<LocalWorkItem>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
 
-        modelBuilder.Entity<LocalProject>(project =>
+        modelBuilder.Entity<Project>(project =>
         {
             project.ToTable("Projects");
             project.HasKey(p => p.Id);
@@ -34,7 +34,7 @@ public class ErgonautDbContext : DbContext
                 .HasMaxLength(200);
             workItem.Property(t => t.ProjectId)
                 .IsRequired();
-            workItem.HasOne<LocalProject>().WithMany()
+            workItem.HasOne<Project>().WithMany()
                 .HasForeignKey(t => t.ProjectId);
         });
     }

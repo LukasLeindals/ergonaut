@@ -1,8 +1,8 @@
-
+using System;
 using Ergonaut.Core.Models;
 namespace Ergonaut.Core.Models.Project
 {
-    public class LocalProject : IProject
+    public class Project : IProject
     {
         public Guid Id { get; init; } = Guid.NewGuid();
 
@@ -14,7 +14,7 @@ namespace Ergonaut.Core.Models.Project
 
         public SourceLabel Source { get; } = SourceLabel.Local;
 
-        public LocalProject(string title)
+        public Project(string title)
         {
             Title = NormalizeTitle(title);
         }
