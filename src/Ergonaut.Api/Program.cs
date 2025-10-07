@@ -1,6 +1,6 @@
 using System.Text;
 using Ergonaut.App.Features.Projects;
-using Ergonaut.App.Features.Tasks;
+using Ergonaut.App.Features.WorkItems;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Ergonaut.Api.Configuration;
@@ -63,8 +63,8 @@ builder.Services.AddAuthorization(options =>
 {
     options.AddPolicy("ProjectsRead", policy => policy.RequireClaim("scope", "projects:read"));
     options.AddPolicy("ProjectsWrite", policy => policy.RequireClaim("scope", "projects:write"));
-    options.AddPolicy("TasksRead", policy => policy.RequireClaim("scope", "tasks:read"));
-    options.AddPolicy("TasksWrite", policy => policy.RequireClaim("scope", "tasks:write"));
+    options.AddPolicy("WorkItemsRead", policy => policy.RequireClaim("scope", "workitems:read"));
+    options.AddPolicy("WorkItemsWrite", policy => policy.RequireClaim("scope", "workitems:write"));
 });
 
 
@@ -72,7 +72,8 @@ builder.Services.AddInfrastructure(builder.Configuration, builder.Environment);
 // reuse the shared application services
 builder.Services.AddScoped<IProjectService, ProjectService>();
 builder.Services.AddScoped<IProjectFactory, LocalProjectFactory>();
-builder.Services.AddScoped<IProjectScopedTaskService, LocalProjectScopedTaskService>();
+builder.Services.AddScoped<IProjectScopedWorkItemService, LocalProjectScopedWorkItemService>();
+builder.Services.AddScoped<IWorkItemService>(sp => sp.GetRequiredService<IProjectScopedWorkItemService>());
 
 
 var app = builder.Build();

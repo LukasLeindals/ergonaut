@@ -15,8 +15,8 @@ This plan outlines the refactors needed to tighten Ergonaut’s modular boundari
 - Document the DTO policy in README or `/docs` so new features follow the same pattern.
 
 ## 3. Feature-Folder Organization
-- Introduce feature-based folders inside each layer (`Features/Projects`, `Features/Tasks`, `Features/Sentinel`).
-- Align namespaces, e.g., `Ergonaut.Api.Features.Tasks.ProjectTasksController`.
+- Introduce feature-based folders inside each layer (`Features/Projects`, `Features/WorkItems`, `Features/Sentinel`).
+- Align namespaces, e.g., `Ergonaut.Api.Features.WorkItems.ProjectWorkItemsController`.
 - Update DI registrations to reflect the new namespace paths.
 - Keep automated tests organized in matching feature folders to simplify discoverability.
 
@@ -26,14 +26,14 @@ This plan outlines the refactors needed to tighten Ergonaut’s modular boundari
 - Ensure both API and UI hosts become thin composition roots that orchestrate helper extensions only.
 
 ## 5. Automation Interfaces
-- Define interfaces such as `ILogEventSource`, `ILogTaskOrchestrator`, and `ILogIngestionPipeline` in `Ergonaut.App`.
+- Define interfaces such as `ILogEventSource`, `ILogWorkItemOrchestrator`, and `ILogIngestionPipeline` in `Ergonaut.App`.
 - Provide in-memory or stub implementations for tests before Sentinel is built.
 - Update TODOs/docs to reference the new abstractions as the recommended integration points.
 
 ## 6. Validation Pipeline
-- Add command validators (FluentValidation or custom) for `CreateProjectRequest` and `CreateTaskRequest`.
-- Extend `LocalTask` to include optional correlation identifiers so log-driven tasks can be de-duplicated.
-- Write unit tests ensuring duplicate detection prevents unintended task creation.
+- Add command validators (FluentValidation or custom) for `CreateProjectRequest` and `CreateWorkItemRequest`.
+- Extend `LocalWorkItem` to include optional correlation identifiers so log-driven work items can be de-duplicated.
+- Write unit tests ensuring duplicate detection prevents unintended work item creation.
 
 ## 7. Architectural Tests
 - Add a `Ergonaut.ArchTests` project using NetArchTest.

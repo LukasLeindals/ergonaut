@@ -1,27 +1,27 @@
-namespace Ergonaut.Core.Models.Task
+namespace Ergonaut.Core.Models.WorkItem
 {
     /// <summary>
-    /// Represents a task item in the Ergonaut task management system.
+    /// Represents a work item in the Ergonaut planning system.
     /// </summary>
-    public interface ITask
+    public interface IWorkItem
     {
         /// <summary>
-        /// The unique identifier for the task.
+        /// The unique identifier for the work item.
         /// </summary>
         Guid Id { get; }
 
         /// <summary>
-        /// The identifier of the project this task belongs to.
+        /// The identifier of the project this work item belongs to.
         /// </summary>
         Guid ProjectId { get; }
 
         /// <summary>
-        /// The title of the task.
+        /// The title of the work item.
         /// </summary>
         string Title { get; }
 
         /// <summary>
-        /// The description of the task.
+        /// The description of the work item.
         /// </summary>
         string Description { get; }
 

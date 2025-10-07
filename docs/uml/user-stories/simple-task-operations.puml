@@ -1,6 +1,6 @@
 !include ../components.puml
-@startuml simple-task-operations
-title Ergonaut — Simple Task Operations
+@startuml simple-work-item-operations
+title Ergonaut — Simple Work Item Operations
 autonumber
 
 actor User
@@ -8,21 +8,21 @@ participant UI
 participant API
 database DB
 
-== Create Task ==
-User -> UI : Click "New Task"\nenter title/fields
-UI -> API : POST /projects/{projectId}/tasks\n{ title, description?, dueDate?, assignedTo? }
+== Create Work Item ==
+User -> UI : Click "New Work Item"\nenter title/fields
+UI -> API : POST /projects/{projectId}/work-items\n{ title, description?, dueDate?, assignedTo? }
 API -> API : Resolve currentUserId
-API -> DB : INSERT Task(\n  projectId,\n  title,\n  description?,\n  dueDate?,\n  assignedTo?,\n  status=TaskStatus.Todo,\n  createdBy=currentUserId,\n  createdAt\n)
-DB --> API : Task { id, projectId, title, description?, status=TaskStatus.Todo,\n  dueDate?, assignedTo?, createdAt, createdBy }
-API --> UI : 201 Created + TaskDto
-UI --> User : Show task details
+API -> DB : INSERT WorkItem(\n  projectId,\n  title,\n  description?,\n  dueDate?,\n  assignedTo?,\n  status=WorkItemStatus.Todo,\n  createdBy=currentUserId,\n  createdAt\n)
+DB --> API : WorkItem { id, projectId, title, description?, status=WorkItemStatus.Todo,\n  dueDate?, assignedTo?, createdAt, createdBy }
+API --> UI : 201 Created + WorkItemDto
+UI --> User : Show work item details
 
-== Edit Task (Details) ==
-User -> UI : Open task • edit field(s)
-UI -> API : PATCH /projects/{projectId}/tasks/{id}\n{ title?, description?, status?, assignedTo?, dueDate? }
-API -> DB : UPDATE Task SET\n  title = ?,\n  description = ?,\n  status = ?,\n  assignedTo = ?,\n  dueDate = ?\nWHERE id = {id}
-DB --> API : Task { id, projectId, title, description?, status, assignedTo?, dueDate?, createdAt, createdBy }
-API --> UI : 200 OK + TaskDto
-UI --> User : Render updated task
+== Edit Work Item (Details) ==
+User -> UI : Open work item • edit field(s)
+UI -> API : PATCH /projects/{projectId}/work-items/{id}\n{ title?, description?, status?, assignedTo?, dueDate? }
+API -> DB : UPDATE WorkItem SET\n  title = ?,\n  description = ?,\n  status = ?,\n  assignedTo = ?,\n  dueDate = ?\nWHERE id = {id}
+DB --> API : WorkItem { id, projectId, title, description?, status, assignedTo?, dueDate?, createdAt, createdBy }
+API --> UI : 200 OK + WorkItemDto
+UI --> User : Render updated work item
 
 @enduml

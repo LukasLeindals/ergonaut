@@ -39,7 +39,7 @@ namespace Ergonaut.Infrastructure.Migrations
                     b.ToTable("Projects", (string)null);
                 });
 
-            modelBuilder.Entity("Ergonaut.Core.Models.Task.LocalTask", b =>
+            modelBuilder.Entity("Ergonaut.Core.Models.WorkItem.LocalWorkItem", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -79,7 +79,7 @@ namespace Ergonaut.Infrastructure.Migrations
                     b.ToTable("Tasks", (string)null);
                 });
 
-            modelBuilder.Entity("Ergonaut.Core.Models.Task.LocalTask", b =>
+            modelBuilder.Entity("Ergonaut.Core.Models.WorkItem.LocalWorkItem", b =>
                 {
                     b.HasOne("Ergonaut.Core.Models.Project.LocalProject", null)
                         .WithMany()

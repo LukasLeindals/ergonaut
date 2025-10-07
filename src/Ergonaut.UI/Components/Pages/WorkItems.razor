@@ -1,18 +1,15 @@
-@page "/tasks"
+@page "/work-items"
 @rendermode InteractiveServer
 @attribute [StreamRendering]
 
-<PageTitle>Tasks</PageTitle>
+<PageTitle>Work Items</PageTitle>
 
-<h1>Task Overview</h1>
-
-
+<h1>Work Items</h1>
 
 @if (!string.IsNullOrWhiteSpace(_errorMessage))
 {
     <div class="alert alert-danger mt-3">@_errorMessage</div>
 }
-
 
 @if (_showCreateModal)
 {
@@ -20,18 +17,18 @@
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">New Task</h5>
+                    <h5 class="modal-title">New Work Item</h5>
                     <button type="button" class="btn-close" aria-label="Close" @onclick="HideCreateModal"></button>
                 </div>
 
-                <EditForm Model="_taskForm" FormName="create-task" OnValidSubmit="CreateTaskAsync"
-                    OnInvalidSubmit="HandleInvalidSubmit">
+                <EditForm Model="_workItemForm" FormName="create-work-item" OnValidSubmit="CreateWorkItemAsync"
+                          OnInvalidSubmit="HandleInvalidSubmit">
                     <DataAnnotationsValidator />
                     <div class="modal-body">
-                        <input @bind-Value="_taskForm.Title" @bind-Value:event="oninput" class="form-control"
-                            placeholder="Task title" />
-                        <input @bind-Value="_taskForm.Description" @bind-Value:event="oninput" class="form-control"
-                            placeholder="Task description" />
+                        <input @bind-Value="_workItemForm.Title" @bind-Value:event="oninput" class="form-control"
+                               placeholder="Work item title" />
+                        <input @bind-Value="_workItemForm.Description" @bind-Value:event="oninput" class="form-control"
+                               placeholder="Work item description" />
                         <ValidationSummary />
                     </div>
                     <div class="modal-footer">
@@ -43,8 +40,6 @@
         </div>
     </div>
 }
-
-
 
 @if (_projects is null)
 {
@@ -79,34 +74,43 @@ else
                 <th class="text-end">Actions</th>
             </tr>
         </thead>
-        @if (_isLoadingTasks)
-        {
-            <p><em>Loading tasks...</em></p>
-            <p> "@_tasks"</p>
-        }
-        else if (_tasks is null)
-        {
-            <p><em>Please select a project to view its tasks.</em></p>
-        }
-        else
-        {
-            <tbody>
-                @foreach (var task in _tasks)
+        <tbody>
+            @if (_isLoadingWorkItems)
+            {
+                <tr>
+                    <td colspan="3"><em>Loading work items...</em></td>
+                </tr>
+            }
+            else if (_workItems is null)
+            {
+                <tr>
+                    <td colspan="3"><em>Please select a project to view its work items.</em></td>
+                </tr>
+            }
+            else if (_workItems.Count == 0)
+            {
+                <tr>
+                    <td colspan="3"><em>No work items yet. Create one to get started.</em></td>
+                </tr>
+            }
+            else
+            {
+                foreach (var workItem in _workItems)
                 {
                     <tr>
-                        <td>@task.Title</td>
-                        <td>@task.Description</td>
+                        <td>@workItem.Title</td>
+                        <td>@workItem.Description</td>
                         <td class="text-end">
                             <button class="btn btn-danger btn-sm" title="Delete" disabled="@_isSubmitting"
-                                @onclick="() => DeleteTaskAsync(task)">
+                                    @onclick="() => DeleteWorkItemAsync(workItem)">
                                 <i class="fa-solid fa-trash"></i> Delete
                             </button>
                         </td>
                     </tr>
                 }
-            </tbody>
-        }
+            }
+        </tbody>
     </table>
 }
 
-<button class="btn btn-primary" @onclick="ShowCreateModal"> Create New Task</button>
+<button class="btn btn-primary" @onclick="ShowCreateModal"> Create New Work Item</button>

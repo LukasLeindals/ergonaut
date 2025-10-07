@@ -1,7 +1,7 @@
 # API Roadmap
 
 ## 1. Purpose
-- Provide a stable HTTP interface for project/task management.
+- Provide a stable HTTP interface for project/work item management.
 - Decouple front-end releases from backend domain logic.
 - Enable future consumers (CLI, automations, third-party integrations) without reworking persistence.
 
@@ -17,8 +17,8 @@
   - GET /projects/{id} — fetch detail (TBD)
   - PUT /projects/{id} — update title (TBD)
   - DELETE /projects/{id} — archive/remove (TBD)
-- Tasks (backlog)
-  - CRUD endpoints mirroring projects once task model stabilizes.
+- Work Items (backlog)
+  - CRUD endpoints mirroring projects once work item model stabilizes.
 - Validation & error contract
   - Standard problem-details payload for failures.
   - Data annotations reused from application layer.

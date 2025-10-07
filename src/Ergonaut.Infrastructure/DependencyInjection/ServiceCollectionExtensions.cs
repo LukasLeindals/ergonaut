@@ -20,7 +20,7 @@ public static class ServiceCollectionExtensions
 
         // Register repository abstractions; keep the application layer unaware of EF specifics.
         services.AddScoped<IProjectRepository, LocalProjectRepository>();
-        services.AddScoped<ITaskRepository, LocalTaskRepository>();
+        services.AddScoped<IWorkItemRepository, LocalWorkItemRepository>();
         return services;
     }
 

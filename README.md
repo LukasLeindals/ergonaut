@@ -1,5 +1,5 @@
 # Ergonaut
-Ergonaut is a modular .NET solution for intelligent project and task orchestration. It keeps domain concerns isolated, exposes reusable application services, and provides both HTTP and Blazor experiences while preparing for log-driven automation.
+Ergonaut is a modular .NET solution for intelligent project and task (work item) orchestration. It keeps domain concerns isolated, exposes reusable application services, and provides both HTTP and Blazor experiences while preparing for log-driven automation.
 
 ## Solution Layout
 ```
@@ -16,23 +16,23 @@ Ergonaut/
 ```
 
 ## Layer Responsibilities
-- **Ergonaut.Core** – Owns the domain model (`LocalTask`, `LocalProject`, enums) and normalization helpers.
-- **Ergonaut.App** – Implements use cases. Services such as `LocalTaskService` and the new `IProjectScopedTaskService` enforce project-level rules before calling repositories.
+- **Ergonaut.Core** – Owns the domain model (`LocalWorkItem`, `LocalProject`, enums) and normalization helpers.
+- **Ergonaut.App** – Implements use cases. Services such as `LocalProjectScopedWorkItemService` and the new `IProjectScopedWorkItemService` enforce project-level rules before calling repositories.
 - **Ergonaut.Infrastructure** – Hosts Entity Framework Core, migrations, and concrete repository classes. A DI extension wires SQLite paths relative to the host.
-- **Ergonaut.Api** – Exposes REST endpoints, handles JWT authentication/authorization, and delegates all business logic to the application layer. Includes project-scoped task endpoints at `api/v1/{projectId}/tasks`.
+- **Ergonaut.Api** – Exposes REST endpoints, handles JWT authentication/authorization, and delegates all business logic to the application layer. Includes project-scoped work item endpoints at `api/v1/{projectId}/work-items`.
 - **Ergonaut.UI** – Blazor Server front end that calls the API via typed HttpClient adapters, manages component state, and authenticates through an API token handler.
 
-## Project-Scoped Task Flow
-1. The UI resolves `IProjectScopedTaskService` for a selected project and calls `GET api/v1/{projectId}/tasks` to list tasks.
-2. `ProjectScopedTasksController` forwards the request to the project-scoped service, which validates the project and loads data via repositories.
-3. Creating a task posts to the same route; on success the API responds with `201 Created` and the new task payload.
-4. Repositories persist `LocalTask` entities through `ErgonautDbContext`, keeping domain types at the center.
+## Project-Scoped Work Item Flow
+1. The UI resolves `IProjectScopedWorkItemService` for a selected project and calls `GET api/v1/{projectId}/work-items` to list work items.
+2. `ProjectScopedWorkItemsController` forwards the request to the project-scoped service, which validates the project and loads data via repositories.
+3. Creating a work item posts to the same route; on success the API responds with `201 Created` and the new work item payload.
+4. Repositories persist `LocalWorkItem` entities through `ErgonautDbContext`, keeping domain types at the center.
 
 ## Upcoming Automation ("Sentinel")
 Work is underway to introduce a log-monitor worker that will:
 - Ingest external log entries and evaluate rules.
-- Use `IProjectScopedTaskService` to create tasks in a project-safe manner.
-- Surface automation activity in the UI (see `TODO.md` for preparatory tasks).
+- Use `IProjectScopedWorkItemService` to create work items in a project-safe manner.
+- Surface automation activity in the UI (see `TODO.md` for preparatory work).
 
 ## Local Development
 - **Database**: SQLite file lives under `data/sqlite/ergonaut.db`. Migrations are managed in `Ergonaut.Infrastructure`. Override the data root for other hosts (e.g., Sentinel worker) via the `Ergonaut:DataRoot` configuration key or `ERGONAUT_DATA_ROOT` environment variable.

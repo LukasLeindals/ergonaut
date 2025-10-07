@@ -1,3 +1,4 @@
+using System.Linq;
 using Ergonaut.Infrastructure.Repositories;
 using Ergonaut.App.Models;
 

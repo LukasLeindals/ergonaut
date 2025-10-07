@@ -20,7 +20,7 @@ namespace Ergonaut.Infrastructure.Migrations
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "9.0.9");
 
-            modelBuilder.Entity("Ergonaut.Core.Models.Project", b =>
+            modelBuilder.Entity("Ergonaut.Core.Models.Project.LocalProject", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -42,7 +42,7 @@ namespace Ergonaut.Infrastructure.Migrations
                     b.ToTable("Projects", (string)null);
                 });
 
-            modelBuilder.Entity("Ergonaut.Core.Models.Task", b =>
+            modelBuilder.Entity("Ergonaut.Core.Models.WorkItem.LocalWorkItem", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()

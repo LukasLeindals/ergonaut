@@ -42,7 +42,7 @@ namespace Ergonaut.Infrastructure.Migrations
                     b.ToTable("Projects", (string)null);
                 });
 
-            modelBuilder.Entity("Ergonaut.Core.Models.Task.LocalTask", b =>
+            modelBuilder.Entity("Ergonaut.Core.Models.WorkItem.LocalWorkItem", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()

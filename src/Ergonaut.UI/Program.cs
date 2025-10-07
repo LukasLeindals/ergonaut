@@ -3,9 +3,9 @@ using Ergonaut.Infrastructure.DependencyInjection;
 using Ergonaut.App.Features.Projects;
 using Ergonaut.UI.Features.Auth;
 using Ergonaut.UI.Features.Projects;
-using Ergonaut.UI.Features.Tasks;
+using Ergonaut.UI.Features.WorkItems;
 using Microsoft.Extensions.Options;
-using Ergonaut.App.Features.Tasks;
+using Ergonaut.App.Features.WorkItems;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,7 +27,7 @@ builder.Services.AddHttpClient<IProjectService, ApiProjectService>((sp, client) 
 
     client.BaseAddress = new Uri(options.BaseUrl);
 }).AddHttpMessageHandler<ApiTokenHandler>();
-builder.Services.AddHttpClient<IProjectScopedTaskService, ApiTaskService>((sp, client) =>
+builder.Services.AddHttpClient<IProjectScopedWorkItemService, ApiWorkItemService>((sp, client) =>
 {
     var options = sp.GetRequiredService<IOptions<ApiOptions>>().Value;
     if (string.IsNullOrWhiteSpace(options.BaseUrl))

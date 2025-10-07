@@ -10,20 +10,20 @@ package "Ergonaut.Core" {
     +CreatedAt: DateTime
     +CreatedBy: Guid
   }
-  Project "1" o-- "many" Task
+  Project "1" o-- "many" WorkItem
   Project "many" -- "1" User : created by
 
-  class Task {
+  class WorkItem {
     +Id: Guid
     +ProjectId: Guid
     +Title: string
     +Description: string?
     +CreatedAt: DateTime
-    +Status: TaskStatus
+    +Status: WorkItemStatus
     +DueDate: DateTime?
   }
-  Task "many" -- "1" User : created by
-  Task "many" -- "0..1" User : assigned to
+  WorkItem "many" -- "1" User : created by
+  WorkItem "many" -- "0..1" User : assigned to
 
 
 
@@ -35,7 +35,7 @@ package "Ergonaut.Core" {
 }
 
 package "Enums" {
-enum TaskStatus {
+enum WorkItemStatus {
   Todo
   InProgress
   Done

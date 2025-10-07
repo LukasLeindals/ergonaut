@@ -25,6 +25,6 @@ AppLayer --> Infra : data access
 Infra --> Db : EF Core CRUD
 
 Logs --> Sentinel : stream entries
-Sentinel --> AppLayer : create tasks
+Sentinel --> AppLayer : create work items
 
 @enduml
