@@ -1,10 +1,11 @@
+using Microsoft.Extensions.Logging;
 using Ergonaut.Core.Repositories;
 using Ergonaut.App.Models;
 using Ergonaut.Core.Models.WorkItem;
 
-namespace Ergonaut.App.Features.WorkItems;
+namespace Ergonaut.App.Services;
 
-public sealed class ProjectScopedWorkItemService(IWorkItemRepository repository, IProjectRepository projectRepository) : IProjectScopedWorkItemService
+public sealed class ProjectScopedWorkItemService(IWorkItemRepository repository, IProjectRepository projectRepository, ILogger<ProjectScopedWorkItemService> logger) : IProjectScopedWorkItemService
 {
 
     private Guid? _projectId { get; set; }
@@ -20,39 +21,43 @@ public sealed class ProjectScopedWorkItemService(IWorkItemRepository repository,
         }
     }
 
-    public async Task<IReadOnlyList<WorkItemSummary>> ListAsync(CancellationToken ct = default)
+    public async Task<IReadOnlyList<WorkItemRecord>> ListAsync(CancellationToken ct = default)
     {
         return (await repository.ListByProjectAsync(ProjectId, ct))
-            .Select(WorkItemSummary.FromWorkItem)
+            .Select(WorkItemRecord.FromWorkItem)
+            .OrderByDescending(w => w.CreatedAt)
             .ToArray();
     }
 
-    public async Task<WorkItemSummary> CreateAsync(CreateWorkItemRequest request, CancellationToken ct = default)
+    public async Task<WorkItemRecord> CreateAsync(CreateWorkItemRequest request, CancellationToken ct = default)
     {
         WorkItem workItem = new WorkItem(projectId: ProjectId, title: request.Title, description: request.Description);
         var saved = await repository.AddAsync(workItem, ct);
-        return WorkItemSummary.FromWorkItem(saved);
+        return WorkItemRecord.FromWorkItem(saved);
     }
 
-    public async Task<DeletionResult> DeleteAsync(Guid id, CancellationToken ct = default)
+    public async Task<DeletionResponse> DeleteAsync(Guid id, CancellationToken ct = default)
     {
         var existing = await repository.GetAsync(id, ct);
         if (existing is null)
-            return new DeletionResult(false, "Work item not found.");
+            return new DeletionResponse(false, "Work item not found.");
 
         if (existing.ProjectId != ProjectId)
-            return new DeletionResult(false, "Work item does not belong to the scoped project.");
+            return new DeletionResponse(false, "Work item does not belong to the scoped project.");
 
         await repository.DeleteAsync(id, ct);
-        return new DeletionResult(true, "Work item deleted successfully.");
+        return new DeletionResponse(true, "Work item deleted successfully.");
     }
 
-    public async Task<WorkItemSummary?> GetAsync(Guid id, CancellationToken ct = default)
+    public async Task<WorkItemRecord?> GetAsync(Guid id, CancellationToken ct = default)
     {
         var workItem = await repository.GetAsync(id, ct); // repository stays domain-focused
         if (workItem is null || workItem.ProjectId != ProjectId)
+        {
+            logger.LogWarning("Work item {WorkItemId} not found in project {ProjectId}.", id, ProjectId);
             return null;
+        }
 
-        return WorkItemSummary.FromWorkItem(workItem);
+        return WorkItemRecord.FromWorkItem(workItem);
     }
 }

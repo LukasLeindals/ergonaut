@@ -1,11 +1,6 @@
-using System.Text;
 using Microsoft.Extensions.Options;
-using Ergonaut.App.Features.Projects;
-using Ergonaut.UI.Features.Auth;
-using Ergonaut.UI.Features.Projects;
-using Ergonaut.UI.Features.WorkItems;
-
-using Ergonaut.App.Features.WorkItems;
+using Ergonaut.UI.ApiServices;
+using Ergonaut.App.Services;
 
 namespace Ergonaut.UI.Extensions;
 

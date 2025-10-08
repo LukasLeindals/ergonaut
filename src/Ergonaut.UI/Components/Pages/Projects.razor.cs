@@ -1,8 +1,7 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using Ergonaut.App.Models;
-using Ergonaut.App.Features.Projects;
-using Ergonaut.UI.Features.Projects;
+using Ergonaut.App.Services;
 
 namespace Ergonaut.UI.Components.Pages;
 
@@ -12,7 +11,7 @@ public partial class Projects : ComponentBase
     [Inject] private ILogger<Projects> Logger { get; set; } = default!;
 
     private CreateProjectRequest _form = new();
-    private List<ProjectInfo>? _projects;
+    private List<ProjectRecord>? _projects;
     private bool _isSubmitting;
     private string? _errorMessage;
     private bool _showCreateModal;
@@ -28,15 +27,12 @@ public partial class Projects : ComponentBase
         _form = new CreateProjectRequest();
     }
 
-    private static ProjectInfo ToInfo(ProjectSummary project) =>
-        new(project.Id, project.Title, project.CreatedAt);
-
     private async Task LoadProjectsAsync()
     {
         Logger.LogInformation("Loading projects...");
         try
         {
-            _projects = (await projectApi.ListAsync(CancellationToken.None)).Select(ToInfo).ToList();
+            _projects = (await projectApi.ListAsync(CancellationToken.None)).Select(ProjectRecord.FromProject).ToList();
         }
         catch (Exception ex)
         {
@@ -56,7 +52,7 @@ public partial class Projects : ComponentBase
 
         try
         {
-            ProjectInfo created = ToInfo(await projectApi.CreateAsync(_form, CancellationToken.None));
+            ProjectRecord created = await projectApi.CreateAsync(_form, CancellationToken.None);
             _projects ??= new();
             _projects.Insert(0, created);
             ResetForm(); // clears model + validation state
@@ -73,7 +69,7 @@ public partial class Projects : ComponentBase
         }
     }
 
-    private async Task DeleteProjectAsync(ProjectInfo project)
+    private async Task DeleteProjectAsync(ProjectRecord project)
     {
         if (_isSubmitting)
             return;
@@ -84,14 +80,14 @@ public partial class Projects : ComponentBase
 
         try
         {
-            DeletionResult deletionResult = await projectApi.DeleteAsync(project.Id, CancellationToken.None);
-            if (deletionResult.Success)
+            DeletionResponse deletionResponse = await projectApi.DeleteAsync(project.Id, CancellationToken.None);
+            if (deletionResponse.Success)
             {
                 _projects?.Remove(project);
             }
             else
             {
-                Logger.LogWarning("Failed to delete project: {Reason}", deletionResult.Message);
+                Logger.LogWarning("Failed to delete project: {Reason}", deletionResponse.Message);
                 _errorMessage = "We couldn’t delete the project. Please try again.";
             }
         }

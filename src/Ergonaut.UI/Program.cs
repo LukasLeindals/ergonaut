@@ -1,10 +1,5 @@
 using Ergonaut.UI.Components;
-using Ergonaut.App.Features.Projects;
-using Ergonaut.UI.Features.Auth;
-using Ergonaut.UI.Features.Projects;
-using Ergonaut.UI.Features.WorkItems;
-using Microsoft.Extensions.Options;
-using Ergonaut.App.Features.WorkItems;
+using Ergonaut.UI.ApiServices;
 using Ergonaut.UI.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);

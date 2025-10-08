@@ -1,5 +1,5 @@
 using Ergonaut.App.Models;
-using Ergonaut.App.Features.WorkItems;
+using Ergonaut.App.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -15,7 +15,7 @@ public sealed class WorkItemsController : ControllerBase
     public WorkItemsController(IWorkItemService workItemService) => _workItemService = workItemService;
 
     [HttpGet("{id:guid}")]
-    public async Task<ActionResult<WorkItemSummary>> GetById(Guid id, CancellationToken ct)
+    public async Task<ActionResult<WorkItemRecord>> GetById(Guid id, CancellationToken ct)
     {
         var workItem = await _workItemService.GetAsync(id, ct);
         return workItem is null ? NotFound() : Ok(workItem);
@@ -23,9 +23,9 @@ public sealed class WorkItemsController : ControllerBase
 
     [HttpDelete("{id:guid}")]
     [Authorize(Policy = "WorkItemsWrite")]
-    public async Task<ActionResult<DeletionResult>> Delete(Guid id, CancellationToken ct)
+    public async Task<ActionResult<DeletionResponse>> Delete(Guid id, CancellationToken ct)
     {
-        DeletionResult result = await _workItemService.DeleteAsync(id, ct);
+        DeletionResponse result = await _workItemService.DeleteAsync(id, ct);
         return result.Success ? NoContent() : NotFound(result.Message);
     }
 

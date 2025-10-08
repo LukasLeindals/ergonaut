@@ -23,7 +23,22 @@ namespace Ergonaut.Core.Models.WorkItem
         /// <summary>
         /// The description of the work item.
         /// </summary>
-        string Description { get; }
+        string? Description { get; }
+
+        /// <summary>
+        /// The date and time when the work item was created.
+        /// </summary>
+        DateTime CreatedAt { get; }
+
+        /// <summary>
+        /// The date and time when the work item was last updated.
+        /// </summary>
+        DateTime UpdatedAt { get; }
+
+        /// <summary>
+        /// The source of the work item (e.g., local).
+        /// </summary>
+        SourceLabel Source { get; }
 
     }
 }

@@ -1,12 +1,10 @@
-using System.Collections.Generic;
-using System.Linq;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using Ergonaut.App.Models;
-using Ergonaut.App.Features.Projects;
-using Ergonaut.UI.Features.Projects;
-using Ergonaut.App.Features.WorkItems;
-using Ergonaut.UI.Features.WorkItems;
+using Ergonaut.App.Services;
+using Ergonaut.UI.ApiServices;
+using Ergonaut.Core.Models.Project;
+using Ergonaut.Core.Models.WorkItem;
 
 namespace Ergonaut.UI.Components.Pages;
 
@@ -16,8 +14,8 @@ public partial class WorkItems : ComponentBase
     [Inject] private IProjectScopedWorkItemService _workItemApi { get; set; } = default!;
     [Inject] private ILogger<WorkItems> Logger { get; set; } = default!;
 
-    private List<ProjectInfo>? _projects;
-    private List<WorkItemSummary>? _workItems;
+    private List<ProjectRecord>? _projects;
+    private List<WorkItemRecord>? _workItems;
     private CreateWorkItemRequest _workItemForm = new();
     private Guid? _selectedProjectId;
 
@@ -60,9 +58,6 @@ public partial class WorkItems : ComponentBase
         }
     }
 
-    private static ProjectInfo ToInfo(ProjectSummary project) =>
-        new(project.Id, project.Title, project.CreatedAt);
-
     private void ResetWorkItemForm() => _workItemForm = new();
 
     private async Task LoadProjectsAsync()
@@ -71,7 +66,7 @@ public partial class WorkItems : ComponentBase
         try
         {
             _errorMessage = null;
-            _projects = (await projectApi.ListAsync(CancellationToken.None)).Select(ToInfo).OrderBy(p => p.Title).ToList();
+            _projects = (await projectApi.ListAsync(CancellationToken.None)).Select(ProjectRecord.FromProject).OrderBy(p => p.Title).ToList();
         }
         catch (Exception ex)
         {
@@ -127,7 +122,7 @@ public partial class WorkItems : ComponentBase
 
         try
         {
-            WorkItemSummary created = await WorkItemApi.CreateAsync(_workItemForm, CancellationToken.None);
+            WorkItemRecord created = await WorkItemApi.CreateAsync(_workItemForm, CancellationToken.None);
             _workItems ??= new();
             _workItems.Insert(0, created);
             ResetWorkItemForm();
@@ -144,7 +139,7 @@ public partial class WorkItems : ComponentBase
         }
     }
 
-    private async Task DeleteWorkItemAsync(WorkItemSummary workItem)
+    private async Task DeleteWorkItemAsync(WorkItemRecord workItem)
     {
         if (_isSubmitting)
             return;
@@ -156,15 +151,15 @@ public partial class WorkItems : ComponentBase
 
         try
         {
-            DeletionResult result = await WorkItemApi.DeleteAsync(workItem.Id, CancellationToken.None);
-            if (result.Success)
+            DeletionResponse deletionResponse = await WorkItemApi.DeleteAsync(workItem.Id, CancellationToken.None);
+            if (deletionResponse.Success)
             {
                 _workItems?.Remove(workItem);
             }
             else
             {
-                Logger.LogWarning("Failed to delete work item: {Reason}", result.Message);
-                _errorMessage = result.Message ?? "We couldn’t delete the work item. Please try again.";
+                Logger.LogWarning("Failed to delete work item: {Reason}", deletionResponse.Message);
+                _errorMessage = deletionResponse.Message;
             }
         }
         catch (Exception ex)

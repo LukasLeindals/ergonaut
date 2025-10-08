@@ -1,7 +1,4 @@
-using System;
-using Ergonaut.App.Models;
-
-namespace Ergonaut.App.Features.WorkItems;
+namespace Ergonaut.App.Services;
 
 public interface IProjectScopedWorkItemService : IWorkItemService
 {

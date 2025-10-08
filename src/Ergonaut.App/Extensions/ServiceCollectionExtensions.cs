@@ -1,6 +1,5 @@
 using Microsoft.Extensions.DependencyInjection;
-using Ergonaut.App.Features.Projects;
-using Ergonaut.App.Features.WorkItems;
+using Ergonaut.App.Services;
 
 
 namespace Ergonaut.App.Extensions;
@@ -11,7 +10,6 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection AddApplicationServices(this IServiceCollection services)
     {
         services.AddScoped<IProjectService, ProjectService>();
-        services.AddScoped<IProjectFactory, ProjectFactory>();
         services.AddScoped<IProjectScopedWorkItemService, ProjectScopedWorkItemService>();
         services.AddScoped<IWorkItemService>(sp => sp.GetRequiredService<IProjectScopedWorkItemService>());
 

@@ -1,7 +1,7 @@
 using System.Net.Http.Headers;
 using Microsoft.Extensions.Options;
 
-namespace Ergonaut.UI.Features.Auth;
+namespace Ergonaut.UI.ApiServices;
 
 internal sealed class ApiTokenHandler : DelegatingHandler
 {
