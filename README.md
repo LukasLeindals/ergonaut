@@ -22,6 +22,11 @@ Ergonaut/
 - **Ergonaut.Api** – Exposes REST endpoints, handles JWT authentication/authorization, and delegates all business logic to the application layer. Includes project-scoped work item endpoints at `api/v1/{projectId}/work-items`.
 - **Ergonaut.UI** – Blazor Server front end that calls the API via typed HttpClient adapters, manages component state, and authenticates through an API token handler.
 
+## Shared DTO Policy
+- Application DTOs live in `Ergonaut.App.Models` and act as the reusable contract for both API responses and UI consumption.
+- Services return these models directly; downstream callers should not wrap or map them unless projecting into view-specific shapes.
+- There is no separate contracts assembly today—new features should continue extending the existing `Models` namespace to keep serialization types centralized.
+
 ## Project-Scoped Work Item Flow
 1. The UI resolves `IProjectScopedWorkItemService` for a selected project and calls `GET api/v1/{projectId}/work-items` to list work items.
 2. `ProjectScopedWorkItemsController` forwards the request to the project-scoped service, which validates the project and loads data via repositories.

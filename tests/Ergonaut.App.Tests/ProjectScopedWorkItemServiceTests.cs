@@ -1,7 +1,10 @@
-using Ergonaut.App.Features.WorkItems;
+using Ergonaut.App.Services;
+using Ergonaut.App.Models;
 using Ergonaut.Core.Models.Project;
 using Ergonaut.Core.Models.WorkItem;
 using Ergonaut.Core.Repositories;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 using Xunit;
 
 namespace Ergonaut.App.Tests;
@@ -11,9 +14,11 @@ public sealed class ProjectScopedWorkItemServiceTests
     private readonly Guid _existingProjectId = Guid.NewGuid();
     private readonly FakeProjectRepository _projects = new();
     private readonly FakeWorkItemRepository _workItems = new();
+    private readonly ILogger<ProjectScopedWorkItemService> _logger;
 
     public ProjectScopedWorkItemServiceTests()
     {
+        _logger = NullLogger<ProjectScopedWorkItemService>.Instance;
         _projects.Add(new Project("Existing") { Id = _existingProjectId });
     }
 
@@ -69,7 +74,7 @@ public sealed class ProjectScopedWorkItemServiceTests
         Assert.DoesNotContain(_workItems.Items, item => item.Id == workItem.Id);
     }
 
-    private IProjectScopedWorkItemService CreateService() => new ProjectScopedWorkItemService(_workItems, _projects);
+    private IProjectScopedWorkItemService CreateService() => new ProjectScopedWorkItemService(_workItems, _projects, _logger);
 
     private sealed class FakeProjectRepository : IProjectRepository
     {

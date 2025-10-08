@@ -15,9 +15,6 @@
 - **Tighten dependency flow**
   - Create an `AddApplicationServices` extension so `Ergonaut.Api` only references application abstractions.
   - Move repository registration into infrastructure composition and expose only interfaces to the API/UI.
-- **Unify DTO contracts**
-  - Decide whether to expose `Ergonaut.App` DTOs directly or create a shared contracts assembly.
-  - Remove duplicate UI models (`ProjectInfo`, etc.) after aligning on the shared DTO strategy.
 - **Organize by feature modules**
   - Restructure controllers, services, and UI components into feature folders (Projects, WorkItems, Sentinel).
   - Update namespace conventions and DI wiring to match the new layout.

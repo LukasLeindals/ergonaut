@@ -1,4 +1,3 @@
-using System.Linq;
 using System.Reflection;
 using NetArchTest.Rules;
 using Xunit;
@@ -12,7 +11,7 @@ public sealed class DependencyFlowTests
     private static readonly string UiNamespace = "Ergonaut.UI";
 
     private static readonly Assembly ApiAssembly = typeof(Api.Controllers.ProjectsController).Assembly;
-    private static readonly Assembly AppAssembly = typeof(App.Features.Projects.ProjectService).Assembly;
+    private static readonly Assembly AppAssembly = typeof(App.Services.ProjectService).Assembly;
     private static readonly Assembly InfrastructureAssembly = typeof(Infrastructure.Repositories.ProjectRepository).Assembly;
 
     [Fact(DisplayName = "API controllers stay isolated from infrastructure")]

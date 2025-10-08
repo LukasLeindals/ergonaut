@@ -32,7 +32,7 @@ public partial class Projects : ComponentBase
         Logger.LogInformation("Loading projects...");
         try
         {
-            _projects = (await projectApi.ListAsync(CancellationToken.None)).Select(ProjectRecord.FromProject).ToList();
+            _projects = (await projectApi.ListAsync(CancellationToken.None)).ToList();
         }
         catch (Exception ex)
         {

@@ -66,7 +66,7 @@ public partial class WorkItems : ComponentBase
         try
         {
             _errorMessage = null;
-            _projects = (await projectApi.ListAsync(CancellationToken.None)).Select(ProjectRecord.FromProject).OrderBy(p => p.Title).ToList();
+            _projects = (await projectApi.ListAsync(CancellationToken.None)).OrderBy(p => p.Title).ToList();
         }
         catch (Exception ex)
         {
