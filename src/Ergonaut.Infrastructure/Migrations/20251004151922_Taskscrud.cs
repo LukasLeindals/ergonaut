@@ -5,7 +5,7 @@
 namespace Ergonaut.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class taskscrud : Migration
+    public partial class Taskscrud : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

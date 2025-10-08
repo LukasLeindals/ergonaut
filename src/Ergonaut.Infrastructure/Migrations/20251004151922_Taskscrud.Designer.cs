@@ -12,7 +12,7 @@ namespace Ergonaut.Infrastructure.Migrations
 {
     [DbContext(typeof(ErgonautDbContext))]
     [Migration("20251004151922_tasks-crud")]
-    partial class taskscrud
+    partial class Taskscrud
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
