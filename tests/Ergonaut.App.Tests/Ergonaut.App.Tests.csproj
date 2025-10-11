@@ -15,6 +15,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Include="..\Mock\App\**\*.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\..\src\Ergonaut.App\Ergonaut.App.csproj" />
   </ItemGroup>
 
