@@ -27,3 +27,4 @@ No outstanding tasks at the moment.
 ## Improvements
 - Introduce validators for `CreateProjectRequest` / `CreateWorkItemRequest`, extend `WorkItem` with correlation identifiers, and add unit tests covering duplicate-prevention.
 - Expand NetArchTest coverage (UI ↛ Infrastructure, Infrastructure ↛ UI, Contracts ↛ Infrastructure) and keep the CI pipeline failing fast on architectural violations.
+- Investigate possibility of testing against a test database in CI to catch issues with migrations and seed data.
