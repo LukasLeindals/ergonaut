@@ -35,6 +35,12 @@ public sealed class DependencyFlowTests
         CheckAssembly(typeof(Infrastructure.Repositories.ProjectRepository).Assembly, InfrastructureNamespace, AppNamespace, UiNamespace);
     }
 
+    [Fact(DisplayName = "DTO contracts stay decoupled from infrastructure")]
+    public void Contracts_Should_Not_Depend_On_Infrastructure()
+    {
+        CheckAssembly(typeof(App.Models.ProjectRecord).Assembly, "Ergonaut.App.Models", InfrastructureNamespace);
+    }
+
     // <summary>
     /// Checks that types in the specified namespace of the given assembly do not depend on any of the forbidden dependencies.
     /// NOTE: The assembly can be found via a type within it, e.g. typeof(SomeTypeInAssembly).Assembly

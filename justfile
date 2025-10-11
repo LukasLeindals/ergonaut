@@ -29,4 +29,4 @@ add-migration name:
     --startup-project src/Ergonaut.Api/Ergonaut.Api.csproj
 
 test:
-    dotnet test --no-build -clp:ErrorsOnly --logger:"console;verbosity=detailed" --settings 'tests/.runsettings'
+    dotnet test --no-build -clp:ErrorsOnly --logger:"console;verbosity=detailed"
