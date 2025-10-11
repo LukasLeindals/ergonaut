@@ -9,45 +9,46 @@ public sealed class DependencyFlowTests
     private static readonly string InfrastructureNamespace = "Ergonaut.Infrastructure";
     private static readonly string AppNamespace = "Ergonaut.App";
     private static readonly string UiNamespace = "Ergonaut.UI";
-
-    private static readonly Assembly ApiAssembly = typeof(Api.Controllers.ProjectsController).Assembly;
-    private static readonly Assembly AppAssembly = typeof(App.Services.ProjectService).Assembly;
-    private static readonly Assembly InfrastructureAssembly = typeof(Infrastructure.Repositories.ProjectRepository).Assembly;
+    private static readonly string ApiNamespace = "Ergonaut.Api";
 
     [Fact(DisplayName = "API controllers stay isolated from infrastructure")]
     public void ApiControllers_Should_Not_Depend_On_Infrastructure()
     {
-        var result = Types.InAssembly(ApiAssembly)
-            .That()
-            .ResideInNamespace("Ergonaut.Api.Controllers")
-            .Should()
-            .NotHaveDependencyOn(InfrastructureNamespace)
-            .GetResult();
-
-        Assert.True(result.IsSuccessful, DescribeFailures(result));
+        CheckAssembly(typeof(Api.Controllers.ProjectsController).Assembly, ApiNamespace, InfrastructureNamespace);
     }
 
     [Fact(DisplayName = "Application layer does not take an infrastructure dependency")]
     public void App_Should_Not_Depend_On_Infrastructure()
     {
-        var result = Types.InAssembly(AppAssembly)
-            .That()
-            .ResideInNamespaceStartingWith(AppNamespace)
-            .Should()
-            .NotHaveDependencyOn(InfrastructureNamespace)
-            .GetResult();
+        CheckAssembly(typeof(App.Services.ProjectService).Assembly, AppNamespace, InfrastructureNamespace);
+    }
 
-        Assert.True(result.IsSuccessful, DescribeFailures(result));
+    [Fact(DisplayName = "UI layer does not take an infrastructure dependency")]
+    public void Ui_Should_Not_Depend_On_Infrastructure()
+    {
+        CheckAssembly(typeof(UI.Components.Pages.Projects).Assembly, UiNamespace, InfrastructureNamespace);
     }
 
     [Fact(DisplayName = "Infrastructure remains unaware of App and UI layers")]
     public void Infrastructure_Should_Not_Depend_On_App_Or_Ui()
     {
-        var result = Types.InAssembly(InfrastructureAssembly)
+        CheckAssembly(typeof(Infrastructure.Repositories.ProjectRepository).Assembly, InfrastructureNamespace, AppNamespace, UiNamespace);
+    }
+
+    // <summary>
+    /// Checks that types in the specified namespace of the given assembly do not depend on any of the forbidden dependencies.
+    /// NOTE: The assembly can be found via a type within it, e.g. typeof(SomeTypeInAssembly).Assembly
+    /// </summary>
+    /// <param name="assembly">The assembly to check.</param>
+    /// <param name="namespace">The namespace to check within the assembly.</param>
+    /// <param name="forbiddenDependencies">The namespaces that should not be depended upon.</param>
+    private static void CheckAssembly(Assembly assembly, string @namespace, params string[] forbiddenDependencies)
+    {
+        var result = Types.InAssembly(assembly)
             .That()
-            .ResideInNamespaceStartingWith(InfrastructureNamespace)
+            .ResideInNamespaceStartingWith(@namespace)
             .Should()
-            .NotHaveDependencyOnAny(AppNamespace, UiNamespace)
+            .NotHaveDependencyOnAny(forbiddenDependencies)
             .GetResult();
 
         Assert.True(result.IsSuccessful, DescribeFailures(result));
