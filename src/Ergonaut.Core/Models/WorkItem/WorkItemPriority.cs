@@ -1,4 +1,3 @@
-
 namespace Ergonaut.Core.Models.WorkItem
 {
     /// <summary>

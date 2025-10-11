@@ -1,5 +1,3 @@
-
-
 namespace Ergonaut.UI.Extensions;
 
 public static class WebApplicationExtensions

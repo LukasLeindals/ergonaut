@@ -8,6 +8,4 @@ public interface IProject
     DateTime CreatedAt { get; }
     DateTime UpdatedAt { get; }
     SourceLabel Source { get; }
-
-    
 }
