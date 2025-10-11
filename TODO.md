@@ -1,32 +1,29 @@
-# TODO by Project
+# TODO
 
+TODOs for the project.
 
-## Ergonaut.UI
-- Plan how the UI should surface log-generated work items (auto-refresh, badges, filters) once background automation is active.
-- Update README and other docs that still reference `Ergonaut.Sentinel` to match the current solution layout or the planned worker implementation.
+Milestone TODOs:
+- Should be given a subheading for larger groups of tasks that can be performed independently.
+  - Avoid creating groups with only one task unless it is a major task.
+  - Groups should be independent of each other, i.e. the tasks can/should be done in any order.
+- Within a milestone heading, tasks should be ordered by priority and dependency.
 
-## Ergonaut.App / Infrastructure
-- Introduce automated tests, starting with `ProjectScopedWorkItemService` and log-ingestion scenarios, to guard domain rules.
+## General
+No outstanding tasks at the moment.
 
-## Sentinel / Automation
-- Decide how to host the upcoming log-monitor/Sentinel worker (inline background service vs dedicated project) and document the integration pattern.
+## Sentinel Milestone – MVP Online
+### Worker Foundations
+- Document the inline vs dedicated project decision and integration plan for the initial Sentinel worker.
+- Implement in-memory versions of `ILogEventSource`, `ILogWorkItemOrchestrator`, and `ILogIngestionPipeline` inside `Ergonaut.App` so downstream components have stable contracts.
+- Create the minimal infrastructure adapters (storage, message bus, etc.) against the new interfaces so the first loop can run end-to-end.
 
-## Architecture Improvements
-- **Tighten dependency flow**
-  - Create an `AddApplicationServices` extension so `Ergonaut.Api` only references application abstractions.
-  - Move repository registration into infrastructure composition and expose only interfaces to the API/UI.
-- **Organize by feature modules**
-  - Restructure controllers, services, and UI components into feature folders (Projects, WorkItems, Sentinel).
-  - Update namespace conventions and DI wiring to match the new layout.
-- **Extract UI bootstrapping helpers**
-  - Add a `services.AddErgonautApiClients()` extension encapsulating HttpClient + token handler setup.
-  - Simplify `Ergonaut.UI/Program.cs` to call composable setup methods only.
-- **Define automation interfaces early**
-  - Introduce `ILogEventSource` / `ILogTaskOrchestrator` contracts in the application layer.
-  - Sketch stub implementations so automation tests can start before the worker exists.
-- **Strengthen validation pipeline**
-  - Add application-level validators (FluentValidation or manual) for work item/project commands.
-  - Extend `WorkItem` with correlation identifiers or guards to prevent duplicate log-derived work items.
-- **Enforce architectural rules with tests**
-  - Add NetArchTest (or similar) checks to keep UI/API from referencing infrastructure directly.
-  - Wire the arch tests into CI so violations fail builds immediately.
+### Quality & Guardrails
+- Add smoke tests covering log-ingestion happy paths and guard rails to validate the end-to-end loop once adapters exist.
+
+### Visibility & Documentation
+- Capture how automation-created work items surface in the UI (refresh cadence, badges, filters) to align UX with the automation path.
+- Update README/docs that still mention `Ergonaut.Sentinel` to match the MVP worker naming, hosting model, and workflow.
+
+## Improvements
+- Introduce validators for `CreateProjectRequest` / `CreateWorkItemRequest`, extend `WorkItem` with correlation identifiers, and add unit tests covering duplicate-prevention.
+- Expand NetArchTest coverage (UI ↛ Infrastructure, Infrastructure ↛ UI, Contracts ↛ Infrastructure) and keep the CI pipeline failing fast on architectural violations.
