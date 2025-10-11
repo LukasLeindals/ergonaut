@@ -12,7 +12,7 @@ builder.Services.Configure<ApiOptions>(builder.Configuration.GetSection("Api"));
 
 
 builder.Services.AddTransient<ApiTokenHandler>();
-builder.Services.AddApiServices();
+builder.Services.AddErgonautApiServices();
 
 
 var app = builder.Build();

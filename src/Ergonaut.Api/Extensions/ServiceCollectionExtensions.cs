@@ -8,8 +8,7 @@ namespace Ergonaut.Api.Extensions;
 
 public static class ServiceCollectionExtensions
 {
-
-    public static IServiceCollection AddPolicies(this IServiceCollection services)
+    public static IServiceCollection AddErgonautPolicies(this IServiceCollection services)
     {
         services.AddAuthorization(options =>
         {
@@ -22,7 +21,7 @@ public static class ServiceCollectionExtensions
         return services;
     }
 
-    public static IServiceCollection AddAuth(this IServiceCollection services, IConfiguration configuration)
+    public static IServiceCollection AddErgonautAuthentication(this IServiceCollection services, IConfiguration configuration)
     {
         // temporary dev secrets; move to secure store later
         var jwtOptions = configuration.GetSection("Jwt").Get<JwtOptions>()
@@ -48,7 +47,7 @@ public static class ServiceCollectionExtensions
         return services;
     }
 
-    public static IServiceCollection AddSwagger(this IServiceCollection services)
+    public static IServiceCollection AddErgonautSwagger(this IServiceCollection services)
     {
         services.AddSwaggerGen(options =>
         {

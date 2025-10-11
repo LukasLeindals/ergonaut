@@ -7,10 +7,10 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwagger();
+builder.Services.AddErgonautSwagger();
 
-builder.Services.AddPolicies();
-builder.Services.AddAuth(builder.Configuration);
+builder.Services.AddErgonautPolicies();
+builder.Services.AddErgonautAuthentication(builder.Configuration);
 builder.Services.AddInfrastructure(builder.Configuration, builder.Environment);
 builder.Services.AddApplicationServices();
 

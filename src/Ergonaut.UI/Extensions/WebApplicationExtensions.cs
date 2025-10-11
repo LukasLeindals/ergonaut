@@ -2,7 +2,7 @@
 
 namespace Ergonaut.UI.Extensions;
 
-public static class AppBuilderExtensions
+public static class WebApplicationExtensions
 {
     public static WebApplication ConfigureHttpRequestPipeline(this WebApplication app)
     {

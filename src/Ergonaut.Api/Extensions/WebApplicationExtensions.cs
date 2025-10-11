@@ -2,7 +2,7 @@
 
 namespace Ergonaut.Api.Extensions;
 
-public static class AppBuilderExtensions
+public static class WebApplicationExtensions
 {
     public static WebApplication ConfigureRedirection(this WebApplication app)
     {
