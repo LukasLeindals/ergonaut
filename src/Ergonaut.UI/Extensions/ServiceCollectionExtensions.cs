@@ -1,6 +1,7 @@
 using Microsoft.Extensions.Options;
 using Ergonaut.UI.ApiServices;
 using Ergonaut.App.Services;
+using Ergonaut.App.Services.ProjectScoped;
 
 namespace Ergonaut.UI.Extensions;
 
@@ -28,7 +29,7 @@ public static class ServiceCollectionExtensions
     {
 
         services.AddHttpClient<IProjectService, ApiProjectService>(ConfigureErgonautApiClient).AddHttpMessageHandler<ApiTokenHandler>();
-        services.AddHttpClient<IProjectScopedWorkItemService, ApiWorkItemService>(ConfigureErgonautApiClient).AddHttpMessageHandler<ApiTokenHandler>();
+        services.AddHttpClient<IWorkItemService, ApiWorkItemService>(ConfigureErgonautApiClient).AddHttpMessageHandler<ApiTokenHandler>();
 
         return services;
 
