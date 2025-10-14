@@ -3,10 +3,8 @@ using Microsoft.AspNetCore.Components.Forms;
 using Ergonaut.App.Models;
 using Ergonaut.App.Services;
 using Ergonaut.App.Services.ProjectScoped;
-using Ergonaut.Core.Models.Project;
-using Ergonaut.Core.Models.WorkItem;
 
-namespace Ergonaut.UI.Components.Pages;
+namespace Ergonaut.UI.Components.Pages.WorkItems;
 
 public partial class WorkItems : ComponentBase
 {

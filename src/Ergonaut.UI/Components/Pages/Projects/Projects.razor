@@ -1,0 +1,30 @@
+@page "/projects"
+@rendermode InteractiveServer
+@attribute [StreamRendering]
+
+
+<PageTitle>Projects</PageTitle>
+
+<h1 class="mb-4">Projects</h1>
+
+
+
+
+<ProjectsCreateModal IsVisible="_showCreateModal"
+                     Form="_form"
+                     IsSubmitting="_isSubmitting"
+                     OnClose="HideCreateModal"
+                     OnValidSubmit="CreateProjectAsync"
+                     OnInvalidSubmit="HandleInvalidSubmit" />
+
+
+@if (!string.IsNullOrWhiteSpace(_errorMessage))
+{
+    <div class="alert alert-danger mt-3">@_errorMessage</div>
+}
+
+<ProjectsTable Projects="_projects"
+               IsSubmitting="_isSubmitting"
+               OnDelete="DeleteProjectAsync" />
+
+<button class="btn btn-primary" @onclick="ShowCreateModal"> Create New Project</button>

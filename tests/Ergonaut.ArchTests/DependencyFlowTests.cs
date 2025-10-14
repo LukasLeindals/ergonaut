@@ -26,7 +26,8 @@ public sealed class DependencyFlowTests
     [Fact(DisplayName = "UI layer does not take an infrastructure dependency")]
     public void Ui_Should_Not_Depend_On_Infrastructure()
     {
-        CheckAssembly(typeof(UI.Components.Pages.Projects).Assembly, UiNamespace, InfrastructureNamespace);
+        CheckAssembly(typeof(UI.Components.Pages.Projects.Projects).Assembly, UiNamespace, InfrastructureNamespace);
+        CheckAssembly(typeof(UI.Components.Pages.WorkItems.WorkItems).Assembly, UiNamespace, InfrastructureNamespace);
     }
 
     [Fact(DisplayName = "Infrastructure remains unaware of App and UI layers")]
