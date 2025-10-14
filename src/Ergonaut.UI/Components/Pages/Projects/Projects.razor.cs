@@ -27,22 +27,6 @@ public partial class Projects : ComponentBase
         _form = new CreateProjectRequest();
     }
 
-    private async Task LoadProjectsAsync()
-    {
-        Logger.LogInformation("Loading projects...");
-        try
-        {
-            _projects = (await projectApi.ListAsync(CancellationToken.None)).ToList();
-        }
-        catch (Exception ex)
-        {
-            Logger.LogError(ex, "Failed to load projects");
-            _errorMessage = "We couldn’t load your projects. Please retry.";
-        }
-    }
-
-    
-
     private void HandleInvalidSubmit(EditContext context)
     {
         Logger.LogInformation($"Invalid form submission: {_form.Title}");

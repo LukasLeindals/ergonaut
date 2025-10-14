@@ -1,0 +1,50 @@
+@using System
+@using System.Globalization
+@using System.Linq
+@using System.Threading.Tasks
+@using Ergonaut.App.Models
+@using Microsoft.AspNetCore.Components
+
+<div class="row align-items-center g-3 mb-4">
+    <div class="col-12 col-md-6">
+        <select class="form-select"
+                value="@SelectedProjectValue"
+                @onchange="HandleSelectionChangeAsync">
+            <option value="">Select a project…</option>
+            @if (Projects is not null)
+            {
+                foreach (var project in Projects.OrderBy(p => p.Title, StringComparer.CurrentCultureIgnoreCase))
+                {
+                    <option value="@project.Id.ToString()"> @project.Title</option>
+                }
+            }
+        </select>
+    </div>
+    <div class="col-12 col-md-6">
+        <p class="mt-4 mt-md-0">
+            <em>Not seeing a fitting project? Create one <a href="projects">here</a>.</em>
+        </p>
+    </div>
+</div>
+
+@code {
+    [Parameter] public IEnumerable<ProjectRecord>? Projects { get; set; }
+    [Parameter] public Guid? SelectedProjectId { get; set; }
+    [Parameter] public EventCallback<Guid?> OnProjectSelected { get; set; }
+
+    private string? SelectedProjectValue => SelectedProjectId?.ToString();
+
+    private async Task HandleSelectionChangeAsync(ChangeEventArgs args)
+    {
+        Guid? parsed = null;
+        if (args.Value is string value && Guid.TryParse(value, out var projectId))
+        {
+            parsed = projectId;
+        }
+
+        if (OnProjectSelected.HasDelegate)
+        {
+            await OnProjectSelected.InvokeAsync(parsed);
+        }
+    }
+}

@@ -13,32 +13,12 @@
 
 @if (_showCreateModal)
 {
-    <div class="modal fade show d-block" tabindex="-1" style="background-color: rgba(0,0,0,.5);" role="dialog">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">New Work Item</h5>
-                    <button type="button" class="btn-close" aria-label="Close" @onclick="HideCreateModal"></button>
-                </div>
-
-                <EditForm Model="_workItemForm" FormName="create-work-item" OnValidSubmit="CreateWorkItemAsync"
-                          OnInvalidSubmit="HandleInvalidSubmit">
-                    <DataAnnotationsValidator />
-                    <div class="modal-body">
-                        <input @bind-Value="_workItemForm.Title" @bind-Value:event="oninput" class="form-control"
-                               placeholder="Work item title" />
-                        <input @bind-Value="_workItemForm.Description" @bind-Value:event="oninput" class="form-control"
-                               placeholder="Work item description" />
-                        <ValidationSummary />
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-outline-secondary" @onclick="HideCreateModal">Cancel</button>
-                        <button type="submit" class="btn btn-primary" disabled="@_isSubmitting">Create</button>
-                    </div>
-                </EditForm>
-            </div>
-        </div>
-    </div>
+    <WorkItemsCreateModal IsVisible="_showCreateModal"
+                          Form="_workItemForm"
+                          IsSubmitting="_isSubmitting"
+                          OnClose="HideCreateModal"
+                          OnValidSubmit="CreateWorkItemAsync"
+                          OnInvalidSubmit="HandleInvalidSubmit" />
 }
 
 @if (_projects is null)
@@ -51,68 +31,15 @@ else if (_projects.Count == 0)
 }
 else
 {
-    <div class="row align-items-center g-3 mb-4">
-        <div class="col-12 col-md-6">
-            <select class="form-select" @bind="SelectedProjectId">
-                <option value="">Select a project…</option>
-                @foreach (var project in _projects)
-                {
-                    <option value="@project.Id">@project.Title</option>
-                }
-            </select>
-        </div>
-        <div class="col-12 col-md-6">
-            <p class="mt-4"><em>Not seeing a fitting project? Create one <a href="projects">here</a>.</em></p>
-        </div>
-    </div>
+    <WorkItemsProjectSelector Projects="_projects"
+                              SelectedProjectId="SelectedProjectId"
+                              OnProjectSelected="SetSelectedProject" />
 
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Title</th>
-                <th>Description</th>
-                <th class="text-end"> Created At </th>
-                <th class="text-end">Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            @if (_isLoadingWorkItems)
-            {
-                <tr>
-                    <td colspan="3"><em>Loading work items...</em></td>
-                </tr>
-            }
-            else if (_workItems is null)
-            {
-                <tr>
-                    <td colspan="3"><em>Please select a project to view its work items.</em></td>
-                </tr>
-            }
-            else if (_workItems.Count == 0)
-            {
-                <tr>
-                    <td colspan="3"><em>No work items yet. Create one to get started.</em></td>
-                </tr>
-            }
-            else
-            {
-                foreach (var workItem in _workItems)
-                {
-                    <tr>
-                        <td>@workItem.Title</td>
-                        <td>@workItem.Description</td>
-                        <td class="text-end">@workItem.CreatedAt.ToLocalTime().ToString("g")</td>
-                        <td class="text-end">
-                            <button class="btn btn-danger btn-sm" title="Delete" disabled="@_isSubmitting"
-                                    @onclick="() => DeleteWorkItemAsync(workItem)">
-                                <i class="fa-solid fa-trash"></i> Delete
-                            </button>
-                        </td>
-                    </tr>
-                }
-            }
-        </tbody>
-    </table>
+    <WorkItemsTable WorkItems="_workItems"
+                    IsLoading="_isLoadingWorkItems"
+                    HasSelectedProject="SelectedProjectId is not null"
+                    IsSubmitting="_isSubmitting"
+                    OnDelete="DeleteWorkItemAsync" />
 }
 
 <button class="btn btn-primary" @onclick="ShowCreateModal"> Create New Work Item</button>
