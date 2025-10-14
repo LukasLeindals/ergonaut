@@ -34,8 +34,6 @@ public sealed class WorkItemsController : ControllerBase
     public async Task<ActionResult<WorkItemRecord>> Post([FromRoute] Guid projectId, [FromBody] CreateWorkItemRequest request, CancellationToken ct)
     {
         var created = await _workItemService.CreateAsync(projectId, request, ct);
-        if (created is null)
-            return BadRequest("Failed to create work item.");
         return CreatedAtAction(nameof(GetById), new { projectId, id = created.Id }, created);
     }
 

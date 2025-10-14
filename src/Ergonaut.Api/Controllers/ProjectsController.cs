@@ -25,8 +25,6 @@ public sealed class ProjectsController : ControllerBase
     public async Task<ActionResult<ProjectRecord>> Post([FromBody] CreateProjectRequest request, CancellationToken ct)
     {
         var created = await _projectService.CreateAsync(request, ct);
-        if (created is null)
-            return BadRequest("Failed to create project.");
         return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
     }
 

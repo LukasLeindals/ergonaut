@@ -8,20 +8,18 @@ namespace Ergonaut.UI.Extensions;
 
 public static class ServiceCollectionExtensions
 {
-    private static void SetErgonautBaseUrl(IServiceProvider sp, HttpClient client)
+
+    private static void ConfigureErgonautApiClient(IServiceProvider sp, HttpClient client)
     {
         var options = sp.GetRequiredService<IOptions<ApiOptions>>().Value;
+
+        // Set the base URL for the API client
         if (string.IsNullOrWhiteSpace(options.BaseUrl))
         {
             throw new InvalidOperationException("API base URL is not configured.");
         }
 
         client.BaseAddress = new Uri(options.BaseUrl);
-    }
-
-    private static void ConfigureErgonautApiClient(IServiceProvider sp, HttpClient client)
-    {
-        SetErgonautBaseUrl(sp, client);
     }
 
 
