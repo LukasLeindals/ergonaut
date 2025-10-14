@@ -27,3 +27,6 @@ add-migration name:
     @dotnet ef migrations add "{{ name }}" \
     --project src/Ergonaut.Infrastructure/Ergonaut.Infrastructure.csproj \
     --startup-project src/Ergonaut.Api/Ergonaut.Api.csproj
+
+test:
+    dotnet test --no-build -clp:ErrorsOnly --logger:"console;verbosity=detailed"

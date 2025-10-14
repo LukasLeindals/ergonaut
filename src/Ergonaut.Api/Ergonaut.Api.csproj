@@ -18,6 +18,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Ergonaut.App\Ergonaut.App.csproj" />
+    <ProjectReference Include="..\Ergonaut.Infrastructure\Ergonaut.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

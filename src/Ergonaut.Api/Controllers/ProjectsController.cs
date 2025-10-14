@@ -1,5 +1,5 @@
 using Ergonaut.App.Models;
-using Ergonaut.App.Features.Projects;
+using Ergonaut.App.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -15,12 +15,14 @@ public sealed class ProjectsController : ControllerBase
     public ProjectsController(IProjectService projectService) => _projectService = projectService;
 
     [HttpGet]
-    public async Task<ActionResult<IReadOnlyList<ProjectSummary>>> Get(CancellationToken ct)
+    public async Task<ActionResult<IReadOnlyList<ProjectRecord>>> Get(CancellationToken ct)
         => Ok(await _projectService.ListAsync(ct));
 
     [HttpPost]
     [Authorize(Policy = "ProjectsWrite")]
-    public async Task<ActionResult<ProjectSummary>> Post([FromBody] CreateProjectRequest request, CancellationToken ct)
+    [ProducesResponseType(typeof(ProjectRecord), 201)]
+    [ProducesResponseType(400)]
+    public async Task<ActionResult<ProjectRecord>> Post([FromBody] CreateProjectRequest request, CancellationToken ct)
     {
         var created = await _projectService.CreateAsync(request, ct);
         return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
@@ -28,14 +30,14 @@ public sealed class ProjectsController : ControllerBase
 
     [HttpDelete("{id:guid}")]
     [Authorize(Policy = "ProjectsWrite")]
-    public async Task<ActionResult<DeletionResult>> Delete(Guid id, CancellationToken ct)
+    public async Task<ActionResult<DeletionResponse>> Delete(Guid id, CancellationToken ct)
     {
-        DeletionResult result = await _projectService.DeleteAsync(id, ct);
+        DeletionResponse result = await _projectService.DeleteAsync(id, ct);
         return result.Success ? NoContent() : NotFound(result.Message);
     }
 
     [HttpGet("{id:guid}")]
-    public async Task<ActionResult<ProjectSummary>> GetById(Guid id, CancellationToken ct)
+    public async Task<ActionResult<ProjectRecord>> GetById(Guid id, CancellationToken ct)
     {
         var project = await _projectService.GetAsync(id, ct);
         return project is null ? NotFound() : Ok(project);

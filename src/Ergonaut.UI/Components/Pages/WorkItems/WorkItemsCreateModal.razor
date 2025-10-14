@@ -1,0 +1,62 @@
+@using System.Threading.Tasks
+@using Ergonaut.App.Models
+@using Microsoft.AspNetCore.Components
+@using Microsoft.AspNetCore.Components.Forms
+
+@if (IsVisible)
+{
+    <div class="modal fade show d-block" tabindex="-1" style="background-color: rgba(0,0,0,.5);" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">New Work Item</h5>
+                    <button type="button" class="btn-close" aria-label="Close" @onclick="CloseAsync"></button>
+                </div>
+
+                <EditForm Model="Form"
+                          FormName="create-work-item"
+                          OnValidSubmit="HandleValidSubmitAsync"
+                          OnInvalidSubmit="HandleInvalidSubmitAsync">
+                    <DataAnnotationsValidator />
+                    <div class="modal-body">
+                        <input @bind-Value="Form.Title"
+                               @bind-Value:event="oninput"
+                               class="form-control"
+                               placeholder="Work item title" />
+                        <input @bind-Value="Form.Description"
+                               @bind-Value:event="oninput"
+                               class="form-control mt-2"
+                               placeholder="Work item description" />
+                        <ValidationSummary />
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button"
+                                class="btn btn-outline-secondary"
+                                @onclick="CloseAsync">Cancel</button>
+                        <button type="submit"
+                                class="btn btn-primary"
+                                disabled="@IsSubmitting">Create</button>
+                    </div>
+                </EditForm>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter] public bool IsVisible { get; set; }
+    [Parameter] public CreateWorkItemRequest Form { get; set; } = default!;
+    [Parameter] public bool IsSubmitting { get; set; }
+    [Parameter] public EventCallback OnClose { get; set; }
+    [Parameter] public EventCallback OnValidSubmit { get; set; }
+    [Parameter] public EventCallback<EditContext> OnInvalidSubmit { get; set; }
+
+    private Task CloseAsync() =>
+        OnClose.HasDelegate ? OnClose.InvokeAsync(null) : Task.CompletedTask;
+
+    private Task HandleValidSubmitAsync() =>
+        OnValidSubmit.HasDelegate ? OnValidSubmit.InvokeAsync(null) : Task.CompletedTask;
+
+    private Task HandleInvalidSubmitAsync(EditContext context) =>
+        OnInvalidSubmit.HasDelegate ? OnInvalidSubmit.InvokeAsync(context) : Task.CompletedTask;
+}

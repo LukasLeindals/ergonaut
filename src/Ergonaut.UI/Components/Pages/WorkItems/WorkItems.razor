@@ -1,0 +1,45 @@
+@page "/work-items"
+@rendermode InteractiveServer
+@attribute [StreamRendering]
+
+<PageTitle>Work Items</PageTitle>
+
+<h1>Work Items</h1>
+
+@if (!string.IsNullOrWhiteSpace(_errorMessage))
+{
+    <div class="alert alert-danger mt-3">@_errorMessage</div>
+}
+
+@if (_showCreateModal)
+{
+    <WorkItemsCreateModal IsVisible="_showCreateModal"
+                          Form="_workItemForm"
+                          IsSubmitting="_isSubmitting"
+                          OnClose="HideCreateModal"
+                          OnValidSubmit="CreateWorkItemAsync"
+                          OnInvalidSubmit="HandleInvalidSubmit" />
+}
+
+@if (_projects is null)
+{
+    <p class="mt-4"><em>Loading...</em></p>
+}
+else if (_projects.Count == 0)
+{
+    <p class="mt-4"><em>No projects yet—create your first one <a href="projects">here</a>.</em></p>
+}
+else
+{
+    <WorkItemsProjectSelector Projects="_projects"
+                              SelectedProjectId="SelectedProjectId"
+                              OnProjectSelected="SetSelectedProject" />
+
+    <WorkItemsTable WorkItems="_workItems"
+                    IsLoading="_isLoadingWorkItems"
+                    HasSelectedProject="SelectedProjectId is not null"
+                    IsSubmitting="_isSubmitting"
+                    OnDelete="DeleteWorkItemAsync" />
+}
+
+<button class="btn btn-primary" @onclick="ShowCreateModal"> Create New Work Item</button>

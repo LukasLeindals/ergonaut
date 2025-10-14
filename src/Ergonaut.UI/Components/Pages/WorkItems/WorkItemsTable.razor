@@ -1,0 +1,63 @@
+@using Ergonaut.App.Models
+@using Microsoft.AspNetCore.Components
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Title</th>
+            <th>Description</th>
+            <th class="text-end">Created At</th>
+            <th class="text-end">Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (!HasSelectedProject)
+        {
+            <tr>
+                <td colspan="4"><em>Please select a project to view its work items.</em></td>
+            </tr>
+        }
+        else if (IsLoading)
+        {
+            <tr>
+                <td colspan="4"><em>Loading work items...</em></td>
+            </tr>
+        }
+        else if (WorkItems is null || WorkItems.Count == 0)
+        {
+            <tr>
+                <td colspan="4"><em>No work items yet. Create one to get started.</em></td>
+            </tr>
+        }
+        else
+        {
+            foreach (var workItem in WorkItems)
+            {
+                <tr>
+                    <td>@workItem.Title</td>
+                    <td>@workItem.Description</td>
+                    <td class="text-end">@workItem.CreatedAt.ToLocalTime().ToString("g")</td>
+                    <td class="text-end">
+                        <button class="btn btn-danger btn-sm"
+                                title="Delete"
+                                disabled="@IsSubmitting"
+                                @onclick="() => DeleteAsync(workItem)">
+                            <i class="fa-solid fa-trash"></i> Delete
+                        </button>
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+
+@code {
+    [Parameter] public IReadOnlyList<WorkItemRecord>? WorkItems { get; set; }
+    [Parameter] public bool IsLoading { get; set; }
+    [Parameter] public bool HasSelectedProject { get; set; }
+    [Parameter] public bool IsSubmitting { get; set; }
+    [Parameter] public EventCallback<WorkItemRecord> OnDelete { get; set; }
+
+    private Task DeleteAsync(WorkItemRecord record) =>
+        OnDelete.HasDelegate ? OnDelete.InvokeAsync(record) : Task.CompletedTask;
+}

@@ -1,4 +1,4 @@
-using Ergonaut.Core.Models.Task;
+using Ergonaut.Core.Models.WorkItem;
 using Ergonaut.Core.Models.Project;
 using Microsoft.EntityFrameworkCore;
 
@@ -9,14 +9,14 @@ public class ErgonautDbContext : DbContext
     public ErgonautDbContext(DbContextOptions<ErgonautDbContext> options)
         : base(options) { }
 
-    public DbSet<LocalProject> Projects => Set<LocalProject>();
-    public DbSet<LocalTask> Tasks => Set<LocalTask>();
+    public DbSet<Project> Projects => Set<Project>();
+    public DbSet<WorkItem> WorkItems => Set<WorkItem>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
 
-        modelBuilder.Entity<LocalProject>(project =>
+        modelBuilder.Entity<Project>(project =>
         {
             project.ToTable("Projects");
             project.HasKey(p => p.Id);
@@ -25,16 +25,16 @@ public class ErgonautDbContext : DbContext
                    .HasMaxLength(200);
         });
 
-        modelBuilder.Entity<LocalTask>(task =>
+        modelBuilder.Entity<WorkItem>(workItem =>
         {
-            task.ToTable("Tasks");
-            task.HasKey(t => t.Id);
-            task.Property(t => t.Title)
+            workItem.ToTable("Tasks");
+            workItem.HasKey(t => t.Id);
+            workItem.Property(t => t.Title)
                 .IsRequired()
                 .HasMaxLength(200);
-            task.Property(t => t.ProjectId)
+            workItem.Property(t => t.ProjectId)
                 .IsRequired();
-            task.HasOne<LocalProject>().WithMany()
+            workItem.HasOne<Project>().WithMany()
                 .HasForeignKey(t => t.ProjectId);
         });
     }

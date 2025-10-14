@@ -1,19 +1,30 @@
 @startuml components
-title Ergonaut - Component Interactions
+title Ergonaut Components
 
-actor User
+top to bottom direction
 
-participant "Blazor Web UI <<UI>>" as UI_FULL
-participant "ASP.NET Core API <<API>>" as API_FULL
-database "EF Core <<DB>>" as DB_FULL
 
-!define UI "UI"
-!define API "API"
-!define DB "DB"
 
-' --- Interactions ---
-User <-> UI_FULL : interacts
-UI_FULL <-> API_FULL : REST calls (JSON)
-API_FULL <-> DB_FULL : CRUD operations
+component "<b>Ergonaut.UI</b>\n<i>Blazor Web UI</i>" as UI
+component "<b>Auth Token Handler</b>" as Auth
+component "<b>Ergonaut.Api</b>\n<i>HTTP Endpoints</i>" as API
+component "<b>Ergonaut.App</b>\n<i>Application Services</i>" as AppLayer
+component "<b>Ergonaut.Core</b>\n<i>Domain Models</i>" as Core
+component "<b>Ergonaut.Infrastructure</b>\n<i>Repositories & EF</i>" as Infra
+component "<b>SQLite Database</b>" as Db
+
+component "<b>Sentinel Worker</b>\n<i>(Log-driven automation)</i>" as Sentinel
+cloud "<b>Log Sources</b>" as Logs
+
+UI --> Auth : request token
+Auth --> API : attach JWT
+UI --> API : REST
+API --> AppLayer : call use cases
+AppLayer --> Core : manipulate
+AppLayer --> Infra : data access
+Infra --> Db : EF Core CRUD
+
+Logs --> Sentinel : stream entries
+Sentinel --> AppLayer : create work items
 
 @enduml
