@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using Ergonaut.App.Models;
 using Ergonaut.App.Services;
-using Ergonaut.UI.ApiServices;
+using Ergonaut.App.Services.ProjectScoped;
 using Ergonaut.Core.Models.Project;
 using Ergonaut.Core.Models.WorkItem;
 
@@ -11,7 +11,7 @@ namespace Ergonaut.UI.Components.Pages;
 public partial class WorkItems : ComponentBase
 {
     [Inject] private IProjectService projectApi { get; set; } = default!;
-    [Inject] private IProjectScopedWorkItemService _workItemApi { get; set; } = default!;
+    [Inject] private IWorkItemService _workItemApi { get; set; } = default!;
     [Inject] private ILogger<WorkItems> Logger { get; set; } = default!;
 
     private List<ProjectRecord>? _projects;
@@ -28,21 +28,6 @@ public partial class WorkItems : ComponentBase
     {
         await LoadProjectsAsync();
         await LoadWorkItemsAsync();
-    }
-
-    private IProjectScopedWorkItemService WorkItemApi
-    {
-        get
-        {
-            if (SelectedProjectId is not Guid projectId)
-                throw new InvalidOperationException("No project selected; cannot access work items.");
-
-            if (_workItemApi is not IProjectScopedWorkItemService scoped)
-                throw new InvalidOperationException("Injected work item service does not support project scoping.");
-
-            scoped.ProjectId = projectId;
-            return scoped;
-        }
     }
 
     private Guid? SelectedProjectId
@@ -89,7 +74,7 @@ public partial class WorkItems : ComponentBase
         {
             _isLoadingWorkItems = true;
             _errorMessage = null;
-            _workItems = (await WorkItemApi.ListAsync(CancellationToken.None)).ToList();
+            _workItems = (await _workItemApi.ListAsync(projectId, CancellationToken.None)).ToList();
             Logger.LogInformation("Loaded {WorkItemCount} work items for project {ProjectId}", _workItems.Count, projectId);
         }
         catch (Exception ex)
@@ -122,7 +107,7 @@ public partial class WorkItems : ComponentBase
 
         try
         {
-            WorkItemRecord created = await WorkItemApi.CreateAsync(_workItemForm, CancellationToken.None);
+            WorkItemRecord created = await _workItemApi.CreateAsync(projectId, _workItemForm, CancellationToken.None);
             _workItems ??= new();
             _workItems.Insert(0, created);
             ResetWorkItemForm();
@@ -144,6 +129,12 @@ public partial class WorkItems : ComponentBase
         if (_isSubmitting)
             return;
 
+        if (SelectedProjectId is not Guid projectId)
+        {
+            _errorMessage = "Select a project before deleting work items.";
+            return;
+        }
+
         _isSubmitting = true;
         _errorMessage = null;
 
@@ -151,7 +142,7 @@ public partial class WorkItems : ComponentBase
 
         try
         {
-            DeletionResponse deletionResponse = await WorkItemApi.DeleteAsync(workItem.Id, CancellationToken.None);
+            DeletionResponse deletionResponse = await _workItemApi.DeleteAsync(projectId, workItem.Id, CancellationToken.None);
             if (deletionResponse.Success)
             {
                 _workItems?.Remove(workItem);
