@@ -1,10 +1,11 @@
 @using Ergonaut.App.Models
+@using System.ComponentModel.DataAnnotations
 
-@if (Projects is null)
+@if (_IsLoading)
 {
     <p class="mt-4"><em>Loading...</em></p>
 }
-else if (Projects.Count == 0)
+else if (_Projects.Count == 0)
 {
     <p class="mt-4"><em>No projects yet—create your first one above.</em></p>
 }
@@ -19,7 +20,7 @@ else
             </tr>
         </thead>
         <tbody>
-            @foreach (var project in Projects)
+            @foreach (var project in _Projects)
             {
                 <tr>
                     <td>@project.Title</td>
@@ -37,10 +38,12 @@ else
     </table>
 }
 @code {
-    [Parameter] public List<ProjectRecord> Projects { get; set; } = default!;
+    [Parameter] public List<ProjectRecord>? Projects { get; set; } = default;
     [Parameter] public bool IsSubmitting { get; set; }
     [Parameter] public EventCallback<ProjectRecord> OnDelete { get; set; }
-
     private Task DeleteProjectAsync(ProjectRecord project) =>
-        OnDelete.HasDelegate ? OnDelete.InvokeAsync(project) : Task.CompletedTask;
+    OnDelete.HasDelegate ? OnDelete.InvokeAsync(project) : Task.CompletedTask;
+
+    private bool _IsLoading => Projects == null;
+    private List<ProjectRecord> _Projects => Projects ?? new List<ProjectRecord>();
 }

@@ -7,15 +7,13 @@
 
 <div class="row align-items-center g-3 mb-4">
     <div class="col-12 col-md-6">
-        <select class="form-select"
-                value="@SelectedProjectValue"
-                @onchange="HandleSelectionChangeAsync">
+        <select class="form-select" value="@SelectedProjectValue" @onchange="HandleSelectionChangeAsync">
             <option value="">Select a project…</option>
             @if (Projects is not null)
             {
-                foreach (var project in Projects.OrderBy(p => p.Title, StringComparer.CurrentCultureIgnoreCase))
+                foreach (var project in Projects)
                 {
-                    <option value="@project.Id.ToString()"> @project.Title</option>
+                    <option value="@project.Id.ToString()"> @project.Title </option>
                 }
             }
         </select>
