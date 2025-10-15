@@ -14,7 +14,7 @@ package "Sentinel Worker" {
 }
 
 package "Ergonaut.App" {
-  component "<b>Work Item Service</b>\n<i>Update tasks in dedicated sentinel project</i>" as WorkItemService
+  component "<b>Work Item Service</b>\n<i>Update tasks in sentinel project</i>" as WorkItemService
 }
 
 rectangle "<b>Sentinel Project</b>\n<i>Existing backlog</i>" as SentinelProject

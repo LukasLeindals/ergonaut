@@ -2,6 +2,7 @@ namespace Ergonaut.Core.Models
 {
     public enum SourceLabel
     {
-        Ergonaut = 0
+        Ergonaut = 0,
+        Sentinel = 1
     }
 }

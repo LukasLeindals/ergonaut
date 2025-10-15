@@ -1,4 +1,5 @@
 using Ergonaut.App.Models;
+using Ergonaut.Core.Models;
 
 namespace Ergonaut.App.Services.ProjectScoped;
 
