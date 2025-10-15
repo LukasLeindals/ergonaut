@@ -1,6 +1,6 @@
 namespace Ergonaut.Core.Models
 {
-    public enum SourceLabel
+    public enum WorkItemSourceLabel
     {
         Ergonaut = 0,
         Sentinel = 1

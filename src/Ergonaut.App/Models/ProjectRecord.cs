@@ -13,7 +13,7 @@ public sealed record ProjectRecord : IProject
 
     public DateTime UpdatedAt { get; init; }
 
-    public SourceLabel Source { get; init; }
+    public WorkItemSourceLabel Source { get; init; }
 
     public static ProjectRecord FromProject(IProject project) => new()
     {

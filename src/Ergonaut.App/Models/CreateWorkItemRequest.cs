@@ -15,5 +15,5 @@ public sealed class CreateWorkItemRequest
     public string? Description { get; set; }
 
     [Required(ErrorMessage = "Please specify the source of the work item.")]
-    public SourceLabel Source { get; set; }
+    public WorkItemSourceLabel Source { get; set; }
 }

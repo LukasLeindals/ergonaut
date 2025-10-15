@@ -1,3 +1,4 @@
+using System.Text.Json;
 using Ergonaut.Core.Models.WorkItem;
 using Ergonaut.Core.Models;
 
@@ -17,9 +18,9 @@ public sealed record WorkItemRecord : IWorkItem
 
     public DateTime UpdatedAt { get; init; }
 
-    public SourceLabel Source { get; init; }
+    public WorkItemSourceLabel Source { get; init; }
 
-    public string? SourceData { get; init; } = null;
+    public IReadOnlyDictionary<string, JsonElement?>? SourceData { get; init; } = null;
 
     public static WorkItemRecord FromWorkItem(IWorkItem workItem) => new()
     {
