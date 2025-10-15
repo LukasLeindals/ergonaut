@@ -9,7 +9,8 @@ Milestone TODOs:
 - Within a milestone heading, tasks should be ordered by priority and dependency.
 
 ## General
-No outstanding tasks at the moment.
+- Allow updates to projects and work items.
+- Add all fields to request models.
 
 ## Sentinel Milestone – MVP Online
 ### Worker Foundations

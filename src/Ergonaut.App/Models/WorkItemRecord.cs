@@ -19,6 +19,8 @@ public sealed record WorkItemRecord : IWorkItem
 
     public SourceLabel Source { get; init; }
 
+    public string? SourceData { get; init; } = null;
+
     public static WorkItemRecord FromWorkItem(IWorkItem workItem) => new()
     {
         Id = workItem.Id,

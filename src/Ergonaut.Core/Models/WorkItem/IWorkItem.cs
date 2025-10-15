@@ -40,5 +40,10 @@ namespace Ergonaut.Core.Models.WorkItem
         /// </summary>
         SourceLabel Source { get; }
 
+        /// <summary>
+        /// Data specific to the source. This should only be modified by the source handler.
+        /// </summary>
+        string? SourceData { get;}
+
     }
 }
