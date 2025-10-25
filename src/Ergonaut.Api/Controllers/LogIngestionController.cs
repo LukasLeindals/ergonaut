@@ -10,7 +10,7 @@ using OpenTelemetry.Proto.Collector.Logs.V1;
 namespace Ergonaut.Api.Controllers;
 
 [ApiController]
-[Route("api/v1/log-ingestion")]
+[Route("api/otlp/v1/logs")]
 [AllowAnonymous]
 public sealed class LogIngestionController : ControllerBase
 {

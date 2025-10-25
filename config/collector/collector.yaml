@@ -6,8 +6,10 @@ receivers:
 
 exporters:
   otlphttp:
-    endpoint: http://localhost:5000/api/v1/log-ingestion
+    endpoint: http://localhost:5075/api/otlp
     compression: none
+    headers:
+      Authorization: "Bearer ${ERGONAUT_API_TOKEN}"
 
 processors:
   batch: {}
