@@ -1,11 +1,11 @@
-using Ergonaut.Core.Models.Logging;
+using Ergonaut.Core.LogIngestion;
 using Google.Protobuf.Collections;
 using Microsoft.Extensions.Logging;
 using OpenTelemetry.Proto.Common.V1;
 using OpenTelemetry.Proto.Logs.V1;
 using OpenTelemetry.Proto.Resource.V1;
 
-namespace Ergonaut.App.Logging;
+namespace Ergonaut.App.LogIngestion;
 
 /// <summary>
 /// Translates Open Telemetry Protocol (OTLP) log records into domain log events.

@@ -1,24 +1,23 @@
 using System.Threading.Channels;
-using Ergonaut.Core.Models.Logging;
 
-namespace Ergonaut.App.Logging;
+namespace Ergonaut.Core.LogIngestion;
 public sealed class LogEventSubscriber : IDisposable
 {
     private readonly Channel<ILogEvent> _channel;
     private readonly CancellationToken _token;
 
-    internal string Name { get; }
+    public string Name { get; }
 
-    internal LogEventSubscriber(string name, Channel<ILogEvent> channel, CancellationToken token)
+    public LogEventSubscriber(string name, Channel<ILogEvent> channel, CancellationToken token)
     {
         Name = name;
         _channel = channel;
         _token = token;
     }
 
-    internal ChannelReader<ILogEvent> Reader => _channel.Reader;
+    private ChannelReader<ILogEvent> Reader => _channel.Reader;
 
-    internal bool TryWrite(ILogEvent logEvent)
+    public bool TryWrite(ILogEvent logEvent)
     {
         if (_token.IsCancellationRequested)
             return false;
@@ -40,7 +39,7 @@ public sealed class LogEventSubscriber : IDisposable
         _channel.Writer.TryComplete();
     }
 
-    internal int FailureCount { get; private set; }
+    public int FailureCount { get; private set; }
     private void ResetFailures() => FailureCount = 0;
-    internal void RecordFailure() => FailureCount++;
+    private void RecordFailure() => FailureCount++;
 }

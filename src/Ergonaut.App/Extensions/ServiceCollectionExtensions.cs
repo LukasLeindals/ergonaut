@@ -1,7 +1,7 @@
-using Ergonaut.App.Logging;
+using Ergonaut.App.LogIngestion;
 using Ergonaut.App.Services;
 using Ergonaut.App.Services.ProjectScoped;
-using Ergonaut.Core.Models.Logging;
+using Ergonaut.Core.LogIngestion;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Ergonaut.App.Extensions;
@@ -25,7 +25,7 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<ILogEventSink>(sp => sp.GetRequiredService<LogEventHub>());
         services.AddSingleton<ILogEventSource>(sp => sp.GetRequiredService<LogEventHub>());
 
-        services.AddSingleton<OtlpLogIngestionService>();
+        services.AddScoped<ILogIngestionService<OpenTelemetry.Proto.Collector.Logs.V1.ExportLogsServiceRequest>, OtlpLogIngestionService>();
 
         return services;
     }

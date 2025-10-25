@@ -5,13 +5,15 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Ergonaut.Api.Controllers;
-using Ergonaut.App.Logging;
-using Ergonaut.Core.Models.Logging;
+using Ergonaut.App.Extensions;
+using Ergonaut.App.LogIngestion;
+using Ergonaut.Core.LogIngestion;
 using Google.Protobuf;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
+using Microsoft.Extensions.DependencyInjection;
 using OpenTelemetry.Proto.Collector.Logs.V1;
 using OpenTelemetry.Proto.Common.V1;
 using OpenTelemetry.Proto.Logs.V1;
@@ -56,8 +58,8 @@ public sealed class LogIngestionControllerTests
         var parsedRequest = ExportLogsServiceRequest.Parser.ParseFrom(payload);
         var verificationSink = new RecordingLogEventSink();
         var verificationService = new OtlpLogIngestionService(verificationSink);
-        var verificationCount = await verificationService.IngestAsync(parsedRequest, CancellationToken.None);
-        Assert.Equal(1, verificationCount);
+        LogIngestionResult logIngestionResult = await verificationService.IngestAsync(parsedRequest, CancellationToken.None);
+        Assert.Equal(1, logIngestionResult.IngestedEventCount);
         Assert.Single(verificationSink.Events);
 
         // Ensure the adapter can translate the parsed payload directly.
@@ -81,13 +83,27 @@ public sealed class LogIngestionControllerTests
         Assert.Equal(timestamp, logEvent.Timestamp);
     }
 
-    private static LogIngestionController CreateController(byte[] payload, string contentType, RecordingLogEventSink sink)
+    [Fact(DisplayName = "DI resolves OtlpLogIngestionController when application services are registered")]
+    public void DependencyInjection_Resolves_Controller()
+    {
+        var services = new ServiceCollection();
+        services.AddLogging();
+        services.AddApplicationServices();
+        services.AddTransient<OtlpLogIngestionController>();
+
+        using var provider = services.BuildServiceProvider(validateScopes: true);
+        using var scope = provider.CreateScope();
+
+        Assert.NotNull(scope.ServiceProvider.GetRequiredService<OtlpLogIngestionController>());
+    }
+
+    private static OtlpLogIngestionController CreateController(byte[] payload, string contentType, RecordingLogEventSink sink)
     {
         var bodyStream = new MemoryStream();
         bodyStream.Write(payload, 0, payload.Length);
         bodyStream.Position = 0;
 
-        var controller = new LogIngestionController(new OtlpLogIngestionService(sink), NullLogger<LogIngestionController>.Instance)
+        var controller = new OtlpLogIngestionController(new OtlpLogIngestionService(sink), NullLogger<OtlpLogIngestionController>.Instance)
         {
             ControllerContext = new ControllerContext
             {

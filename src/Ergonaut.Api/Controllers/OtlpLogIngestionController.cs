@@ -1,6 +1,6 @@
-using System.IO;
 using System.Text;
-using Ergonaut.App.Logging;
+using Ergonaut.App.LogIngestion;
+using Ergonaut.Core.LogIngestion;
 using Google.Protobuf;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -12,15 +12,15 @@ namespace Ergonaut.Api.Controllers;
 [ApiController]
 [Route("api/otlp/v1/logs")]
 [AllowAnonymous]
-public sealed class LogIngestionController : ControllerBase
+public sealed class OtlpLogIngestionController : ControllerBase
 {
     private static readonly JsonParser Parser = new(JsonParser.Settings.Default.WithIgnoreUnknownFields(true));
     private static readonly JsonFormatter Formatter = new(JsonFormatter.Settings.Default.WithPreserveProtoFieldNames(true));
 
-    private readonly OtlpLogIngestionService _ingestionService;
-    private readonly ILogger<LogIngestionController> _logger;
+    private readonly ILogIngestionService<ExportLogsServiceRequest> _ingestionService;
+    private readonly ILogger<OtlpLogIngestionController> _logger;
 
-    public LogIngestionController(OtlpLogIngestionService ingestionService, ILogger<LogIngestionController> logger)
+    public OtlpLogIngestionController(ILogIngestionService<ExportLogsServiceRequest> ingestionService, ILogger<OtlpLogIngestionController> logger)
     {
         _ingestionService = ingestionService;
         _logger = logger;
@@ -49,9 +49,9 @@ public sealed class LogIngestionController : ControllerBase
             return BadRequest("Invalid OTLP payload.");
         }
 
-        var ingestedCount = await _ingestionService.IngestAsync(request, cancellationToken).ConfigureAwait(false);
+        LogIngestionResult logIngestionResult = await _ingestionService.IngestAsync(request, cancellationToken).ConfigureAwait(false);
 
-        _logger.LogInformation("Ingested {Count} log records from OTLP request.", ingestedCount);
+        _logger.LogInformation("Ingested {Count} log records from OTLP request.", logIngestionResult.IngestedEventCount);
 
         var response = new ExportLogsServiceResponse();
         return contentFormat switch

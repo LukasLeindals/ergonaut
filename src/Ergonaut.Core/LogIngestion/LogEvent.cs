@@ -1,7 +1,7 @@
 using System.Text.Json;
 using Microsoft.Extensions.Logging;
 
-namespace Ergonaut.Core.Models.Logging;
+namespace Ergonaut.Core.LogIngestion;
 
 /// <summary>
 /// Immutable log event record used across ingestion pipelines.

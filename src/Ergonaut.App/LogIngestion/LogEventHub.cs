@@ -1,12 +1,10 @@
-using System.Linq;
-using System.Threading;
 using System.Threading.Channels;
 using Microsoft.Extensions.Logging;
-using Ergonaut.Core.Models.Logging;
+using Ergonaut.Core.LogIngestion;
 
 
 
-namespace Ergonaut.App.Logging;
+namespace Ergonaut.App.LogIngestion;
 
 
 public sealed class LogEventHub : ILogEventSink, ILogEventSource, IDisposable
@@ -21,6 +19,7 @@ public sealed class LogEventHub : ILogEventSink, ILogEventSource, IDisposable
     private readonly CancellationTokenSource _cts = new();
     private readonly Task _dispatcherTask;
     private readonly ILogger<LogEventHub> _logger;
+    private int _disposed;
     public LogEventHub(ILogger<LogEventHub> logger)
     {
 
@@ -109,6 +108,11 @@ public sealed class LogEventHub : ILogEventSink, ILogEventSource, IDisposable
 
     public void Dispose()
     {
+        if (Interlocked.Exchange(ref _disposed, 1) != 0)
+        {
+            return;
+        }
+
         _inbox.Writer.TryComplete();
         _cts.Cancel();
 
@@ -142,5 +146,6 @@ public sealed class LogEventHub : ILogEventSink, ILogEventSource, IDisposable
         }
 
         _cts.Dispose();
+        GC.SuppressFinalize(this);
     }
 }

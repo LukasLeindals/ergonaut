@@ -1,9 +1,9 @@
-using Ergonaut.Core.Models.Logging;
+using Ergonaut.Core.LogIngestion;
 using OpenTelemetry.Proto.Collector.Logs.V1;
 
-namespace Ergonaut.App.Logging;
+namespace Ergonaut.App.LogIngestion;
 
-public sealed class OtlpLogIngestionService
+public sealed class OtlpLogIngestionService : ILogIngestionService<ExportLogsServiceRequest>
 {
     private readonly ILogEventSink _sink;
 
@@ -18,13 +18,14 @@ public sealed class OtlpLogIngestionService
     /// <param name="request">The OTLP log export request.</param>
     /// <param name="cancellationToken">A cancellation token.</param>
     /// <returns>The number of ingested log events.</returns>
-    public async Task<int> IngestAsync(ExportLogsServiceRequest request, CancellationToken cancellationToken = default)
+    public async Task<LogIngestionResult> IngestAsync(ExportLogsServiceRequest request, CancellationToken cancellationToken = default)
     {
         if (request is null)
             throw new ArgumentNullException(nameof(request));
 
         var collected = new List<ILogEvent>();
 
+        int FailedConversionCount = 0;
         foreach (var resourceLogs in request.ResourceLogs)
         {
             foreach (var scopeLogs in resourceLogs.ScopeLogs)
@@ -33,6 +34,7 @@ public sealed class OtlpLogIngestionService
                 {
                     if (!OtlpLogEventAdapter.TryConvert(out ILogEvent logEvent, logRecord, resourceLogs.Resource))
                     {
+                        FailedConversionCount++;
                         continue;
                     }
 
@@ -46,7 +48,7 @@ public sealed class OtlpLogIngestionService
             await _sink.PublishAsync(collected, cancellationToken).ConfigureAwait(false);
         }
 
-        return collected.Count;
+        return new LogIngestionResult(collected.Count, FailedConversionCount);
     }
 
 

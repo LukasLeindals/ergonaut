@@ -1,4 +1,4 @@
-namespace Ergonaut.Core.Models.Logging;
+namespace Ergonaut.Core.LogIngestion;
 
 public interface ILogEventSink
 {

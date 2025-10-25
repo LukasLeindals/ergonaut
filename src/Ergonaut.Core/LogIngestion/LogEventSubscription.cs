@@ -1,5 +1,5 @@
 
-namespace Ergonaut.Core.Models.Logging;
+namespace Ergonaut.Core.LogIngestion;
 
 public sealed record LogEventSubscription(
     IAsyncEnumerable<ILogEvent> Events,

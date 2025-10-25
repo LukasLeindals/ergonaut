@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Text.Json;
 using Microsoft.Extensions.Logging;
 
-namespace Ergonaut.Core.Models.Logging;
+namespace Ergonaut.Core.LogIngestion;
 
 public interface ILogEvent
 {
