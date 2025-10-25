@@ -1,0 +1,37 @@
+@startuml sentinel_task_definition
+title Sentinel Task Definition Path
+
+cloud "Log Streams" as LogStreams
+
+package "Sentinel Worker" {
+  component "<b>Log Event Normalizer</b>\n<i>Normalize incoming logs</i>" as Source
+  component "<b>Ingestion Pipeline</b>\n<i>Buffers & sequences events</i>" as Pipeline
+  component "<b>Relevance Filter</b>\n<i>Apply rules regarding relevance,</i> \n <i>e.g. drop info level logs</i>" as RelevanceFilter
+  component "<b>Task Constructor</b>\n<i>Builds task from log</i>" as Constructor
+  component "<b>Duplicate Classifier</b>\n<i>Compare against existing sentinel tasks</i>" as DuplicateClassifier
+  component "<b>Task Creator</b>\n<i>Calls WorkItemService for new task</i>" as TaskCreator
+  component "<b>Task Extender/Modifier</b>\n<i>Enrich existing sentinel task</i>" as TaskExtender
+}
+
+package "Ergonaut.App" {
+  component "<b>Work Item Service</b>\n<i>Update tasks in sentinel project</i>" as WorkItemService
+}
+
+rectangle "<b>Sentinel Project</b>\n<i>Existing backlog</i>" as SentinelProject
+
+
+
+LogStreams --> Source : raw log entry
+Source --> Pipeline : `LogEvent`
+Pipeline --> RelevanceFilter : severity & pattern eval
+RelevanceFilter --> Constructor : relevant events only
+Constructor --> DuplicateClassifier : proposed draft
+DuplicateClassifier --> TaskCreator : no match
+DuplicateClassifier --> TaskExtender : duplicate found
+TaskCreator --> WorkItemService : create new task
+TaskExtender --> WorkItemService : update / extend task
+DuplicateClassifier ..> SentinelProject : consult existing items
+WorkItemService --> SentinelProject : persist changes
+
+
+@enduml

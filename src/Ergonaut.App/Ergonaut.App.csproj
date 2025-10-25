@@ -4,16 +4,25 @@
     <TargetFramework>net9.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <ProtoRootDir>$(MSBuildProjectDirectory)/../../proto</ProtoRootDir>
   </PropertyGroup>
 
   <ItemGroup>
-  <ProjectReference Include="..\Ergonaut.Core\Ergonaut.Core.csproj" />
+    <ProjectReference Include="..\Ergonaut.Core\Ergonaut.Core.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.9" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.0" />
+    <PackageReference Include="Google.Protobuf" Version="3.25.3" />
+    <PackageReference Include="Grpc.Tools" Version="2.72.0">
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
   </ItemGroup>
 
+  <ItemGroup>
+    <Protobuf Include="$(ProtoRootDir)/opentelemetry/proto/common/v1/common.proto" GrpcServices="None" ProtoRoot="$(ProtoRootDir)" AdditionalImportDirs="$(ProtoRootDir)" />
+    <Protobuf Include="$(ProtoRootDir)/opentelemetry/proto/resource/v1/resource.proto" GrpcServices="None" ProtoRoot="$(ProtoRootDir)" AdditionalImportDirs="$(ProtoRootDir)" />
+    <Protobuf Include="$(ProtoRootDir)/opentelemetry/proto/logs/v1/logs.proto" GrpcServices="None" ProtoRoot="$(ProtoRootDir)" AdditionalImportDirs="$(ProtoRootDir)" />
+    <Protobuf Include="$(ProtoRootDir)/opentelemetry/proto/collector/logs/v1/logs_service.proto" GrpcServices="None" ProtoRoot="$(ProtoRootDir)" AdditionalImportDirs="$(ProtoRootDir)" />
+  </ItemGroup>
 
 </Project>

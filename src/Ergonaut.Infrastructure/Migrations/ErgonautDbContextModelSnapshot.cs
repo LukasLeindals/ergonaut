@@ -61,6 +61,12 @@ namespace Ergonaut.Infrastructure.Migrations
                     b.Property<Guid>("ProjectId")
                         .HasColumnType("TEXT");
 
+                    b.Property<int>("Source")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("SourceData")
+                        .HasColumnType("TEXT");
+
                     b.Property<int>("Status")
                         .HasColumnType("INTEGER");
 

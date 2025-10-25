@@ -1,6 +1,9 @@
 using System.ComponentModel.DataAnnotations;
+using Ergonaut.Core.Models;
+using Ergonaut.Core.Models.WorkItem;
 
 namespace Ergonaut.App.Models;
+
 public sealed class CreateWorkItemRequest
 {
 
@@ -10,4 +13,7 @@ public sealed class CreateWorkItemRequest
 
     [StringLength(1000, ErrorMessage = "Keep the description under 1000 characters.")]
     public string? Description { get; set; }
+
+    [Required(ErrorMessage = "Please specify the source of the work item.")]
+    public WorkItemSourceLabel Source { get; set; }
 }

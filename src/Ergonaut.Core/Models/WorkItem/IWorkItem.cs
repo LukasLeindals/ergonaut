@@ -1,3 +1,4 @@
+using System.Text.Json;
 namespace Ergonaut.Core.Models.WorkItem
 {
     /// <summary>
@@ -38,7 +39,12 @@ namespace Ergonaut.Core.Models.WorkItem
         /// <summary>
         /// The source of the work item (e.g., local).
         /// </summary>
-        SourceLabel Source { get; }
+        WorkItemSourceLabel Source { get; }
+
+        /// <summary>
+        /// Data specific to the source. This should only be modified by the source handler.
+        /// </summary>
+        Dictionary<string, JsonElement?>? SourceData { get; }
 
     }
 }

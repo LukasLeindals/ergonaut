@@ -22,6 +22,7 @@ bld/
 [Oo]bj/
 [Ll]og/
 [Ll]ogs/
+!proto/**/[Ll]ogs/
 
 # .NET Core
 project.lock.json
@@ -54,3 +55,4 @@ TestResult.xml
 nunit-*.xml
 data/sqlite/*
 *.DS_Store
+samples/log_emitter/.streamlit/secrets.toml

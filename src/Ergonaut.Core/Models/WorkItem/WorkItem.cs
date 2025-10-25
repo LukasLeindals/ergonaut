@@ -1,3 +1,4 @@
+using System.Text.Json;
 namespace Ergonaut.Core.Models.WorkItem
 {
     /// <summary>
@@ -33,7 +34,8 @@ namespace Ergonaut.Core.Models.WorkItem
         /// Gets or sets the date and time when the work item was last updated.
         /// </summary>
         public DateTime UpdatedAt { get; private set; } = DateTime.UtcNow;
-        public SourceLabel Source { get; } = SourceLabel.Ergonaut;
+        public WorkItemSourceLabel Source { get; init; }
+        public Dictionary<string, JsonElement?>? SourceData { get; private set; } = null;
 
         /// <summary>
         /// Gets or sets the due date for the work item.
@@ -45,11 +47,13 @@ namespace Ergonaut.Core.Models.WorkItem
         /// </summary>
         /// <param name="projectId">The identifier of the project this work item belongs to.</param>
         /// <param name="title">The title of the work item.</param>
-        public WorkItem(Guid projectId, string title, string? description = null)
+        public WorkItem(Guid projectId, string title, WorkItemSourceLabel source, string? description = null, Dictionary<string, JsonElement?>? sourceData = null)
         {
             ProjectId = projectId;
             Title = NormalizeTitle(title);
+            Source = source;
             Description = description ?? string.Empty;
+            SourceData = sourceData;
         }
     }
 }

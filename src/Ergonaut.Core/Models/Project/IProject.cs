@@ -7,5 +7,5 @@ public interface IProject
     string Title { get; }
     DateTime CreatedAt { get; }
     DateTime UpdatedAt { get; }
-    SourceLabel Source { get; }
+    WorkItemSourceLabel Source { get; }
 }

@@ -1,6 +1,7 @@
 using System.Linq;
 using Ergonaut.App.Errors;
 using Ergonaut.App.Models;
+using Ergonaut.Core.Models;
 using Ergonaut.Core.Models.WorkItem;
 using Ergonaut.Core.Repositories;
 using Microsoft.Extensions.Logging;
@@ -41,7 +42,7 @@ public sealed class WorkItemService(
     {
         await EnsureProjectExists(projectId, ct);
 
-        WorkItem workItem = new(projectId: projectId, title: request.Title, description: request.Description);
+        WorkItem workItem = new(projectId: projectId, title: request.Title, description: request.Description, source: request.Source);
         var saved = await repository.AddAsync(workItem, ct);
         return WorkItemRecord.FromWorkItem(saved);
     }
