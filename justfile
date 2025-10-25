@@ -34,7 +34,10 @@ test:
 run-log-emitter:
     cd samples/log_emitter && poetry run streamlit run app.py
 
-install otelcol:
+start-otelcol:
+    otelcol --config config/collector.yaml
+
+install-otelcol:
     curl -LO https://github.com/open-telemetry/opentelemetry-collector-releases/releases/download/v0.101.0/otelcol_0.101.0_darwin_arm64.tar.gz
     tar -xzf otelcol_0.101.0_darwin_arm64.tar.gz
     sudo mv otelcol /usr/local/bin/   # or another directory on your PATH
