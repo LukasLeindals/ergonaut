@@ -4,6 +4,7 @@
     <TargetFramework>net9.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <ProtoRootDir>$(MSBuildProjectDirectory)/../../proto</ProtoRootDir>
   </PropertyGroup>
 
   <ItemGroup>
@@ -18,10 +19,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Protobuf Include="..\..\proto\opentelemetry\proto\common\v1\common.proto" GrpcServices="None" ProtoRoot="..\..\proto" AdditionalImportDirs="..\..\proto" />
-    <Protobuf Include="..\..\proto\opentelemetry\proto\resource\v1\resource.proto" GrpcServices="None" ProtoRoot="..\..\proto" AdditionalImportDirs="..\..\proto" />
-    <Protobuf Include="..\..\proto\opentelemetry\proto\logs\v1\logs.proto" GrpcServices="None" ProtoRoot="..\..\proto" AdditionalImportDirs="..\..\proto" />
-    <Protobuf Include="..\..\proto\opentelemetry\proto\collector\logs\v1\logs_service.proto" GrpcServices="None" ProtoRoot="..\..\proto" AdditionalImportDirs="..\..\proto" />
+    <Protobuf Include="$(ProtoRootDir)/opentelemetry/proto/common/v1/common.proto" GrpcServices="None" ProtoRoot="$(ProtoRootDir)" AdditionalImportDirs="$(ProtoRootDir)" />
+    <Protobuf Include="$(ProtoRootDir)/opentelemetry/proto/resource/v1/resource.proto" GrpcServices="None" ProtoRoot="$(ProtoRootDir)" AdditionalImportDirs="$(ProtoRootDir)" />
+    <Protobuf Include="$(ProtoRootDir)/opentelemetry/proto/logs/v1/logs.proto" GrpcServices="None" ProtoRoot="$(ProtoRootDir)" AdditionalImportDirs="$(ProtoRootDir)" />
+    <Protobuf Include="$(ProtoRootDir)/opentelemetry/proto/collector/logs/v1/logs_service.proto" GrpcServices="None" ProtoRoot="$(ProtoRootDir)" AdditionalImportDirs="$(ProtoRootDir)" />
   </ItemGroup>
 
 </Project>

@@ -30,6 +30,7 @@ public sealed record WorkItemRecord : IWorkItem
         Description = workItem.Description,
         CreatedAt = workItem.CreatedAt,
         UpdatedAt = workItem.UpdatedAt,
-        Source = workItem.Source
+        Source = workItem.Source,
+        SourceData = workItem.SourceData?.ToDictionary(kvp => kvp.Key, kvp => kvp.Value)
     };
 }
