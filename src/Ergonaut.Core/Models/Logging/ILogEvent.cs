@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json;
-using System.Text.Json.Serialization;
+using Microsoft.Extensions.Logging;
 
 namespace Ergonaut.Core.Models.Logging;
 
@@ -19,4 +19,10 @@ public interface ILogEvent
     LogLevel Level { get; }
 
     IReadOnlyDictionary<string, JsonElement?>? Metadata { get; }
+
+    string? TraceId { get; }
+    string? SpanId { get; }
+    string? TraceFlags { get; }
+    IReadOnlyDictionary<string, string?>? Tags { get; }
+
 }
