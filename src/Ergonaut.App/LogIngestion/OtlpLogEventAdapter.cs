@@ -1,9 +1,13 @@
+using System;
+using System.Collections.Generic;
+using System.Threading;
 using Ergonaut.Core.LogIngestion;
 using Google.Protobuf.Collections;
 using Microsoft.Extensions.Logging;
 using OpenTelemetry.Proto.Common.V1;
 using OpenTelemetry.Proto.Logs.V1;
 using OpenTelemetry.Proto.Resource.V1;
+using OpenTelemetry.Proto.Collector.Logs.V1;
 
 namespace Ergonaut.App.LogIngestion;
 
@@ -12,6 +16,40 @@ namespace Ergonaut.App.LogIngestion;
 /// </summary>
 public sealed class OtlpLogEventAdapter
 {
+    public static LogIngestionResult Transform(ExportLogsServiceRequest request, CancellationToken cancellationToken = default)
+    {
+        if (request is null)
+            throw new ArgumentNullException(nameof(request));
+
+        var events = new List<ILogEvent>();
+        var warnings = new List<string>();
+        var dropped = 0;
+
+        foreach (var resourceLogs in request.ResourceLogs)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+
+            foreach (var scopeLogs in resourceLogs.ScopeLogs)
+            {
+                foreach (var logRecord in scopeLogs.LogRecords)
+                {
+                    cancellationToken.ThrowIfCancellationRequested();
+
+                    if (!TryConvert(out var logEvent, logRecord, resourceLogs.Resource))
+                    {
+                        dropped++;
+                        var severity = logRecord.SeverityText ?? logRecord.SeverityNumber.ToString();
+                        warnings.Add($"Dropped OTLP log record (severity: {severity}).");
+                        continue;
+                    }
+
+                    events.Add(logEvent);
+                }
+            }
+        }
+
+        return LogIngestionResult.Success(events, dropped, warnings);
+    }
 
     public static bool TryConvert(out ILogEvent logEvent, LogRecord logRecord, Resource? resource)
     {

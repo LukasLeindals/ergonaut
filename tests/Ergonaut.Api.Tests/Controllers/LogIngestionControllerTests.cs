@@ -11,9 +11,9 @@ using Ergonaut.Core.LogIngestion;
 using Google.Protobuf;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
-using Microsoft.Extensions.DependencyInjection;
 using OpenTelemetry.Proto.Collector.Logs.V1;
 using OpenTelemetry.Proto.Common.V1;
 using OpenTelemetry.Proto.Logs.V1;
@@ -56,11 +56,6 @@ public sealed class LogIngestionControllerTests
         var payload = exportRequest.ToByteArray();
 
         var parsedRequest = ExportLogsServiceRequest.Parser.ParseFrom(payload);
-        var verificationSink = new RecordingLogEventSink();
-        var verificationService = new OtlpLogIngestionService(verificationSink);
-        LogIngestionResult logIngestionResult = await verificationService.IngestAsync(parsedRequest, CancellationToken.None);
-        Assert.Equal(1, logIngestionResult.IngestedEventCount);
-        Assert.Single(verificationSink.Events);
 
         // Ensure the adapter can translate the parsed payload directly.
         Assert.True(
@@ -103,7 +98,7 @@ public sealed class LogIngestionControllerTests
         bodyStream.Write(payload, 0, payload.Length);
         bodyStream.Position = 0;
 
-        var controller = new OtlpLogIngestionController(new OtlpLogIngestionService(sink), NullLogger<OtlpLogIngestionController>.Instance)
+        var controller = new OtlpLogIngestionController(CreatePipeline(sink), NullLogger<OtlpLogIngestionController>.Instance)
         {
             ControllerContext = new ControllerContext
             {
@@ -122,6 +117,12 @@ public sealed class LogIngestionControllerTests
         controller.HttpContext.Request.Body.Position = 0;
 
         return controller;
+    }
+
+    private static OtlpLogIngestionPipeline CreatePipeline(ILogEventSink sink)
+    {
+        var parser = new OtlpLogPayloadParser();
+        return new OtlpLogIngestionPipeline(parser, sink, NullLogger<OtlpLogIngestionPipeline>.Instance);
     }
 
     private static ExportLogsServiceRequest BuildExportRequest(DateTimeOffset timestamp)
