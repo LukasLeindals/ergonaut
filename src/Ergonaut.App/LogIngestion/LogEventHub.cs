@@ -123,7 +123,7 @@ public sealed class LogEventHub : ILogEventSink, ILogEventSource, IDisposable
         }
         catch (AggregateException ex)
         {
-            if (!ex.InnerExceptions.Any(e => !(e is OperationCanceledException)))
+            if (!ex.InnerExceptions.All(e => e is OperationCanceledException))
             {
                 _logger.LogError(ex, "Log event dispatcher terminated unexpectedly.");
             }
