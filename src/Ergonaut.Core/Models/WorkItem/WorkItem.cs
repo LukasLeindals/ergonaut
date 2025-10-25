@@ -35,7 +35,7 @@ namespace Ergonaut.Core.Models.WorkItem
         /// </summary>
         public DateTime UpdatedAt { get; private set; } = DateTime.UtcNow;
         public WorkItemSourceLabel Source { get; init; }
-        public IReadOnlyDictionary<string, JsonElement?>? SourceData { get; private set; } = null;
+        public Dictionary<string, JsonElement?>? SourceData { get; private set; } = null;
 
         /// <summary>
         /// Gets or sets the due date for the work item.
@@ -47,7 +47,7 @@ namespace Ergonaut.Core.Models.WorkItem
         /// </summary>
         /// <param name="projectId">The identifier of the project this work item belongs to.</param>
         /// <param name="title">The title of the work item.</param>
-        public WorkItem(Guid projectId, string title, WorkItemSourceLabel source, string? description = null, IReadOnlyDictionary<string, JsonElement?>? sourceData = null)
+        public WorkItem(Guid projectId, string title, WorkItemSourceLabel source, string? description = null, Dictionary<string, JsonElement?>? sourceData = null)
         {
             ProjectId = projectId;
             Title = NormalizeTitle(title);

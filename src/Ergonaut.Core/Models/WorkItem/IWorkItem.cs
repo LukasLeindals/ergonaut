@@ -44,7 +44,7 @@ namespace Ergonaut.Core.Models.WorkItem
         /// <summary>
         /// Data specific to the source. This should only be modified by the source handler.
         /// </summary>
-        IReadOnlyDictionary<string, JsonElement?>? SourceData { get; }
+        Dictionary<string, JsonElement?>? SourceData { get; }
 
     }
 }

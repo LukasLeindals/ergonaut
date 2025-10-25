@@ -20,7 +20,7 @@ public sealed record WorkItemRecord : IWorkItem
 
     public WorkItemSourceLabel Source { get; init; }
 
-    public IReadOnlyDictionary<string, JsonElement?>? SourceData { get; init; } = null;
+    public Dictionary<string, JsonElement?>? SourceData { get; init; } = null;
 
     public static WorkItemRecord FromWorkItem(IWorkItem workItem) => new()
     {

@@ -1,6 +1,8 @@
 using Ergonaut.Core.Models.WorkItem;
 using Ergonaut.Core.Models.Project;
 using Microsoft.EntityFrameworkCore;
+using System.Text.Json;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace Ergonaut.Infrastructure.Data;
 
@@ -25,6 +27,8 @@ public class ErgonautDbContext : DbContext
                    .HasMaxLength(200);
         });
 
+
+
         modelBuilder.Entity<WorkItem>(workItem =>
         {
             workItem.ToTable("Tasks");
@@ -36,6 +40,22 @@ public class ErgonautDbContext : DbContext
                 .IsRequired();
             workItem.HasOne<Project>().WithMany()
                 .HasForeignKey(t => t.ProjectId);
+
+            workItem.Property(t => t.SourceData)
+            .HasConversion(
+                v => v == null ? null : JsonSerializer.Serialize(v, _jsonOptions),
+                v => string.IsNullOrWhiteSpace(v)
+                    ? null
+                    : JsonSerializer.Deserialize<Dictionary<string, JsonElement?>>(v, _jsonOptions))
+            .HasColumnType("TEXT")
+            .Metadata.SetValueComparer(
+                new ValueComparer<Dictionary<string, JsonElement?>?>(
+                    (c1, c2) => JsonSerializer.Serialize(c1, _jsonOptions) == JsonSerializer.Serialize(c2, _jsonOptions),
+                    c => c == null ? 0 : JsonSerializer.Serialize(c, _jsonOptions).GetHashCode(),
+                    c => c == null ? null : JsonSerializer.Deserialize<Dictionary<string, JsonElement?>>(JsonSerializer.Serialize(c, _jsonOptions), _jsonOptions)
+                ));
         });
     }
+
+    private static readonly JsonSerializerOptions _jsonOptions = new(JsonSerializerDefaults.Web);
 }
