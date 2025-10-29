@@ -11,7 +11,21 @@ Milestone TODOs:
 ## General
 - Allow updates to projects and work items.
 - Add all fields to request models.
+- Clean up authentication and authorization.
 
+## Sentinel MVP
+
+- Settle on design for creating work items from log events.
+- Implement creation of work items from log events.
+
+
+## Sentinel Part II
+- Deduplicate work item creation for identical log events occurring within a configurable time window.
+- Configuration options for Sentinel (e.g., time window for deduplication, log event severity threshold for work item creation).
+
+## Sentinel Future
+- Datadog integration.
+- LLM layer for better work item description generation and deduplication.
 
 ## Improvements
 - Introduce validators for `CreateProjectRequest` / `CreateWorkItemRequest`, extend `WorkItem` with correlation identifiers, and add unit tests covering duplicate-prevention.
