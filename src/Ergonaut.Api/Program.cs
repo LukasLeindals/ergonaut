@@ -5,6 +5,11 @@ using Ergonaut.Infrastructure.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
+var mainConfig = Path.Combine(builder.Environment.ContentRootPath, "..", "..", "config", "appsettings.json");
+builder.Configuration.AddJsonFile(mainConfig, optional: false, reloadOnChange: true)
+    .AddJsonFile("appsettings.json", optional: true)
+    .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true);
+
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddErgonautSwagger();
