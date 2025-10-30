@@ -97,7 +97,7 @@ def main() -> None:
     st.caption(f"Logs exported to: {endpoint}")
 
     if st.button("Emit log event"):
-        logger.info("User triggered log emission from Streamlit demo.")
+        logger.warning("User triggered log emission from Streamlit demo.")
         st.success("Log event sent! Check the collector output.")
 
 

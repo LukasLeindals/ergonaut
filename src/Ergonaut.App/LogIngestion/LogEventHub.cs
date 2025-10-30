@@ -50,6 +50,7 @@ public sealed class LogEventHub : ILogEventSink, ILogEventSource, IDisposable
 
     public LogEventSubscription Subscribe(string? subscriberName = null, CancellationToken cancellationToken = default)
     {
+        _logger.LogInformation("Registering log subscriber {SubscriberName}.", subscriberName ?? "unknown");
         var channel = Channel.CreateBounded<ILogEvent>(_perSubscriberCapacity);
 
         var subscriber = new LogEventSubscriber(subscriberName ?? "unknown", channel, cancellationToken);
@@ -61,7 +62,7 @@ public sealed class LogEventHub : ILogEventSink, ILogEventSource, IDisposable
         _logger.LogDebug("Registered log subscriber {SubscriberName}.", subscriber.Name);
 
         var events = channel.Reader.ReadAllAsync(cancellationToken);
-        return new LogEventSubscription(events, () => { RemoveSubscriber(subscriber); });
+        return new LogEventSubscription(events, () => RemoveSubscriber(subscriber));
     }
 
     /// <summary>

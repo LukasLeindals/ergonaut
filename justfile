@@ -12,6 +12,9 @@ ui:
 api:
     @dotnet watch --project src/Ergonaut.Api/Ergonaut.Api.csproj --launch-profile http
 
+sentinel:
+    @dotnet run --project src/Ergonaut.Sentinel/Ergonaut.Sentinel.csproj
+
 # Update the local SQLite database using the latest migrations
 update-db:
     @echo "Applying any pending database migrations..."
@@ -36,6 +39,9 @@ run-log-emitter:
 
 start-otelcol:
     otelcol --config config/collector.yaml
+
+stop-otelcol:
+    @pkill -TERM -f "otelcol --config config/collector.yaml" || echo "otelcol not running"
 
 install-otelcol:
     curl -LO https://github.com/open-telemetry/opentelemetry-collector-releases/releases/download/v0.101.0/otelcol_0.101.0_darwin_arm64.tar.gz
