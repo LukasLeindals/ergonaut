@@ -13,10 +13,10 @@ public class WorkItemCreator : IWorkItemCreator
     private readonly SentinelConfig _config;
     private readonly ILogger<WorkItemCreator> _logger;
 
-    private readonly IProjectService _projectService;
-    private readonly IWorkItemService _workItemService;
+    private readonly ISentinelProjectService _projectService;
+    private readonly ISentinelWorkItemService _workItemService;
 
-    public WorkItemCreator(ILogger<WorkItemCreator> logger, IOptions<SentinelConfig> config, IProjectService projectService, IWorkItemService workItemService)
+    public WorkItemCreator(ILogger<WorkItemCreator> logger, IOptions<SentinelConfig> config, ISentinelProjectService projectService, ISentinelWorkItemService workItemService)
     {
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         _config = config?.Value ?? throw new ArgumentNullException(nameof(config));
@@ -30,7 +30,7 @@ public class WorkItemCreator : IWorkItemCreator
 
         CreateWorkItemRequest workItemRequest = await Convert(logEvent, project, cancellationToken);
         WorkItemRecord? result = await _workItemService.CreateAsync(project.Id, workItemRequest, cancellationToken);
-        
+
         _logger.LogInformation("Created work item '{WorkItemTitle}' with ID {WorkItemId} in project '{ProjectName}'.", result.Title, result.Id, project.Title);
     }
 

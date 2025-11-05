@@ -17,8 +17,6 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IProjectService, ProjectService>();
         services.AddScoped<IWorkItemService, WorkItemService>();
 
-
-
         return services;
     }
 
@@ -38,7 +36,6 @@ public static class ServiceCollectionExtensions
     {
 
         // Log ingestion
-        services.AddApplicationServices();
         services.AddLogIngestion();
 
         // Sentinel configuration
