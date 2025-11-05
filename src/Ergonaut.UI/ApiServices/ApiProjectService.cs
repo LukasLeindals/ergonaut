@@ -24,6 +24,16 @@ internal sealed class ApiProjectService(HttpClient client) : IProjectService
         return await response.Content.ReadFromJsonAsync<ProjectRecord>(cancellationToken: ct);
     }
 
+    public async Task<ProjectRecord?> GetProjectByName(string projectName, CancellationToken ct = default)
+    {
+        var response = await client.GetAsync($"api/v1/projects/by-name/{Uri.EscapeDataString(projectName)}", ct);
+        if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
+            return null;
+
+        response.EnsureSuccessStatusCode();
+        return await response.Content.ReadFromJsonAsync<ProjectRecord>(cancellationToken: ct);
+    }
+
     public async Task<ProjectRecord> CreateAsync(CreateProjectRequest request, CancellationToken ct = default)
     {
         var response = await client.PostAsJsonAsync("api/v1/projects", request, ct);

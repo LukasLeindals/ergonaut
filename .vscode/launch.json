@@ -10,10 +10,10 @@
       "args": [],
       "cwd": "${workspaceFolder}/src/Ergonaut.Api",
       "stopAtEntry": false,
-      "serverReadyAction": {
-        "action": "openExternally",
-        "pattern": "\\bNow listening on:\\s+(https?://\\S+)"
-      },
+      // "serverReadyAction": {
+      //   "action": "openExternally",
+      //   "pattern": "\\bNow listening on:\\s+(https?://\\S+)"
+      // },
       "env": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
@@ -45,16 +45,18 @@
       "cwd": "${workspaceFolder}/src/Ergonaut.Sentinel",
       "stopAtEntry": false,
       "env": {
-        "DOTNET_ENVIRONMENT": "Development"
+        "DOTNET_ENVIRONMENT": "Development",
+        "LogIngestion__Kafka__BootstrapServers": "localhost:9092",
+        "LogIngestion__Kafka__Topic": "ergonaut-logingestion",
+        "LogIngestion__Kafka__GroupId": "ergonaut-log-event-consumer"
       }
     }
   ],
   "compounds": [
     {
-      "name": "Launch All Components",
+      "name": "Launch Sentinel",
       "configurations": [
         "Ergonaut API",
-        // "Ergonaut UI",
         "Sentinel Worker"
       ]
     }

@@ -96,9 +96,17 @@ def main() -> None:
     logger, endpoint = get_logger()
     st.caption(f"Logs exported to: {endpoint}")
 
+    message = st.text_input("A custom log message", value="A custom log message")
+    warn_level = st.selectbox(
+        "Log level", options=["WARN", "ERROR", "INFO", "DEBUG"], index=0
+    )
+
     if st.button("Emit log event"):
-        logger.warning("User triggered log emission from Streamlit demo.")
-        st.success("Log event sent! Check the collector output.")
+        try:
+            getattr(logger, warn_level.lower())(message)
+            st.success("Log event sent! Check the collector output.")
+        except Exception as e:
+            st.error(f"Failed to emit log event: {e}")
 
 
 if __name__ == "__main__":

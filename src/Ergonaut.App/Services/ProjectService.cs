@@ -33,4 +33,10 @@ public sealed class ProjectService(IProjectRepository repository) : IProjectServ
         var project = await repository.GetAsync(id, ct); // repository stays domain-focused
         return project is null ? null : ProjectRecord.FromProject(project);
     }
+
+    public async Task<ProjectRecord?> GetProjectByName(string projectName, CancellationToken ct = default)
+    {
+        var project = await repository.GetByNameAsync(projectName, ct);
+        return project is null ? null : ProjectRecord.FromProject(project);
+    }
 }

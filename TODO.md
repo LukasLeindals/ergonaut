@@ -15,6 +15,7 @@ Milestone TODOs:
 
 ## Sentinel MVP
 
+- Fix access to log events stream (hub is on separate process).
 - Settle on design for creating work items from log events.
 - Implement creation of work items from log events.
 

@@ -1,11 +1,11 @@
 using Ergonaut.App.LogIngestion;
 using Ergonaut.App.Services;
 using Ergonaut.App.Services.ProjectScoped;
+using Ergonaut.Core.EventIngestion;
 using Ergonaut.Core.LogIngestion;
 using Ergonaut.Core.LogIngestion.PayloadParser;
 using Ergonaut.App.Sentinel;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Ergonaut.App.Extensions;
 
@@ -17,16 +17,16 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IProjectService, ProjectService>();
         services.AddScoped<IWorkItemService, WorkItemService>();
 
-        services.AddLogIngestion();
+
 
         return services;
     }
 
     public static IServiceCollection AddLogIngestion(this IServiceCollection services)
     {
-        services.TryAddSingleton<LogEventHub>();
-        services.TryAddSingleton<ILogEventSink>(sp => sp.GetRequiredService<LogEventHub>());
-        services.TryAddSingleton<ILogEventSource>(sp => sp.GetRequiredService<LogEventHub>());
+        services.AddOptions<KafkaLogEventOptions>().BindConfiguration("LogIngestion:Kafka").ValidateDataAnnotations().ValidateOnStart();
+        services.AddSingleton<IEventProducer<ILogEvent>, KafkaLogEventProducer>();
+        services.AddSingleton<IEventConsumer<ILogEvent>, KafkaLogEventConsumer>();
 
         services.AddSingleton<IPayloadParser<OpenTelemetry.Proto.Collector.Logs.V1.ExportLogsServiceRequest>, OtlpLogPayloadParser>();
         services.AddScoped<ILogIngestionPipeline, OtlpLogIngestionPipeline>();
@@ -38,10 +38,15 @@ public static class ServiceCollectionExtensions
     {
 
         // Log ingestion
+        services.AddApplicationServices();
         services.AddLogIngestion();
+
+        // Sentinel configuration
+        services.AddOptions<SentinelConfig>().BindConfiguration("Sentinel").ValidateDataAnnotations().ValidateOnStart();
 
         // Sentinel specific services
         services.AddSingleton<ILogEventFilter, SentinelLogEventFilter>();
+        services.AddScoped<IWorkItemCreator, WorkItemCreator>();
 
         return services;
     }

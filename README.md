@@ -1,6 +1,10 @@
 # Ergonaut
 Ergonaut is a modular .NET solution for intelligent project and task (work item) orchestration. It keeps domain concerns isolated, exposes reusable application services, and provides both HTTP and Blazor experiences while preparing for log-driven automation.
 
+## Usage
+
+The ergonaut project is designed to be hosted locally or deployed to a server.
+
 ## Solution Layout
 ```
 Ergonaut/

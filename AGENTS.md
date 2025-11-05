@@ -1,5 +1,7 @@
 # AGENT PRINCIPLES AND GUIDELINES
 
+Note: The first edition of this project has an upcoming deadline. The immediate priority is to deliver a functional prototype. Any non-essential or “nice-to-have” features should not be implemented at this stage. Instead, document them in a file named FUTURE_WORK.md for consideration in later iterations.
+
 This document outlines the principles and guidelines for building and interacting with AI agents in the Ergonaut project. These agents are designed to assist developers by providing context-aware suggestions, code reviews, and architectural guidance.
 
 Keep this document updated as we refine our approach to AI-assisted development.

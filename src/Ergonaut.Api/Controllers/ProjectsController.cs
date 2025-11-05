@@ -42,4 +42,11 @@ public sealed class ProjectsController : ControllerBase
         var project = await _projectService.GetAsync(id, ct);
         return project is null ? NotFound() : Ok(project);
     }
+
+    [HttpGet("by-name/{projectName}")]
+    public async Task<ActionResult<ProjectRecord>> GetByName(string projectName, CancellationToken ct)
+    {
+        var project = await _projectService.GetProjectByName(projectName, ct);
+        return project is null ? NotFound() : Ok(project);
+    }
 }

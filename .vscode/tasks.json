@@ -20,9 +20,25 @@
         ],
     },
     {
+        "label": "start-kafka",
+        "type": "shell",
+        "command": "just",
+        "args": [
+            "start-kafka"
+        ]
+    },
+    {
+      "label": "start-api",
+      "type": "shell",
+      "command": "just",
+      "args": [
+        "api"
+      ]
+    },
+    {
         "label": "sentinel-dependencies",
         "dependsOrder": "sequence",
-        "dependsOn": ["build", "start-otelcol"]
+        "dependsOn": ["build", "start-kafka", "start-otelcol"]
     }
   ],
 }

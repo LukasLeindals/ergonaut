@@ -32,13 +32,18 @@ add-migration name:
     --startup-project src/Ergonaut.Api/Ergonaut.Api.csproj
 
 test:
-    dotnet test --no-build -clp:ErrorsOnly --logger:"console;verbosity=detailed"
+    dotnet test -clp:ErrorsOnly --logger:"console;verbosity=detailed"
 
 run-log-emitter:
     cd samples/log_emitter && poetry run streamlit run app.py
 
 start-otelcol:
-    otelcol --config config/collector.yaml
+    @echo "Starting OpenTelemetry Collector..."
+    @if pid=$(pgrep -f "otelcol --config config/collector.yaml"); then \
+        echo "otelcol already running with pid ${pid}"; \
+    else \
+        otelcol --config config/collector.yaml; \
+    fi
 
 stop-otelcol:
     @pkill -TERM -f "otelcol --config config/collector.yaml" || echo "otelcol not running"
@@ -47,3 +52,7 @@ install-otelcol:
     curl -LO https://github.com/open-telemetry/opentelemetry-collector-releases/releases/download/v0.101.0/otelcol_0.101.0_darwin_arm64.tar.gz
     tar -xzf otelcol_0.101.0_darwin_arm64.tar.gz
     sudo mv otelcol /usr/local/bin/   # or another directory on your PATH
+
+start-kafka:
+    @docker compose -f .image/docker-compose-kafka.yaml up -d
+    # docker compose -f deploy/log-ingestion/docker-compose.yml up --build -d

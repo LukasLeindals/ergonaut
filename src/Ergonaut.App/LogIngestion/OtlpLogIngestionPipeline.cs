@@ -1,6 +1,4 @@
-using System;
-using System.Threading;
-using System.Threading.Tasks;
+using Ergonaut.Core.EventIngestion;
 using Ergonaut.Core.LogIngestion;
 using Ergonaut.Core.LogIngestion.PayloadParser;
 using Microsoft.Extensions.Logging;
@@ -14,16 +12,16 @@ namespace Ergonaut.App.LogIngestion;
 public sealed class OtlpLogIngestionPipeline : ILogIngestionPipeline
 {
     private readonly IPayloadParser<ExportLogsServiceRequest> _parser;
-    private readonly ILogEventSink _sink;
+    private readonly IEventProducer<ILogEvent> _eventProducer;
     private readonly ILogger<OtlpLogIngestionPipeline> _logger;
 
     public OtlpLogIngestionPipeline(
         IPayloadParser<ExportLogsServiceRequest> parser,
-        ILogEventSink sink,
+        IEventProducer<ILogEvent> eventProducer,
         ILogger<OtlpLogIngestionPipeline> logger)
     {
         _parser = parser ?? throw new ArgumentNullException(nameof(parser));
-        _sink = sink ?? throw new ArgumentNullException(nameof(sink));
+        _eventProducer = eventProducer ?? throw new ArgumentNullException(nameof(eventProducer));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 
@@ -52,7 +50,7 @@ public sealed class OtlpLogIngestionPipeline : ILogIngestionPipeline
 
         if (transformation.Events.Count > 0)
         {
-            await _sink.PublishAsync(transformation.Events, cancellationToken).ConfigureAwait(false);
+            await _eventProducer.ProduceAsync(transformation.Events, cancellationToken).ConfigureAwait(false);
         }
 
         if (transformation.DroppedEventCount > 0)
