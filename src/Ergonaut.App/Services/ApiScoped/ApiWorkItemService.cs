@@ -1,13 +1,12 @@
-using System;
-using System.Collections.Generic;
+
 using System.Net;
 using System.Net.Http.Json;
 using Ergonaut.App.Models;
 using Ergonaut.App.Services.ProjectScoped;
 
-namespace Ergonaut.UI.ApiServices;
+namespace Ergonaut.App.Services.ApiScoped;
 
-internal sealed class ApiWorkItemService(HttpClient client) : IWorkItemService
+public sealed class ApiWorkItemService(HttpClient client) : IWorkItemService
 {
     public async Task<IReadOnlyList<WorkItemRecord>> ListAsync(Guid projectId, CancellationToken ct = default)
     {

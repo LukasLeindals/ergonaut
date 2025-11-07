@@ -5,7 +5,10 @@ using Ergonaut.Core.EventIngestion;
 using Ergonaut.Core.LogIngestion;
 using Ergonaut.Core.LogIngestion.PayloadParser;
 using Ergonaut.App.Sentinel;
+using Ergonaut.App.Services.ApiScoped;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Configuration;
+
 
 namespace Ergonaut.App.Extensions;
 

@@ -1,24 +1,30 @@
+using Ergonaut.App.Services.ApiScoped;
 using Ergonaut.UI.Components;
-using Ergonaut.UI.ApiServices;
 using Ergonaut.UI.Extensions;
+using Ergonaut.App.Extensions;
+using Microsoft.AspNetCore.DataProtection;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add configuration sources
-var mainConfig = Path.Combine(builder.Environment.ContentRootPath, "..", "..", "config", "appsettings.json");
-builder.Configuration.AddJsonFile(mainConfig, optional: false, reloadOnChange: true)
-    .AddJsonFile("appsettings.json", optional: true)
-    .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true);
+builder.Configuration.AddConfigurationSources(builder.Environment);
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
-builder.Services.Configure<ApiOptions>(builder.Configuration.GetSection("Api"));
 
 
-builder.Services.AddTransient<ApiTokenHandler>();
+
+
 builder.Services.AddErgonautApiServices();
+
+
+var keysPath = Path.Combine(builder.Environment.ContentRootPath, "..", "..", "data-protection");
+Directory.CreateDirectory(keysPath);
+builder.Services.AddDataProtection()
+    .PersistKeysToFileSystem(new DirectoryInfo(keysPath))
+    .SetApplicationName("ergonaut-ui");
 
 
 var app = builder.Build();
@@ -26,6 +32,8 @@ var app = builder.Build();
 
 app.ConfigureHttpRequestPipeline();
 app.UseAntiforgery();
+
+
 
 app.MapStaticAssets();
 app.MapRazorComponents<App>()

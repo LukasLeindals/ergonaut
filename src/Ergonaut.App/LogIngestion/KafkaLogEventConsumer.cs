@@ -5,13 +5,14 @@ using Ergonaut.Core.LogIngestion;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Logging;
 using Confluent.Kafka;
+using System.Threading;
 
 public sealed class KafkaLogEventConsumer : IEventConsumer<ILogEvent>, IDisposable
 {
     private readonly KafkaLogEventOptions _options;
     private readonly ILogger<KafkaLogEventConsumer> _logger;
 
-    private IConsumer<Null, byte[]> _consumer;
+    private IConsumer<Null, byte[]>? _consumer;
 
     public KafkaLogEventConsumer(KafkaLogEventOptions options, ILogger<KafkaLogEventConsumer> logger)
     {
@@ -36,7 +37,8 @@ public sealed class KafkaLogEventConsumer : IEventConsumer<ILogEvent>, IDisposab
 
     public async Task StartConsuming(string topic, Func<ILogEvent, CancellationToken, ValueTask> handleEvent, CancellationToken cancellationToken)
     {
-        _consumer.Subscribe(topic);
+        var consumer = _consumer ?? throw new ObjectDisposedException(nameof(KafkaLogEventConsumer));
+        consumer.Subscribe(topic);
         _logger.LogInformation("Started consuming Kafka topic: {Topic}", topic);
 
         try
@@ -45,7 +47,7 @@ public sealed class KafkaLogEventConsumer : IEventConsumer<ILogEvent>, IDisposab
             {
                 try
                 {
-                    var consumeResult = _consumer.Consume(cancellationToken);
+                    var consumeResult = consumer.Consume(cancellationToken);
                     if (consumeResult != null)
                     {
                         if (!KafkaLogEventEnvelope.TryUnwrap(consumeResult.Message.Value, out var envelope))
@@ -74,15 +76,35 @@ public sealed class KafkaLogEventConsumer : IEventConsumer<ILogEvent>, IDisposab
         }
         finally
         {
-            _consumer.Close();
+            CloseConsumer();
             _logger.LogInformation("Kafka consumer closed.");
         }
     }
 
     public void Dispose()
     {
-        _consumer?.Close();
-        _consumer?.Dispose();
+        CloseConsumer();
     }
 
+    private void CloseConsumer()
+    {
+        var consumer = Interlocked.Exchange(ref _consumer, null);
+        if (consumer is null)
+        {
+            return;
+        }
+
+        try
+        {
+            consumer.Close();
+        }
+        catch (ObjectDisposedException)
+        {
+            // already closed by another path
+        }
+        finally
+        {
+            consumer.Dispose();
+        }
+    }
 }

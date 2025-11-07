@@ -1,10 +1,9 @@
 using Ergonaut.App.Models;
-using Ergonaut.App.Sentinel;
 using System.Net.Http.Json;
 
-namespace Ergonaut.Sentinel.Services;
+namespace Ergonaut.App.Services.ApiScoped;
 
-internal sealed class SentinelProjectService(HttpClient client) : ISentinelProjectService
+public sealed class ApiProjectService(HttpClient client) : IProjectService
 {
     public async Task<IReadOnlyList<ProjectRecord>> ListAsync(CancellationToken ct = default)
     {

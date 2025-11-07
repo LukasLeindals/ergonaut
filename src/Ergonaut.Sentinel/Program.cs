@@ -1,21 +1,17 @@
 using Ergonaut.Sentinel;
 using Ergonaut.App.Extensions;
-using Ergonaut.App.Sentinel;
-using Ergonaut.Sentinel.Services;
+using Ergonaut.Sentinel.Startup;
 
 var builder = Host.CreateApplicationBuilder(args);
 
 // Add configuration sources
-var mainConfig = Path.Combine(builder.Environment.ContentRootPath, "..", "..", "config", "appsettings.json");
-builder.Configuration.AddJsonFile(mainConfig, optional: false, reloadOnChange: true)
-    .AddJsonFile("appsettings.json", optional: true)
-    .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true);
+builder.Configuration.AddConfigurationSources(builder.Environment);
 
 // Add services to the container.
-builder.Services.AddScoped<ISentinelProjectService, SentinelProjectService>();
-builder.Services.AddScoped<ISentinelWorkItemService, SentinelWorkItemService>();
+builder.Services.AddErgonautApiServices();
 builder.Services.AddSentinel();
 builder.Services.AddHostedService<Worker>();
+builder.Services.AddHostedService<KafkaTopicInitializerHostedService>();
 
 var host = builder.Build();
 await host.RunAsync();

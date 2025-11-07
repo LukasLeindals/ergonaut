@@ -98,7 +98,7 @@ def main() -> None:
 
     message = st.text_input("A custom log message", value="A custom log message")
     warn_level = st.selectbox(
-        "Log level", options=["WARN", "ERROR", "INFO", "DEBUG"], index=0
+        "Log level", options=["WARNING", "ERROR", "INFO", "DEBUG"], index=0
     )
 
     if st.button("Emit log event"):

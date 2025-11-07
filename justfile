@@ -56,3 +56,17 @@ install-otelcol:
 start-kafka:
     @docker compose -f .image/docker-compose-kafka.yaml up -d
     # docker compose -f deploy/log-ingestion/docker-compose.yml up --build -d
+
+run-sentinel:
+    docker compose -f .image/sentinel/docker-compose.yaml up --build -d
+
+run-docker:
+    docker compose \
+    -f .image/docker-compose.yaml \
+    up --build -d --remove-orphans
+
+build-docker project:
+    docker build -f .image/{{ project }}/Dockerfile .
+
+compose-docker target:
+    docker compose -f .image/docker-compose.yaml up -d --build {{ target }}

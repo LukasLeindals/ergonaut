@@ -15,9 +15,9 @@ Milestone TODOs:
 
 ## Sentinel MVP
 
-- Fix access to log events stream (hub is on separate process).
-- Settle on design for creating work items from log events.
-- Implement creation of work items from log events.
+- Add appropriate containers for proper deployment of API, UI and Sentinel services.
+- Add environments (local, test, prod) with appropriate configuration for each service.
+- Have simple end-to-end flow with simple log filtering and task creation
 
 
 ## Sentinel Part II
