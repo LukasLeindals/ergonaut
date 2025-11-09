@@ -11,10 +11,14 @@ public static class ConfigurationExtensions
         ArgumentNullException.ThrowIfNull(config);
         ArgumentNullException.ThrowIfNull(environment);
 
-        var mainConfig = Path.Combine(environment.ContentRootPath, "..", "..", "config", "appsettings.json");
-        config.AddJsonFile(mainConfig, optional: false, reloadOnChange: true)
-            .AddJsonFile("appsettings.json", optional: true)
-            .AddJsonFile($"appsettings.{environment.EnvironmentName}.json", optional: true)
+        var configRoot = Path.Combine(environment.ContentRootPath, "..", "..", "config");
+        var sharedConfig = Path.Combine(configRoot, "appsettings.json");
+        var sharedEnvironmentConfig = Path.Combine(configRoot, $"appsettings.{environment.EnvironmentName}.json");
+
+        config.AddJsonFile(sharedConfig, optional: false, reloadOnChange: true)
+            .AddJsonFile(sharedEnvironmentConfig, optional: true, reloadOnChange: true)
+            .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+            .AddJsonFile($"appsettings.{environment.EnvironmentName}.json", optional: true, reloadOnChange: true)
             .AddEnvironmentVariables();
 
         return config;

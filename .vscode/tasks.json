@@ -20,11 +20,11 @@
         ],
     },
     {
-        "label": "start-kafka",
+        "label": "run-docker-development",
         "type": "shell",
         "command": "just",
         "args": [
-            "start-kafka"
+            "run-docker-development"
         ]
     },
     {
@@ -38,7 +38,7 @@
     {
         "label": "sentinel-dependencies",
         "dependsOrder": "sequence",
-        "dependsOn": ["build", "start-kafka", "start-otelcol"]
+        "dependsOn": ["build", "run-docker-development"]
     }
   ],
 }

@@ -6,7 +6,7 @@ receivers:
 
 exporters:
   otlphttp:
-    endpoint: http://api:5075/api/otlp
+    endpoint: ${env:OTLP__EXPORT_ENDPOINT}
     compression: none
     headers:
       Authorization: "Bearer ${ERGONAUT_API_TOKEN}"

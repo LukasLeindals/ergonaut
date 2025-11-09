@@ -1,3 +1,5 @@
+using Microsoft.Extensions.Hosting;
+
 namespace Ergonaut.Api.Extensions;
 
 public static class WebApplicationExtensions
@@ -8,11 +10,17 @@ public static class WebApplicationExtensions
         {
             app.UseSwagger();
             app.UseSwaggerUI();
+            return app;
         }
-        else
+
+        app.UseHttpsRedirection();
+
+        if (app.Environment.IsStaging())
         {
-            app.UseHttpsRedirection();
+            app.UseSwagger();
+            app.UseSwaggerUI();
         }
+
         return app;
     }
 }

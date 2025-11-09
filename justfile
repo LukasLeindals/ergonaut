@@ -53,14 +53,11 @@ install-otelcol:
     tar -xzf otelcol_0.101.0_darwin_arm64.tar.gz
     sudo mv otelcol /usr/local/bin/   # or another directory on your PATH
 
-start-kafka:
-    @docker compose -f .image/docker-compose-kafka.yaml up -d
-    # docker compose -f deploy/log-ingestion/docker-compose.yml up --build -d
-
-run-sentinel:
-    docker compose -f .image/sentinel/docker-compose.yaml up --build -d
+run-docker-development:
+    @docker compose -f .image/docker-compose-development.yaml up --build -d --remove-orphans
 
 run-docker:
+    export DOTNET_ENVIRONMENT=Staging && \
     docker compose \
     -f .image/docker-compose.yaml \
     up --build -d --remove-orphans
@@ -69,4 +66,11 @@ build-docker project:
     docker build -f .image/{{ project }}/Dockerfile .
 
 compose-docker target:
+    export DOTNET_ENVIRONMENT=Staging && \
     docker compose -f .image/docker-compose.yaml up -d --build {{ target }}
+
+get-process port:
+    @lsof -i :{{ port }} | grep LISTEN
+
+list-process name="Ergonaut.Api":
+    @ps aux | grep {{ name }}

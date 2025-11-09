@@ -100,10 +100,13 @@ def main() -> None:
     warn_level = st.selectbox(
         "Log level", options=["WARNING", "ERROR", "INFO", "DEBUG"], index=0
     )
+    extra_vars = st.text_input("Extra variables (key1=value1,key2=value2)", value=None)
+    if extra_vars:
+        extra_vars = dict(item.strip().split("=") for item in extra_vars.split(","))
 
     if st.button("Emit log event"):
         try:
-            getattr(logger, warn_level.lower())(message)
+            getattr(logger, warn_level.lower())(message, extra=extra_vars)
             st.success("Log event sent! Check the collector output.")
         except Exception as e:
             st.error(f"Failed to emit log event: {e}")
