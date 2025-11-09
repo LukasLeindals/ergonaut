@@ -25,13 +25,13 @@ public sealed class OtlpLogEventAdapter
         var warnings = new List<string>();
         var dropped = 0;
 
-        foreach (var resourceLogs in request.ResourceLogs)
+        foreach (ResourceLogs resourceLogs in request.ResourceLogs)
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            foreach (var scopeLogs in resourceLogs.ScopeLogs)
+            foreach (ScopeLogs scopeLogs in resourceLogs.ScopeLogs)
             {
-                foreach (var logRecord in scopeLogs.LogRecords)
+                foreach (LogRecord logRecord in scopeLogs.LogRecords)
                 {
                     cancellationToken.ThrowIfCancellationRequested();
 

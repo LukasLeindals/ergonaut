@@ -10,8 +10,9 @@ builder.Configuration.AddConfigurationSources(builder.Environment);
 // Add services to the container.
 builder.Services.AddErgonautApiServices();
 builder.Services.AddSentinel();
-builder.Services.AddHostedService<Worker>();
 builder.Services.AddHostedService<KafkaTopicInitializerHostedService>();
+builder.Services.AddHostedService<Worker>();
+
 
 var host = builder.Build();
 await host.RunAsync();

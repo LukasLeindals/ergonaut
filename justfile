@@ -62,6 +62,9 @@ run-docker:
     -f .image/docker-compose.yaml \
     up --build -d --remove-orphans
 
+stop-docker:
+    @docker compose -f .image/docker-compose.yaml down
+
 build-docker project:
     docker build -f .image/{{ project }}/Dockerfile .
 
