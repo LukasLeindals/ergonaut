@@ -5,5 +5,5 @@ namespace Ergonaut.App.Sentinel;
 
 public interface ILogEventFilter
 {
-    bool Accept(ILogEvent logEvent, CancellationToken cancellationToken = default);
+    Task<bool> Accept(ILogEvent logEvent, CancellationToken cancellationToken = default);
 }

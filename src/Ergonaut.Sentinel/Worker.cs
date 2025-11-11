@@ -24,7 +24,7 @@ public class Worker : BackgroundService
     public async ValueTask HandleEvent(ILogEvent logEvent, CancellationToken cancellationToken)
     {
         _logger.LogInformation("Accepting log event");
-        bool accept = _logEventFilter.Accept(logEvent, cancellationToken);
+        bool accept = await _logEventFilter.Accept(logEvent, cancellationToken);
         if (accept)
         {
             _logger.LogInformation("Processing log event");

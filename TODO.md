@@ -11,16 +11,17 @@ Milestone TODOs:
 ## General
 - Allow updates to projects and work items.
 - Add all fields to request models.
+
+## Authentication & Authorization
 - Clean up authentication and authorization.
+  - Long-lived tokens.
+  - No hardcoded secrets.
 
 ## Sentinel MVP
 
-- Add appropriate containers for proper deployment of API, UI and Sentinel services.
-- Add environments (local, test, prod) with appropriate configuration for each service.
-- Have simple end-to-end flow with simple log filtering and task creation
-
-
-## Sentinel Part II
+- Update work items to contain more information from log events for better deduplication and context.
+- Add simple deduplication based on log template.
+  - Posibly also add a configurable otlp attribute to use for filtering.
 - Deduplicate work item creation for identical log events occurring within a configurable time window.
 - Configuration options for Sentinel (e.g., time window for deduplication, log event severity threshold for work item creation).
 
@@ -28,7 +29,3 @@ Milestone TODOs:
 - Datadog integration.
 - LLM layer for better work item description generation and deduplication.
 
-## Improvements
-- Introduce validators for `CreateProjectRequest` / `CreateWorkItemRequest`, extend `WorkItem` with correlation identifiers, and add unit tests covering duplicate-prevention.
-- Expand NetArchTest coverage (UI ↛ Infrastructure, Infrastructure ↛ UI, Contracts ↛ Infrastructure) and keep the CI pipeline failing fast on architectural violations.
-- Investigate possibility of testing against a test database in CI to catch issues with migrations and seed data.

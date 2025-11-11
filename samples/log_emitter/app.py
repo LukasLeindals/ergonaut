@@ -103,10 +103,15 @@ def main() -> None:
     extra_vars = st.text_input("Extra variables (key1=value1,key2=value2)", value=None)
     if extra_vars:
         extra_vars = dict(item.strip().split("=") for item in extra_vars.split(","))
+    else:
+        extra_vars = {}
 
     if st.button("Emit log event"):
         try:
-            getattr(logger, warn_level.lower())(message, extra=extra_vars)
+            getattr(logger, warn_level.lower())(
+                message.format(**extra_vars),
+                extra=extra_vars | {"messageTemplate": message},
+            )
             st.success("Log event sent! Check the collector output.")
         except Exception as e:
             st.error(f"Failed to emit log event: {e}")

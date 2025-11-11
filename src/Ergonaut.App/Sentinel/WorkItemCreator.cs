@@ -5,7 +5,6 @@ using Ergonaut.Core.Models;
 using Ergonaut.App.Services;
 using Ergonaut.App.Services.ProjectScoped;
 using Ergonaut.App.Models;
-using Ergonaut.Core.Models.Project;
 namespace Ergonaut.App.Sentinel;
 
 public class WorkItemCreator : IWorkItemCreator
@@ -56,11 +55,22 @@ public class WorkItemCreator : IWorkItemCreator
     {
         // Conversion logic to create a work item from log event
         var existing = await _workItemService.ListAsync(projectId: project.Id, cancellationToken);
-        int existingCount = existing.ToList().Count(p => p.Source == WorkItemSourceLabel.Sentinel);
+
+        int? titleCountSuffix;
+
+        WorkItemRecord? lastExisting = existing.ToList().OrderBy(w => w.CreatedAt).ToList().FindLast(w => w.Source == WorkItemSourceLabel.Sentinel);
+        if (lastExisting != null)
+        {
+            titleCountSuffix = int.TryParse(lastExisting.Title.Split('#').Last(), out int result) ? result : (int?)null;
+        }
+        else
+        {
+            titleCountSuffix = existing.ToList().Count(p => p.Source == WorkItemSourceLabel.Sentinel);
+        }
 
         var workItemRequest = new CreateWorkItemRequest
         {
-            Title = $"Sentinel Alert #{existingCount + 1}",
+            Title = $"Sentinel Alert #{(titleCountSuffix ?? 0) + 1}",
             Description = logEvent.Message,
             Source = WorkItemSourceLabel.Sentinel
         };
