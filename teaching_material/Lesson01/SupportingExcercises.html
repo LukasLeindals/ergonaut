@@ -1,0 +1,73 @@
+<html>
+<body>
+<h1><center>Supporting Excercises - L1</center></h1>
+<h2>1</h2><p>
+<h4>Visit <a href="https://docs.microsoft.com/en-us/">https://docs.microsoft.com/en-us/</a><br>
+Find information about the Console class<br>
+Find some  methods and properties in the ASCIIEncoding Class!
+</h4>
+
+
+<h2>2</h2><p>
+<h4>Start Visual Studio .NET! ( I assume that you have installed Visual Studio 2019 Community) <br>
+Spend some time on the content of the menu line.<br>
+</h4>
+
+<h2>3</h2><p>
+<h4>Make a simple "Hallo world" project (Console app) int .NET 5<br>
+Change the application making it possible to enter your name<br>
+and get a personal greeting from the application.<br>
+
+</h4>
+<h2>4</h2><p>
+<h4>Try to Debug the "Hallo world" application.<br>
+
+</h4>
+
+<h2>5</h2><p>
+<h4>Make a simple project (Console App)<br>
+Build a calculator, making it possible to calculate +,-,/,*
+
+</h4>
+
+<h2>6</h2><p>
+
+<h4>Create a small WPF based calculator<br>
+Consider if the calculator should be based on RPN (using a stack)
+Reuse the calculator class above.<br>
+Compile and test the application!
+<br>
+
+
+
+<h2>7 (extra)</h2><p>
+<h4>Write your own Intermediate Language:<br>
+Here follows a small example:
+<br>
+.assembly <br>
+extern mscorlib{}.assembly <br>
+
+Hejsa<br>
+{<br> 
+.ver 1:0:1:0<br>
+}<br>
+
+.module Hejsa.exe<br>
+
+.method static void Main() cil managed<br>
+{  <br>
+   .maxstack 1  <br>
+   .entrypoint    <br>
+   ldstr "Hallo from IL"<br>  
+   call void [mscorlib]System.Console::WriteLine(string)  <br>
+   ret<br>
+}<br>
+
+<p>
+Use ilasm ( Intermediate Assembler) for assembling.
+
+</h4>
+
+
+</body>
+</html> 

@@ -12,6 +12,11 @@ Milestone TODOs:
 - Allow updates to projects and work items.
 - Add all fields to request models.
 
+## Structure & Architecture
+- Refactor LogIngestion to separate adapters, processors, and exporters more clearly.
+- Re-evaluate placement of certain services (e.g., WorkItemCreator) in the project structure.
+- Investigate oppportunity for using MVVM or similar patterns in the app structure.
+
 ## Authentication & Authorization
 - Clean up authentication and authorization.
   - Long-lived tokens.
