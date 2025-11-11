@@ -15,4 +15,6 @@ public interface IProjectService
 
     // Retrieves a project by its ID, or null if not found.
     Task<ProjectRecord?> GetAsync(Guid id, CancellationToken ct = default); // DTO return type
+
+    Task<ProjectRecord?> GetProjectByName(string projectName, CancellationToken ct = default);
 }

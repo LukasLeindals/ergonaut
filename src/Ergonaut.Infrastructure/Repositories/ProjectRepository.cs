@@ -21,6 +21,10 @@ public sealed class ProjectRepository : IProjectRepository
 
     public async Task<IProject> AddAsync(IProject project, CancellationToken ct = default)
     {
+        Project? existing = await GetByNameAsync(project.Title, ct) as Project;
+        if (existing is not null)
+            throw new InvalidOperationException($"Project with name {project.Title} already exists.");
+
         _db.Projects.Add(project as Project ?? throw new NotSupportedException($"Expected {nameof(Project)} type but got {project.GetType().Name}."));
         await _db.SaveChangesAsync(ct);
         return project;
@@ -40,4 +44,7 @@ public sealed class ProjectRepository : IProjectRepository
         _db.Projects.Remove(entity);
         await _db.SaveChangesAsync(ct);
     }
+
+    public async Task<IProject?> GetByNameAsync(string projectName, CancellationToken ct = default) =>
+        await _db.Projects.AsNoTracking().FirstOrDefaultAsync(p => p.Title == projectName, ct);
 }

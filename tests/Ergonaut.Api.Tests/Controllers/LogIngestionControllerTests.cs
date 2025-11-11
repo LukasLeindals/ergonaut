@@ -1,19 +1,17 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
+
 using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using Ergonaut.Api.Controllers;
 using Ergonaut.App.Extensions;
 using Ergonaut.App.LogIngestion;
 using Ergonaut.Core.LogIngestion;
+using Ergonaut.Core.EventIngestion;
 using Google.Protobuf;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
+using Microsoft.Extensions.Configuration;
 using OpenTelemetry.Proto.Collector.Logs.V1;
 using OpenTelemetry.Proto.Common.V1;
 using OpenTelemetry.Proto.Logs.V1;
@@ -81,10 +79,23 @@ public sealed class LogIngestionControllerTests
     [Fact(DisplayName = "DI resolves OtlpLogIngestionController when application services are registered")]
     public void DependencyInjection_Resolves_Controller()
     {
+        var configuration = new ConfigurationBuilder()
+            .AddInMemoryCollection(new Dictionary<string, string?>
+            {
+                ["LogIngestion:Kafka:BootstrapServers"] = "test",
+                ["LogIngestion:Kafka:Topic"] = "test-topic",
+                ["LogIngestion:Kafka:GroupId"] = "test-group"
+            })
+            .Build();
+
         var services = new ServiceCollection();
+        services.AddSingleton<IConfiguration>(configuration);
         services.AddLogging();
         services.AddApplicationServices();
+        services.AddLogIngestion();
+        services.AddSingleton<IEventProducer<ILogEvent>, RecordingLogEventSink>(); // avoid needing Kafka for tests
         services.AddTransient<OtlpLogIngestionController>();
+        services.AddOptions();
 
         using var provider = services.BuildServiceProvider(validateScopes: true);
         using var scope = provider.CreateScope();
@@ -119,10 +130,10 @@ public sealed class LogIngestionControllerTests
         return controller;
     }
 
-    private static OtlpLogIngestionPipeline CreatePipeline(ILogEventSink sink)
+    private static OtlpLogIngestionPipeline CreatePipeline(IEventProducer<ILogEvent> producer)
     {
         var parser = new OtlpLogPayloadParser();
-        return new OtlpLogIngestionPipeline(parser, sink, NullLogger<OtlpLogIngestionPipeline>.Instance);
+        return new OtlpLogIngestionPipeline(parser, producer, NullLogger<OtlpLogIngestionPipeline>.Instance);
     }
 
     private static ExportLogsServiceRequest BuildExportRequest(DateTimeOffset timestamp)
@@ -166,11 +177,11 @@ public sealed class LogIngestionControllerTests
         return request;
     }
 
-    private sealed class RecordingLogEventSink : ILogEventSink
+    private sealed class RecordingLogEventSink : IEventProducer<ILogEvent>
     {
         public List<ILogEvent> Events { get; } = new();
 
-        public Task PublishAsync(IEnumerable<ILogEvent> events, CancellationToken cancellationToken = default)
+        public Task ProduceAsync(IEnumerable<ILogEvent> events, CancellationToken cancellationToken = default)
         {
             Events.AddRange(events);
             return Task.CompletedTask;

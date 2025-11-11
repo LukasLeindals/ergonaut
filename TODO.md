@@ -12,8 +12,25 @@ Milestone TODOs:
 - Allow updates to projects and work items.
 - Add all fields to request models.
 
+## Structure & Architecture
+- Refactor LogIngestion to separate adapters, processors, and exporters more clearly.
+- Re-evaluate placement of certain services (e.g., WorkItemCreator) in the project structure.
+- Investigate oppportunity for using MVVM or similar patterns in the app structure.
 
-## Improvements
-- Introduce validators for `CreateProjectRequest` / `CreateWorkItemRequest`, extend `WorkItem` with correlation identifiers, and add unit tests covering duplicate-prevention.
-- Expand NetArchTest coverage (UI ↛ Infrastructure, Infrastructure ↛ UI, Contracts ↛ Infrastructure) and keep the CI pipeline failing fast on architectural violations.
-- Investigate possibility of testing against a test database in CI to catch issues with migrations and seed data.
+## Authentication & Authorization
+- Clean up authentication and authorization.
+  - Long-lived tokens.
+  - No hardcoded secrets.
+
+## Sentinel MVP
+
+- Update work items to contain more information from log events for better deduplication and context.
+- Add simple deduplication based on log template.
+  - Posibly also add a configurable otlp attribute to use for filtering.
+- Deduplicate work item creation for identical log events occurring within a configurable time window.
+- Configuration options for Sentinel (e.g., time window for deduplication, log event severity threshold for work item creation).
+
+## Sentinel Future
+- Datadog integration.
+- LLM layer for better work item description generation and deduplication.
+

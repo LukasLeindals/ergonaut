@@ -25,13 +25,13 @@ public sealed class OtlpLogEventAdapter
         var warnings = new List<string>();
         var dropped = 0;
 
-        foreach (var resourceLogs in request.ResourceLogs)
+        foreach (ResourceLogs resourceLogs in request.ResourceLogs)
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            foreach (var scopeLogs in resourceLogs.ScopeLogs)
+            foreach (ScopeLogs scopeLogs in resourceLogs.ScopeLogs)
             {
-                foreach (var logRecord in scopeLogs.LogRecords)
+                foreach (LogRecord logRecord in scopeLogs.LogRecords)
                 {
                     cancellationToken.ThrowIfCancellationRequested();
 
@@ -66,8 +66,9 @@ public sealed class OtlpLogEventAdapter
         var source = SelectSource(logRecord, ResolveServiceName(resource));
         var timestamp = ResolveTimestamp(logRecord);
         var level = MapSeverity(logRecord.SeverityNumber);
+        string? messageTemplate = ExtractMessageTemplate(logRecord);
 
-        logEvent = new LogEvent(message, source, timestamp, level);
+        logEvent = new LogEvent(message, source, timestamp, level, messageTemplate);
         return true;
     }
 
@@ -119,6 +120,19 @@ public sealed class OtlpLogEventAdapter
         };
     }
 
+    private static string? ExtractMessageTemplate(LogRecord logRecord)
+    {
+        foreach (string sep in new[] { "_", "." })
+        {
+            var template = TryGetAttribute(logRecord.Attributes, $"messagetemplate", key => key.ToLowerInvariant().Replace(sep, ""));
+            if (!string.IsNullOrWhiteSpace(template))
+            {
+                return template;
+            }
+        }
+        return null;
+    }
+
     private static DateTimeOffset ResolveTimestamp(LogRecord logRecord)
     {
         if (logRecord.TimeUnixNano > 0)
@@ -148,11 +162,17 @@ public sealed class OtlpLogEventAdapter
             _ => LogLevel.Information
         };
 
-    private static string? TryGetAttribute(RepeatedField<KeyValue> attributes, string key)
+    private static string? TryGetAttribute(RepeatedField<KeyValue> attributes, string key, Func<string, string>? transform = null)
     {
         foreach (var attribute in attributes)
         {
-            if (string.Equals(attribute.Key, key, StringComparison.OrdinalIgnoreCase))
+            string attributeKey;
+            if (transform != null)
+                attributeKey = transform(attribute.Key);
+            else
+                attributeKey = attribute.Key;
+
+            if (string.Equals(attributeKey, key, StringComparison.OrdinalIgnoreCase))
             {
                 return attribute.Value.ValueCase switch
                 {

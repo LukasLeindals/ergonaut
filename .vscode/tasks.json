@@ -1,0 +1,44 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "build",
+      "type": "shell",
+      "command": "dotnet",
+      "args": [
+        "build",
+        "${workspaceFolder}/Ergonaut.sln"
+      ],
+      "problemMatcher": "$msCompile"
+    },
+    {
+        "label": "start-otelcol",
+        "type": "shell",
+        "command": "just",
+        "args": [
+            "start-otelcol"
+        ],
+    },
+    {
+        "label": "run-docker-development",
+        "type": "shell",
+        "command": "just",
+        "args": [
+            "run-docker-development"
+        ]
+    },
+    {
+      "label": "start-api",
+      "type": "shell",
+      "command": "just",
+      "args": [
+        "api"
+      ]
+    },
+    {
+        "label": "sentinel-dependencies",
+        "dependsOrder": "sequence",
+        "dependsOn": ["build", "run-docker-development"]
+    }
+  ],
+}

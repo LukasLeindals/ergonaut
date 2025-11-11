@@ -35,4 +35,10 @@ internal sealed class MockProjectRepository : IProjectRepository
         _projects.Remove(id);
         return Task.CompletedTask;
     }
+
+    public Task<IProject?> GetByNameAsync(string projectName, CancellationToken ct = default)
+    {
+        var project = _projects.Values.FirstOrDefault(p => p.Title.Equals(projectName, StringComparison.OrdinalIgnoreCase));
+        return Task.FromResult(project);
+    }
 }

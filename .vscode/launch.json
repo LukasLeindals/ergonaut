@@ -1,0 +1,64 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Ergonaut API",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build",
+      "program": "${workspaceFolder}/src/Ergonaut.Api/bin/Debug/net9.0/Ergonaut.Api.dll",
+      "args": [],
+      "cwd": "${workspaceFolder}/src/Ergonaut.Api",
+      "stopAtEntry": false,
+      // "serverReadyAction": {
+      //   "action": "openExternally",
+      //   "pattern": "\\bNow listening on:\\s+(https?://\\S+)"
+      // },
+      "env": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
+    },
+    {
+      "name": "Ergonaut UI",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build",
+      "program": "${workspaceFolder}/src/Ergonaut.UI/bin/Debug/net9.0/Ergonaut.UI.dll",
+      "args": [],
+      "cwd": "${workspaceFolder}/src/Ergonaut.UI",
+      "stopAtEntry": false,
+      "serverReadyAction": {
+        "action": "openExternally",
+        "pattern": "\\bNow listening on:\\s+(https?://\\S+)"
+      },
+      "env": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      }
+    },
+    {
+      "name": "Sentinel Worker",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "sentinel-dependencies",
+      "program": "${workspaceFolder}/src/Ergonaut.Sentinel/bin/Debug/net9.0/Ergonaut.Sentinel.dll",
+      "args": [],
+      "cwd": "${workspaceFolder}/src/Ergonaut.Sentinel",
+      "stopAtEntry": false,
+      "env": {
+        "DOTNET_ENVIRONMENT": "Development",
+        "LogIngestion__Kafka__BootstrapServers": "localhost:9092",
+        "LogIngestion__Kafka__Topic": "ergonaut-logingestion",
+        "LogIngestion__Kafka__GroupId": "ergonaut-log-event-consumer"
+      }
+    }
+  ],
+  "compounds": [
+    {
+      "name": "Launch Sentinel",
+      "configurations": [
+        "Ergonaut API",
+        "Sentinel Worker"
+      ]
+    }
+  ]
+}

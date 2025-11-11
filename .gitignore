@@ -56,3 +56,5 @@ nunit-*.xml
 data/sqlite/*
 *.DS_Store
 samples/log_emitter/.streamlit/secrets.toml
+.env
+data-protection/*
