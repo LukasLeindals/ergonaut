@@ -26,8 +26,8 @@ public interface ILogEvent
     string? TraceId { get; }
     string? SpanId { get; }
 
-    IReadOnlyDictionary<string, Object> Attributes { get; }
+    IReadOnlyDictionary<string, string?> Attributes { get; }
 
-    IReadOnlyDictionary<string, Object> ResourceAttributes { get; }
-    IReadOnlyDictionary<string, Object> ScopeAttributes { get; }
+    IReadOnlyDictionary<string, string?> ResourceAttributes { get; }
+    IReadOnlyDictionary<string, string?> ScopeAttributes { get; }
 }

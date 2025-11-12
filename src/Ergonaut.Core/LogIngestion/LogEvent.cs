@@ -1,4 +1,3 @@
-
 using System.Text.Json;
 using Microsoft.Extensions.Logging;
 
@@ -19,9 +18,9 @@ public sealed record LogEvent : ILogEvent
         string? traceId = null,
         string? spanId = null,
         IReadOnlyDictionary<string, string?>? tags = null,
-        IReadOnlyDictionary<string, object>? attributes = null,
-        IReadOnlyDictionary<string, object>? resourceAttributes = null,
-        IReadOnlyDictionary<string, object>? scopeAttributes = null
+        IReadOnlyDictionary<string, string?>? attributes = null,
+        IReadOnlyDictionary<string, string?>? resourceAttributes = null,
+        IReadOnlyDictionary<string, string?>? scopeAttributes = null
         )
     {
         if (string.IsNullOrWhiteSpace(message))
@@ -42,9 +41,9 @@ public sealed record LogEvent : ILogEvent
         Metadata = metadata;
         Tags = tags;
 
-        Attributes = attributes ?? new Dictionary<string, Object>();
-        ResourceAttributes = resourceAttributes ?? new Dictionary<string, Object>();
-        ScopeAttributes = scopeAttributes ?? new Dictionary<string, Object>();
+        Attributes = attributes ?? new Dictionary<string, string?>();
+        ResourceAttributes = resourceAttributes ?? new Dictionary<string, string?>();
+        ScopeAttributes = scopeAttributes ?? new Dictionary<string, string?>();
         TraceId = traceId;
         SpanId = spanId;
 
@@ -65,13 +64,13 @@ public sealed record LogEvent : ILogEvent
     public IReadOnlyDictionary<string, string?>? Tags { get; }
 
     // From log record
-    public IReadOnlyDictionary<string, Object> Attributes { get; set; } = new Dictionary<string, Object>();
+    public IReadOnlyDictionary<string, string?> Attributes { get; init; }
     public string? TraceId { get; }
     public string? SpanId { get; }
 
     // From resource
-    public IReadOnlyDictionary<string, Object> ResourceAttributes { get; set; } = new Dictionary<string, Object>();
+    public IReadOnlyDictionary<string, string?> ResourceAttributes { get; init; }
 
     // From scope
-    public IReadOnlyDictionary<string, Object> ScopeAttributes { get; set; } = new Dictionary<string, Object>();
+    public IReadOnlyDictionary<string, string?> ScopeAttributes { get; init; }
 }

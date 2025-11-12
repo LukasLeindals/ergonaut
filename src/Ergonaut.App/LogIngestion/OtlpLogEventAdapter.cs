@@ -1,4 +1,3 @@
-
 using Ergonaut.Core.LogIngestion;
 using Google.Protobuf.Collections;
 using Google.Protobuf;
@@ -166,7 +165,7 @@ public sealed class OtlpLogEventAdapter
             SeverityNumber.Warn or SeverityNumber.Warn2 or SeverityNumber.Warn3 or SeverityNumber.Warn4 => LogLevel.Warning,
             SeverityNumber.Error or SeverityNumber.Error2 or SeverityNumber.Error3 or SeverityNumber.Error4 => LogLevel.Error,
             SeverityNumber.Fatal or SeverityNumber.Fatal2 or SeverityNumber.Fatal3 or SeverityNumber.Fatal4 => LogLevel.Critical,
-            _ => throw new ArgumentOutOfRangeException(nameof(severity), "Unknown severity number.")
+            _ => LogLevel.None
         };
 
     // Converts a ByteString ID (e.g., TraceId or SpanId) to a lowercase hex string representation.
@@ -174,7 +173,6 @@ public sealed class OtlpLogEventAdapter
     {
         return id is null || id.IsEmpty ? null : Convert.ToHexString(id.Span).ToLowerInvariant();
     }
-
 
     private static string? TryGetAttribute(RepeatedField<KeyValue> attributes, string key, Func<string, string>? transform = null)
     {
@@ -202,18 +200,22 @@ public sealed class OtlpLogEventAdapter
         return null;
     }
 
-    private static IReadOnlyDictionary<string, Object> ConvertAttributes(RepeatedField<KeyValue> attributes)
+    private static IReadOnlyDictionary<string, string?> ConvertAttributes(RepeatedField<KeyValue>? attributes)
     {
-        var dict = new Dictionary<string, Object>();
+
+        var dict = new Dictionary<string, string?>();
+
+        if (attributes is null)
+            return dict;
 
         foreach (var attribute in attributes)
         {
-            object value = attribute.Value.ValueCase switch
+            string? value = attribute.Value.ValueCase switch
             {
                 AnyValue.ValueOneofCase.StringValue => attribute.Value.StringValue,
-                AnyValue.ValueOneofCase.IntValue => attribute.Value.IntValue,
-                AnyValue.ValueOneofCase.BoolValue => attribute.Value.BoolValue,
-                AnyValue.ValueOneofCase.DoubleValue => attribute.Value.DoubleValue,
+                AnyValue.ValueOneofCase.IntValue => attribute.Value.IntValue.ToString(),
+                AnyValue.ValueOneofCase.BoolValue => attribute.Value.BoolValue.ToString(),
+                AnyValue.ValueOneofCase.DoubleValue => attribute.Value.DoubleValue.ToString("G"),
                 _ => null!
             };
 
