@@ -74,7 +74,7 @@ public sealed class OtlpLogEventAdapter
             tags: null,
             attributes: ConvertAttributes(logRecord.Attributes),
             resourceAttributes: ConvertAttributes(resourceLogs.Resource.Attributes),
-            scopeAttributes: ConvertAttributes(scopeLogs.Scope.Attributes)
+            scopeAttributes: ConvertAttributes(scopeLogs.Scope?.Attributes)
         );
         return true;
     }
