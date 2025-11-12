@@ -17,8 +17,10 @@ public sealed record LogEvent : ILogEvent
         IReadOnlyDictionary<string, JsonElement?>? metadata = null,
         string? traceId = null,
         string? spanId = null,
-        string? traceFlags = null,
-        IReadOnlyDictionary<string, string?>? tags = null
+        IReadOnlyDictionary<string, string?>? tags = null,
+        IReadOnlyDictionary<string, string?>? attributes = null,
+        IReadOnlyDictionary<string, string?>? resourceAttributes = null,
+        IReadOnlyDictionary<string, string?>? scopeAttributes = null
         )
     {
         if (string.IsNullOrWhiteSpace(message))
@@ -37,10 +39,14 @@ public sealed record LogEvent : ILogEvent
         Level = level;
         MessageTemplate = messageTemplate;
         Metadata = metadata;
+        Tags = tags;
+
+        Attributes = attributes ?? new Dictionary<string, string?>();
+        ResourceAttributes = resourceAttributes ?? new Dictionary<string, string?>();
+        ScopeAttributes = scopeAttributes ?? new Dictionary<string, string?>();
         TraceId = traceId;
         SpanId = spanId;
-        TraceFlags = traceFlags;
-        Tags = tags;
+
     }
 
     public string Message { get; }
@@ -55,8 +61,16 @@ public sealed record LogEvent : ILogEvent
 
     public IReadOnlyDictionary<string, JsonElement?>? Metadata { get; }
 
+    public IReadOnlyDictionary<string, string?>? Tags { get; }
+
+    // From log record
+    public IReadOnlyDictionary<string, string?> Attributes { get; init; }
     public string? TraceId { get; }
     public string? SpanId { get; }
-    public string? TraceFlags { get; }
-    public IReadOnlyDictionary<string, string?>? Tags { get; }
+
+    // From resource
+    public IReadOnlyDictionary<string, string?> ResourceAttributes { get; init; }
+
+    // From scope
+    public IReadOnlyDictionary<string, string?> ScopeAttributes { get; init; }
 }

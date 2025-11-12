@@ -12,6 +12,9 @@ ui:
 api:
     @dotnet watch --project src/Ergonaut.Api/Ergonaut.Api.csproj --launch-profile http
 
+stop-api:
+    kill -9 $(lsof -ti:5075) || echo "Ergonaut API not running"
+
 sentinel:
     @dotnet run --project src/Ergonaut.Sentinel/Ergonaut.Sentinel.csproj
 

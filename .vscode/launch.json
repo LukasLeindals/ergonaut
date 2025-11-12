@@ -55,6 +55,7 @@
   "compounds": [
     {
       "name": "Launch Sentinel",
+      "preLaunchTask": "stop-api",
       "configurations": [
         "Ergonaut API",
         "Sentinel Worker"

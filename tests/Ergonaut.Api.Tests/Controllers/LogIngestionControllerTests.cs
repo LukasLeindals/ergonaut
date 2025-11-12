@@ -60,7 +60,8 @@ public sealed class LogIngestionControllerTests
             OtlpLogEventAdapter.TryConvert(
                 out var convertedEvent,
                 parsedRequest.ResourceLogs[0].ScopeLogs[0].LogRecords[0],
-                parsedRequest.ResourceLogs[0].Resource));
+                parsedRequest.ResourceLogs[0],
+                parsedRequest.ResourceLogs[0].ScopeLogs[0]));
         Assert.NotNull(convertedEvent);
 
         var sink = new RecordingLogEventSink();

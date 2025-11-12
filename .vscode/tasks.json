@@ -36,6 +36,14 @@
       ]
     },
     {
+        "label": "stop-api",
+        "type": "shell",
+        "command": "just",
+        "args": [
+            "stop-api"
+        ]
+    },
+    {
         "label": "sentinel-dependencies",
         "dependsOrder": "sequence",
         "dependsOn": ["build", "run-docker-development"]

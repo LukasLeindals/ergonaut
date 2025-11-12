@@ -1,8 +1,6 @@
-using System;
-using System.Collections.Generic;
-using System.Threading;
 using Ergonaut.Core.LogIngestion;
 using Google.Protobuf.Collections;
+using Google.Protobuf;
 using Microsoft.Extensions.Logging;
 using OpenTelemetry.Proto.Common.V1;
 using OpenTelemetry.Proto.Logs.V1;
@@ -35,7 +33,7 @@ public sealed class OtlpLogEventAdapter
                 {
                     cancellationToken.ThrowIfCancellationRequested();
 
-                    if (!TryConvert(out var logEvent, logRecord, resourceLogs.Resource))
+                    if (!TryConvert(out var logEvent, logRecord, resourceLogs, scopeLogs))
                     {
                         dropped++;
                         var severity = logRecord.SeverityText ?? logRecord.SeverityNumber.ToString();
@@ -51,7 +49,7 @@ public sealed class OtlpLogEventAdapter
         return LogIngestionResult.Success(events, dropped, warnings);
     }
 
-    public static bool TryConvert(out ILogEvent logEvent, LogRecord logRecord, Resource? resource)
+    public static bool TryConvert(out ILogEvent logEvent, LogRecord logRecord, ResourceLogs resourceLogs, ScopeLogs scopeLogs)
     {
         if (logRecord is null)
             throw new ArgumentNullException(nameof(logRecord));
@@ -63,12 +61,20 @@ public sealed class OtlpLogEventAdapter
             return false;
         }
 
-        var source = SelectSource(logRecord, ResolveServiceName(resource));
-        var timestamp = ResolveTimestamp(logRecord);
-        var level = MapSeverity(logRecord.SeverityNumber);
-        string? messageTemplate = ExtractMessageTemplate(logRecord);
-
-        logEvent = new LogEvent(message, source, timestamp, level, messageTemplate);
+        logEvent = new LogEvent(
+            message: message,
+            source: SelectSource(logRecord, ResolveServiceName(resourceLogs.Resource)),
+            timestamp: ResolveTimestamp(logRecord),
+            level: MapSeverity(logRecord.SeverityNumber),
+            messageTemplate: ExtractMessageTemplate(logRecord),
+            metadata: null,
+            traceId: ToHexString(logRecord.TraceId),
+            spanId: ToHexString(logRecord.SpanId),
+            tags: null,
+            attributes: ConvertAttributes(logRecord.Attributes),
+            resourceAttributes: ConvertAttributes(resourceLogs.Resource?.Attributes),
+            scopeAttributes: ConvertAttributes(scopeLogs.Scope?.Attributes)
+        );
         return true;
     }
 
@@ -159,8 +165,14 @@ public sealed class OtlpLogEventAdapter
             SeverityNumber.Warn or SeverityNumber.Warn2 or SeverityNumber.Warn3 or SeverityNumber.Warn4 => LogLevel.Warning,
             SeverityNumber.Error or SeverityNumber.Error2 or SeverityNumber.Error3 or SeverityNumber.Error4 => LogLevel.Error,
             SeverityNumber.Fatal or SeverityNumber.Fatal2 or SeverityNumber.Fatal3 or SeverityNumber.Fatal4 => LogLevel.Critical,
-            _ => LogLevel.Information
+            _ => LogLevel.None
         };
+
+    // Converts a ByteString ID (e.g., TraceId or SpanId) to a lowercase hex string representation.
+    private static string? ToHexString(ByteString? id)
+    {
+        return id is null || id.IsEmpty ? null : Convert.ToHexString(id.Span).ToLowerInvariant();
+    }
 
     private static string? TryGetAttribute(RepeatedField<KeyValue> attributes, string key, Func<string, string>? transform = null)
     {
@@ -186,5 +198,30 @@ public sealed class OtlpLogEventAdapter
         }
 
         return null;
+    }
+
+    private static IReadOnlyDictionary<string, string?> ConvertAttributes(RepeatedField<KeyValue>? attributes)
+    {
+
+        var dict = new Dictionary<string, string?>();
+
+        if (attributes is null)
+            return dict;
+
+        foreach (var attribute in attributes)
+        {
+            string? value = attribute.Value.ValueCase switch
+            {
+                AnyValue.ValueOneofCase.StringValue => attribute.Value.StringValue,
+                AnyValue.ValueOneofCase.IntValue => attribute.Value.IntValue.ToString(),
+                AnyValue.ValueOneofCase.BoolValue => attribute.Value.BoolValue.ToString(),
+                AnyValue.ValueOneofCase.DoubleValue => attribute.Value.DoubleValue.ToString("G"),
+                _ => null!
+            };
+
+            dict[attribute.Key] = value;
+        }
+
+        return dict;
     }
 }
