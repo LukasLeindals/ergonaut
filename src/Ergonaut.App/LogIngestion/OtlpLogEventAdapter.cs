@@ -73,7 +73,7 @@ public sealed class OtlpLogEventAdapter
             spanId: ToHexString(logRecord.SpanId),
             tags: null,
             attributes: ConvertAttributes(logRecord.Attributes),
-            resourceAttributes: ConvertAttributes(resourceLogs.Resource.Attributes),
+            resourceAttributes: ConvertAttributes(resourceLogs.Resource?.Attributes),
             scopeAttributes: ConvertAttributes(scopeLogs.Scope?.Attributes)
         );
         return true;
