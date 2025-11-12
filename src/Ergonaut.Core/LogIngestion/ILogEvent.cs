@@ -20,9 +20,14 @@ public interface ILogEvent
 
     IReadOnlyDictionary<string, JsonElement?>? Metadata { get; }
 
-    string? TraceId { get; }
-    string? SpanId { get; }
-    string? TraceFlags { get; }
     IReadOnlyDictionary<string, string?>? Tags { get; }
 
+    // From log record
+    string? TraceId { get; }
+    string? SpanId { get; }
+
+    IReadOnlyDictionary<string, Object> Attributes { get; }
+
+    IReadOnlyDictionary<string, Object> ResourceAttributes { get; }
+    IReadOnlyDictionary<string, Object> ScopeAttributes { get; }
 }

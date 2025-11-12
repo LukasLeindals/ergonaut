@@ -1,3 +1,4 @@
+
 using System.Text.Json;
 using Microsoft.Extensions.Logging;
 
@@ -17,8 +18,10 @@ public sealed record LogEvent : ILogEvent
         IReadOnlyDictionary<string, JsonElement?>? metadata = null,
         string? traceId = null,
         string? spanId = null,
-        string? traceFlags = null,
-        IReadOnlyDictionary<string, string?>? tags = null
+        IReadOnlyDictionary<string, string?>? tags = null,
+        IReadOnlyDictionary<string, object>? attributes = null,
+        IReadOnlyDictionary<string, object>? resourceAttributes = null,
+        IReadOnlyDictionary<string, object>? scopeAttributes = null
         )
     {
         if (string.IsNullOrWhiteSpace(message))
@@ -37,10 +40,14 @@ public sealed record LogEvent : ILogEvent
         Level = level;
         MessageTemplate = messageTemplate;
         Metadata = metadata;
+        Tags = tags;
+
+        Attributes = attributes ?? new Dictionary<string, Object>();
+        ResourceAttributes = resourceAttributes ?? new Dictionary<string, Object>();
+        ScopeAttributes = scopeAttributes ?? new Dictionary<string, Object>();
         TraceId = traceId;
         SpanId = spanId;
-        TraceFlags = traceFlags;
-        Tags = tags;
+
     }
 
     public string Message { get; }
@@ -55,8 +62,16 @@ public sealed record LogEvent : ILogEvent
 
     public IReadOnlyDictionary<string, JsonElement?>? Metadata { get; }
 
+    public IReadOnlyDictionary<string, string?>? Tags { get; }
+
+    // From log record
+    public IReadOnlyDictionary<string, Object> Attributes { get; set; } = new Dictionary<string, Object>();
     public string? TraceId { get; }
     public string? SpanId { get; }
-    public string? TraceFlags { get; }
-    public IReadOnlyDictionary<string, string?>? Tags { get; }
+
+    // From resource
+    public IReadOnlyDictionary<string, Object> ResourceAttributes { get; set; } = new Dictionary<string, Object>();
+
+    // From scope
+    public IReadOnlyDictionary<string, Object> ScopeAttributes { get; set; } = new Dictionary<string, Object>();
 }
