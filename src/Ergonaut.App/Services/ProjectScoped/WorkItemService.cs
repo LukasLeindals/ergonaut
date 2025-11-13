@@ -1,4 +1,5 @@
 using System.Linq;
+using System.Text.Json;
 using Ergonaut.App.Errors;
 using Ergonaut.App.Models;
 using Ergonaut.Core.Models;
@@ -42,7 +43,10 @@ public sealed class WorkItemService(
     {
         await EnsureProjectExists(projectId, ct);
 
-        WorkItem workItem = new(projectId: projectId, title: request.Title, description: request.Description, source: request.Source);
+        WorkItem workItem = new(
+            projectId: projectId, title: request.Title, description: request.Description, sourceLabel: request.SourceLabel,
+            status: request.Status, priority: request.Priority, dueDate: request.DueDate, sourceData: request.SourceData ?? new Dictionary<string, JsonElement?>()
+        );
         var saved = await repository.AddAsync(workItem, ct);
         return WorkItemRecord.FromWorkItem(saved);
     }

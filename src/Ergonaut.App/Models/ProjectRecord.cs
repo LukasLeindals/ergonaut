@@ -9,18 +9,21 @@ public sealed record ProjectRecord : IProject
 
     public required string Title { get; init; }
 
+    public string? Description { get; init; }
+
     public DateTime CreatedAt { get; init; }
 
     public DateTime UpdatedAt { get; init; }
 
-    public WorkItemSourceLabel Source { get; init; }
+    public SourceLabel? SourceLabel { get; init; }
 
     public static ProjectRecord FromProject(IProject project) => new()
     {
         Id = project.Id,
         Title = project.Title,
+        Description = project.Description,
         CreatedAt = project.CreatedAt,
         UpdatedAt = project.UpdatedAt,
-        Source = project.Source
+        SourceLabel = project.SourceLabel
     };
 }

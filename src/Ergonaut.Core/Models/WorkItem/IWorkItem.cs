@@ -37,9 +37,24 @@ namespace Ergonaut.Core.Models.WorkItem
         DateTime UpdatedAt { get; }
 
         /// <summary>
+        /// The current status of the work item.
+        /// </summary>
+        WorkItemStatus Status { get; }
+
+        /// <summary>
+        /// The priority level of the work item.
+        /// </summary>
+        WorkItemPriority? Priority { get; }
+
+        /// <summary>
+        /// The due date for the work item.
+        /// </summary>
+        DateTime? DueDate { get; }
+
+        /// <summary>
         /// The source of the work item (e.g., local).
         /// </summary>
-        WorkItemSourceLabel Source { get; }
+        SourceLabel? SourceLabel { get; }
 
         /// <summary>
         /// Data specific to the source. This should only be modified by the source handler.

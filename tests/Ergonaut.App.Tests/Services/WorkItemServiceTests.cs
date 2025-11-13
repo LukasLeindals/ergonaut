@@ -38,8 +38,8 @@ public sealed class WorkItemServiceTests
         var otherProjectId = Guid.NewGuid();
 
         _workItems.Seed(
-            new WorkItem(projectId: _existingProjectId, title: "Keep me", source: WorkItemSourceLabel.Ergonaut),
-            new WorkItem(projectId: otherProjectId, title: "Ignore me", source: WorkItemSourceLabel.Ergonaut));
+            new WorkItem(projectId: _existingProjectId, title: "Keep me", sourceLabel: SourceLabel.Ergonaut),
+            new WorkItem(projectId: otherProjectId, title: "Ignore me", sourceLabel: SourceLabel.Ergonaut));
 
         var result = await CreateService().ListAsync(_existingProjectId);
 
@@ -62,7 +62,7 @@ public sealed class WorkItemServiceTests
     [Fact(DisplayName = "Deletes work items when they exist in the scoped project")]
     public async Task DeleteAsync_Removes_Task_When_Found()
     {
-        var workItem = new WorkItem(projectId: _existingProjectId, title: "Delete me", source: WorkItemSourceLabel.Ergonaut);
+        var workItem = new WorkItem(projectId: _existingProjectId, title: "Delete me", sourceLabel: SourceLabel.Ergonaut);
         _workItems.Seed(workItem);
 
         var result = await CreateService().DeleteAsync(_existingProjectId, workItem.Id);

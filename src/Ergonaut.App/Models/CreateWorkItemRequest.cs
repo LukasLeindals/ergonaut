@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json;
 using Ergonaut.Core.Models;
 using Ergonaut.Core.Models.WorkItem;
 
@@ -14,6 +15,19 @@ public sealed class CreateWorkItemRequest
     [StringLength(1000, ErrorMessage = "Keep the description under 1000 characters.")]
     public string? Description { get; set; }
 
-    [Required(ErrorMessage = "Please specify the source of the work item.")]
-    public WorkItemSourceLabel Source { get; set; }
+    public SourceLabel? SourceLabel { get; set; } = null;
+
+    public WorkItemStatus Status { get; set; } = WorkItemStatus.New;
+
+    public WorkItemPriority? Priority { get; set; } = null;
+
+    public DateTime? DueDate { get; set; } = null;
+
+    public Dictionary<string, JsonElement?>? SourceData { get; set; } = null;
+
+    public CreateWorkItemRequest() { }
+    public CreateWorkItemRequest(SourceLabel? sourceLabel = null)
+    {
+        SourceLabel = sourceLabel;
+    }
 }

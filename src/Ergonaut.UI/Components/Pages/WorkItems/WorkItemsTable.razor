@@ -6,6 +6,9 @@
         <tr>
             <th>Title</th>
             <th>Description</th>
+            <th>Status</th>
+            <th>Priority</th>
+            <th>Due Date</th>
             <th class="text-end">Created At</th>
             <th class="text-end">Actions</th>
         </tr>
@@ -36,6 +39,9 @@
                 <tr>
                     <td>@workItem.Title</td>
                     <td>@workItem.Description</td>
+                    <td>@workItem.Status</td>
+                    <td>@workItem.Priority</td>
+                    <td>@workItem.DueDate?.ToLocalTime().ToString("d")</td>
                     <td class="text-end">@workItem.CreatedAt.ToLocalTime().ToString("g")</td>
                     <td class="text-end">
                         <button class="btn btn-danger btn-sm"

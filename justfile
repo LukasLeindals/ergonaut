@@ -9,7 +9,7 @@ ui:
     @cd src/Ergonaut.UI && dotnet watch
 
 # Launch the Ergonaut API in watch mode using the HTTP profile expected by the UI
-api:
+api: stop-api
     @dotnet watch --project src/Ergonaut.Api/Ergonaut.Api.csproj --launch-profile http
 
 stop-api:

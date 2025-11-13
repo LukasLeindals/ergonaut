@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
+using Ergonaut.Core.Models;
 using Ergonaut.App.Models;
 using Ergonaut.App.Services;
 using Ergonaut.App.Services.ProjectScoped;
@@ -14,7 +15,7 @@ public partial class WorkItems : ComponentBase
 
     private List<ProjectRecord>? _projects;
     private List<WorkItemRecord>? _workItems;
-    private CreateWorkItemRequest _workItemForm = new();
+    private CreateWorkItemRequest _workItemForm = new(sourceLabel: SourceLabel.Ergonaut);
     private Guid? _selectedProjectId;
 
     private bool _isSubmitting;

@@ -24,6 +24,9 @@
                                class="form-control"
                                placeholder="Project name" />
                         <ValidationSummary />
+                        <input @bind-Value="Form.Description" @bind-Value:event="oninput" class="form-control"
+                            placeholder="Project description" />
+                        <ValidationSummary />
                     </div>
                     <div class="modal-footer">
                         <button type="button"

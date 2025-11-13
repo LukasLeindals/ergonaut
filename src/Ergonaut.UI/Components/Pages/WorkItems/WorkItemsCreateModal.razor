@@ -27,6 +27,19 @@
                                @bind-Value:event="oninput"
                                class="form-control mt-2"
                                placeholder="Work item description" />
+                        <input @bind-Value="Form.Status"
+                               @bind-Value:event="oninput"
+                               class="form-control mt-2"
+                               placeholder="Work item status" />
+                        <input @bind-Value="Form.Priority"
+                               @bind-Value:event="oninput"
+                               class="form-control mt-2"
+                               placeholder="Work item priority" />
+                        <input @bind-Value="Form.DueDate"
+                               @bind-Value:event="oninput"
+                               class="form-control mt-2"
+                               placeholder="Work item due date" />
+
                         <ValidationSummary />
                     </div>
                     <div class="modal-footer">

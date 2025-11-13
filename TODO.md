@@ -30,6 +30,9 @@ Milestone TODOs:
 - Deduplicate work item creation for identical log events occurring within a configurable time window.
 - Configuration options for Sentinel (e.g., time window for deduplication, log event severity threshold for work item creation).
 
+## Checks
+- Is async where possible and done correctly.
+
 ## Sentinel Future
 - Datadog integration.
 - LLM layer for better work item description generation and deduplication.
