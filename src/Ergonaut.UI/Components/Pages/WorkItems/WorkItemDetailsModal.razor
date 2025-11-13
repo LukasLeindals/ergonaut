@@ -2,6 +2,8 @@
 @using Ergonaut.App.Models
 @using Microsoft.AspNetCore.Components
 @using Microsoft.AspNetCore.Components.Forms
+@using Ergonaut.Core.Models
+@using Ergonaut.Core.Models.WorkItem
 
 @if (IsVisible)
 {
@@ -17,19 +19,67 @@
                     OnInvalidSubmit="HandleInvalidSubmitAsync">
                     <DataAnnotationsValidator />
                     <div class="modal-body">
-                        <input @bind-Value="EditedWorkItem.Title" @bind-Value:event="oninput" class="form-control"
-                            placeholder="Work item title" />
-                        <input @bind-Value="EditedWorkItem.Description" @bind-Value:event="oninput" class="form-control mt-2"
-                            placeholder="Work item description" />
-                        <input @bind-Value="EditedWorkItem.Status" @bind-Value:event="oninput" class="form-control mt-2"
-                            placeholder="Work item status" />
-                        <input @bind-Value="EditedWorkItem.Priority" @bind-Value:event="oninput" class="form-control mt-2"
-                            placeholder="Work item priority" />
-                        <input @bind-Value="EditedWorkItem.DueDate" @bind-Value:event="oninput" class="form-control mt-2"
-                            placeholder="Work item due date" />
-                        <input @bind-Value="EditedWorkItem.SourceLabel" @bind-Value:event="oninput" class="form-control mt-2" />
-                        @* <input @bind-Value="EditedWorkItem.SourceData" @bind-Value:event="oninput" class="form-control mt-2" /> *@
                         <ValidationSummary />
+
+                        <fieldset disabled="@IsSubmitting">
+                            <div class="mb-3">
+                                <label for="title" class="form-label">Title</label>
+                                <InputText id="title" class="form-control" @bind-Value="EditedWorkItem.Title"
+                                    @bind-Value:event="oninput" />
+                                <ValidationMessage For="@(() => EditedWorkItem.Title)" />
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="description" class="form-label">Description</label>
+                                <InputTextArea id="description" class="form-control" rows="4"
+                                    @bind-Value="EditedWorkItem.Description" @bind-Value:event="oninput" />
+                                <ValidationMessage For="@(() => EditedWorkItem.Description)" />
+                            </div>
+
+                            <div class="row g-3">
+                                <div class="col-md-4">
+                                    <label for="status" class="form-label">Status</label>
+                                    <InputSelect id="status" class="form-select" @bind-Value="EditedWorkItem.Status">
+                                        @foreach (var status in StatusOptions)
+                                        {
+                                            <option value="@status">@status</option>
+                                        }
+                                    </InputSelect>
+                                </div>
+
+                                <div class="col-md-4">
+                                    <label for="priority" class="form-label">Priority</label>
+                                    <InputSelect id="priority" class="form-select" @bind-Value="EditedWorkItem.Priority">
+                                        <option value="">Not set</option>
+                                        @foreach (var priority in PriorityOptions)
+                                        {
+                                            <option value="@priority">@priority</option>
+                                        }
+                                    </InputSelect>
+                                </div>
+
+                                <div class="col-md-4">
+                                    <label class="form-label">Source</label>
+                                    <div class="form-control-plaintext">
+                                        <span class="badge bg-secondary">@GetSourceLabel()</span>
+                                    </div>
+                                </div>
+
+                                <div class="mt-3">
+                                    <label for="dueDate" class="form-label">Due Date</label>
+                                    <div class="input-group">
+                                        <InputDate TValue="DateTime ?" id="dueDate" class="form-control"
+                                            @bind-Value="EditedWorkItem.DueDate" />
+                                        <button type="button" class="btn btn-outline-secondary" title="Clear due date"
+                                            @onclick="ClearDueDate" disabled="@(EditedWorkItem.DueDate is null)">
+                                            <i class="fa-solid fa-xmark"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                        </fieldset>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-outline-secondary" @onclick="CloseAsync">Cancel</button>
@@ -58,4 +108,12 @@
 
     private Task HandleInvalidSubmitAsync(EditContext context) =>
     OnInvalidSubmit.HasDelegate ? OnInvalidSubmit.InvokeAsync(context) : Task.CompletedTask;
+
+    private void ClearDueDate() => EditedWorkItem.DueDate = null;
+
+    private string GetSourceLabel() =>
+    SelectedWorkItem.SourceLabel?.ToString() ?? "Unknown";
+    private static readonly WorkItemStatus[] StatusOptions = Enum.GetValues<WorkItemStatus>();
+    private static readonly WorkItemPriority[] PriorityOptions = Enum.GetValues<WorkItemPriority>();
+
 }
