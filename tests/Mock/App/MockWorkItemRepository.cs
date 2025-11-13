@@ -36,10 +36,9 @@ internal sealed class MockWorkItemRepository : IWorkItemRepository
         return Task.FromResult(workItem);
     }
 
-    public Task UpdateAsync(IWorkItem workItem, CancellationToken ct = default)
+    public Task<IWorkItem> UpdateAsync(IWorkItem workItem, CancellationToken ct = default)
     {
-        Seed(workItem);
-        return Task.CompletedTask;
+        return AddAsync(workItem, ct);
     }
 
     public Task DeleteAsync(Guid id, CancellationToken ct = default)

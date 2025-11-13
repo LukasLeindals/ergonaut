@@ -24,10 +24,11 @@ public sealed class WorkItemRepository : IWorkItemRepository
         await _db.SaveChangesAsync(ct);
         return workItem;
     }
-    public async Task UpdateAsync(IWorkItem workItem, CancellationToken ct = default)
+    public async Task<IWorkItem> UpdateAsync(IWorkItem workItem, CancellationToken ct = default)
     {
         _db.WorkItems.Update((WorkItem)workItem);
         await _db.SaveChangesAsync(ct);
+        return workItem;
     }
     public async Task DeleteAsync(Guid id, CancellationToken ct = default)
     {

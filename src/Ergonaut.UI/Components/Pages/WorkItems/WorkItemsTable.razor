@@ -9,6 +9,7 @@
             <th>Status</th>
             <th>Priority</th>
             <th>Due Date</th>
+            <th class="text-end">Updated At</th>
             <th class="text-end">Created At</th>
             <th class="text-end">Actions</th>
         </tr>
@@ -42,8 +43,15 @@
                     <td>@workItem.Status</td>
                     <td>@workItem.Priority</td>
                     <td>@workItem.DueDate?.ToLocalTime().ToString("d")</td>
+                    <td class="text-end">@workItem.UpdatedAt.ToLocalTime().ToString("g")</td>
                     <td class="text-end">@workItem.CreatedAt.ToLocalTime().ToString("g")</td>
                     <td class="text-end">
+                        <button class="btn btn-primary btn-sm me-2"
+                                title="View/Edit"
+                                disabled="@IsSubmitting"
+                                @onclick="() => { ViewDetails(workItem); }">
+                            <i class="fa-solid fa-edit"></i> Edit
+                        </button>
                         <button class="btn btn-danger btn-sm"
                                 title="Delete"
                                 disabled="@IsSubmitting"
@@ -63,7 +71,11 @@
     [Parameter] public bool HasSelectedProject { get; set; }
     [Parameter] public bool IsSubmitting { get; set; }
     [Parameter] public EventCallback<WorkItemRecord> OnDelete { get; set; }
+    [Parameter] public EventCallback<WorkItemRecord> OnView { get; set; }
 
     private Task DeleteAsync(WorkItemRecord record) =>
         OnDelete.HasDelegate ? OnDelete.InvokeAsync(record) : Task.CompletedTask;
+
+    private Task ViewDetails(WorkItemRecord record) =>
+        OnView.HasDelegate ? OnView.InvokeAsync(record) : Task.CompletedTask;
 }

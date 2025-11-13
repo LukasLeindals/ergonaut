@@ -1,4 +1,5 @@
 using System.Text.Json;
+using Ergonaut.Core.Models.WorkItem;
 
 namespace Ergonaut.Core.Models.WorkItem;
 
@@ -35,7 +36,7 @@ public partial class WorkItem : IWorkItem
     /// Gets or sets the date and time when the work item was last updated.
     /// </summary>
     public DateTime UpdatedAt { get; private set; } = DateTime.UtcNow;
-    public SourceLabel? SourceLabel { get; init; }
+    public SourceLabel? SourceLabel { get; private set; } = null;
     public Dictionary<string, JsonElement?>? SourceData { get; private set; } = null;
 
     /// <summary>
@@ -61,6 +62,22 @@ public partial class WorkItem : IWorkItem
         Status = status;
         Priority = priority;
         DueDate = dueDate;
+    }
+
+    public IWorkItem Update(string title, WorkItemStatus status, string? description = null, WorkItemPriority? priority = null, DateTime? dueDate = null, SourceLabel? sourceLabel = null, Dictionary<string, JsonElement?>? sourceData = null)
+    {
+
+        Title = NormalizeTitle(title);
+        Description = NormalizeDescription(description);
+        Status = status;
+        Priority = priority;
+        DueDate = dueDate;
+        SourceLabel = sourceLabel;
+        SourceData = sourceData;
+
+        UpdatedAt = DateTime.UtcNow;
+
+        return this;
     }
 
     private static string NormalizeTitle(string title)

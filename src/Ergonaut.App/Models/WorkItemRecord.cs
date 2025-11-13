@@ -28,6 +28,19 @@ public sealed record WorkItemRecord : IWorkItem
 
     public Dictionary<string, JsonElement?>? SourceData { get; init; } = null;
 
+    public IWorkItem Update(string title, WorkItemStatus status, string? description = null, WorkItemPriority? priority = null, DateTime? dueDate = null, SourceLabel? sourceLabel = null, Dictionary<string, JsonElement?>? sourceData = null)
+    {
+        return this with
+        {
+            Title = title,
+            Status = status,
+            Description = description,
+            Priority = priority,
+            DueDate = dueDate,
+            SourceLabel = sourceLabel,
+            SourceData = sourceData
+        };
+    }
     public static WorkItemRecord FromWorkItem(IWorkItem workItem) => new()
     {
         Id = workItem.Id,

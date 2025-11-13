@@ -2,7 +2,7 @@ using System.Linq;
 using System.Text.Json;
 using Ergonaut.App.Errors;
 using Ergonaut.App.Models;
-using Ergonaut.Core.Models;
+using Ergonaut.Core.Exceptions;
 using Ergonaut.Core.Models.WorkItem;
 using Ergonaut.Core.Repositories;
 using Microsoft.Extensions.Logging;
@@ -64,6 +64,28 @@ public sealed class WorkItemService(
 
         await repository.DeleteAsync(id, ct);
         return new DeletionResponse(true, "Work item deleted successfully.");
+    }
+
+    public async Task<WorkItemRecord> UpdateAsync(Guid projectId, Guid id, UpdateWorkItemRequest request, CancellationToken ct = default)
+    {
+        await EnsureProjectExists(projectId, ct);
+
+        var existing = await repository.GetAsync(id, ct);
+        if (existing is null || existing.ProjectId != projectId)
+            throw new WorkItemNotFoundException(id, projectId);
+
+        existing.Update(
+            title: request.Title,
+            description: request.Description,
+            status: request.Status,
+            priority: request.Priority,
+            dueDate: request.DueDate,
+            sourceLabel: request.SourceLabel,
+            sourceData: request.SourceData
+        );
+
+        var updated = await repository.UpdateAsync(existing, ct);
+        return WorkItemRecord.FromWorkItem(updated);
     }
 
     private async Task EnsureProjectExists(Guid projectId, CancellationToken ct)

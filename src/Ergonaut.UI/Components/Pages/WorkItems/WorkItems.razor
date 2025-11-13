@@ -21,6 +21,17 @@
                           OnInvalidSubmit="HandleInvalidSubmit" />
 }
 
+@if (_showDetailsModal && _selectedWorkItem is not null && _editedWorkItem is not null)
+{
+    <WorkItemDetailsModal IsVisible="_showDetailsModal"
+                          SelectedWorkItem="_selectedWorkItem"
+                          EditedWorkItem="_editedWorkItem"
+                          IsSubmitting="_isSubmitting"
+                          OnClose="HideDetailsModal"
+                          OnValidSubmit="UpdateWorkItemAsync"
+                          OnInvalidSubmit="HandleInvalidSubmit" />
+}
+
 @if (_projects is null)
 {
     <p class="mt-4"><em>Loading...</em></p>
@@ -37,8 +48,7 @@ else
 
     <WorkItemsTable WorkItems="_workItems"
                     IsLoading="_isLoadingWorkItems"
-                    HasSelectedProject="SelectedProjectId is not null"
-                    IsSubmitting="_isSubmitting"
+                    HasSelectedProject="SelectedProjectId is not null" IsSubmitting="_isSubmitting" OnView="ShowDetailsModal"
                     OnDelete="DeleteWorkItemAsync" />
 }
 

@@ -80,4 +80,47 @@ public partial class WorkItems
             _isSubmitting = false;
         }
     }
+
+    private async Task UpdateWorkItemAsync()
+    {
+        if (_isSubmitting)
+            return;
+
+        if (SelectedProjectId is not Guid projectId)
+        {
+            _errorMessage = "Select a project before updating work items.";
+            return;
+        }
+
+        if (_selectedWorkItem is null || _editedWorkItem is null)
+        {
+            _errorMessage = "No work item selected for update.";
+            return;
+        }
+
+        _isSubmitting = true;
+        _errorMessage = null;
+
+        Logger.LogInformation("Updating work item {WorkItemId} in project {ProjectId}", _selectedWorkItem.Id, projectId);
+
+        try
+        {
+            WorkItemRecord updated = await _workItemApi.UpdateAsync(projectId, _selectedWorkItem.Id, _editedWorkItem, CancellationToken.None);
+            int index = _workItems?.FindIndex(w => w.Id == updated.Id) ?? -1;
+            if (index >= 0)
+            {
+                _workItems![index] = updated;
+            }
+            HideDetailsModal();
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Failed to update work item {WorkItemId}", _selectedWorkItem.Id);
+            _errorMessage = "We couldn’t update the work item. Check the details and try again.";
+        }
+        finally
+        {
+            _isSubmitting = false;
+        }
+    }
 }
