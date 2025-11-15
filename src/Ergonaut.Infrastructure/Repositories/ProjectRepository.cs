@@ -30,10 +30,11 @@ public sealed class ProjectRepository : IProjectRepository
         return project;
     }
 
-    public async Task UpdateAsync(IProject project, CancellationToken ct = default)
+    public async Task<IProject> UpdateAsync(IProject project, CancellationToken ct = default)
     {
         _db.Projects.Update((Project)project);
         await _db.SaveChangesAsync(ct);
+        return project;
     }
 
     public async Task DeleteAsync(Guid id, CancellationToken ct = default)

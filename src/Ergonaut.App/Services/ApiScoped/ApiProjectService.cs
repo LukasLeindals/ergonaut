@@ -40,7 +40,16 @@ public sealed class ApiProjectService(HttpClient client) : IProjectService
         response.EnsureSuccessStatusCode();
 
         var created = await response.Content.ReadFromJsonAsync<ProjectRecord>(cancellationToken: ct);
-        return created ?? throw new InvalidOperationException("API returned no project payload.");
+        return created ?? throw new InvalidOperationException("API returned no project.");
+    }
+
+    public async Task<ProjectRecord> UpdateAsync(Guid id, UpdateProjectRequest request, CancellationToken ct = default)
+    {
+        var response = await client.PutAsJsonAsync($"api/v1/projects/{id:D}", request, ct);
+        response.EnsureSuccessStatusCode();
+
+        var updated = await response.Content.ReadFromJsonAsync<ProjectRecord>(cancellationToken: ct);
+        return updated ?? throw new InvalidOperationException("API returned no project.");
     }
 
     public async Task<DeletionResponse> DeleteAsync(Guid id, CancellationToken ct = default)

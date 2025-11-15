@@ -2,6 +2,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Ergonaut.Core.LogIngestion;
 using Ergonaut.Core.Models;
+using Ergonaut.Core.Models.WorkItem;
 using Ergonaut.App.Services;
 using Ergonaut.App.Services.ProjectScoped;
 using Ergonaut.App.Models;
@@ -43,7 +44,9 @@ public class WorkItemCreator : IWorkItemCreator
         _logger.LogInformation($"Project '{_config.ProjectName}' not found. Creating new project.");
         var createRequest = new CreateProjectRequest
         {
-            Title = _config.ProjectName
+            Title = _config.ProjectName,
+            SourceLabel = SourceLabel.Sentinel,
+            Description = "Auto-created project for Sentinel log events."
         };
 
         ProjectRecord createdProject = await _projectService.CreateAsync(createRequest, cancellationToken);
@@ -58,23 +61,40 @@ public class WorkItemCreator : IWorkItemCreator
 
         int? titleCountSuffix;
 
-        WorkItemRecord? lastExisting = existing.ToList().OrderBy(w => w.CreatedAt).ToList().FindLast(w => w.Source == WorkItemSourceLabel.Sentinel);
+        WorkItemRecord? lastExisting = existing.ToList().OrderBy(w => w.CreatedAt).ToList().FindLast(w => w.SourceLabel == SourceLabel.Sentinel);
         if (lastExisting != null)
         {
             titleCountSuffix = int.TryParse(lastExisting.Title.Split('#').Last(), out int result) ? result : (int?)null;
         }
         else
         {
-            titleCountSuffix = existing.ToList().Count(p => p.Source == WorkItemSourceLabel.Sentinel);
+            titleCountSuffix = existing.ToList().Count(p => p.SourceLabel == SourceLabel.Sentinel);
         }
 
         var workItemRequest = new CreateWorkItemRequest
         {
             Title = $"Sentinel Alert #{(titleCountSuffix ?? 0) + 1}",
             Description = logEvent.Message,
-            Source = WorkItemSourceLabel.Sentinel
+            SourceLabel = SourceLabel.Sentinel,
+            Status = WorkItemStatus.New,
+            Priority = MapLogLevelToPriority(logEvent.Level),
+            // SourceData # TODO: Map relevant log event data
         };
 
         return workItemRequest;
+    }
+
+    private static WorkItemPriority? MapLogLevelToPriority(LogLevel level)
+    {
+        return level switch
+        {
+            LogLevel.Critical => WorkItemPriority.High,
+            LogLevel.Error => WorkItemPriority.High,
+            LogLevel.Warning => WorkItemPriority.Medium,
+            LogLevel.Information => WorkItemPriority.Low,
+            LogLevel.Debug => WorkItemPriority.Low,
+            LogLevel.Trace => WorkItemPriority.Low,
+            _ => null,
+        };
     }
 }

@@ -41,7 +41,7 @@ public sealed class ApiWorkItemService(HttpClient client) : IWorkItemService
         response.EnsureSuccessStatusCode();
 
         var created = await response.Content.ReadFromJsonAsync<WorkItemRecord>(cancellationToken: ct);
-        return created ?? throw new InvalidOperationException("API returned no work item payload.");
+        return created ?? throw new InvalidOperationException("API returned no work item.");
     }
 
     public async Task<DeletionResponse> DeleteAsync(Guid projectId, Guid id, CancellationToken ct = default)
@@ -67,5 +67,17 @@ public sealed class ApiWorkItemService(HttpClient client) : IWorkItemService
         {
             return new DeletionResponse(false, $"Error deleting work item: {ex.Message}");
         }
+    }
+
+    public async Task<WorkItemRecord> UpdateAsync(Guid projectId, Guid id, UpdateWorkItemRequest request, CancellationToken ct = default)
+    {
+        var response = await client.PutAsJsonAsync($"api/v1/{projectId}/work-items/{id:D}", request, ct);
+        if (response.StatusCode == HttpStatusCode.NotFound)
+            throw new InvalidOperationException($"Work item {id} in project {projectId} was not found.");
+
+        response.EnsureSuccessStatusCode();
+
+        var updated = await response.Content.ReadFromJsonAsync<WorkItemRecord>(cancellationToken: ct);
+        return updated ?? throw new InvalidOperationException("Error updating work item: API returned no work item.");
     }
 }

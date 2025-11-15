@@ -8,6 +8,6 @@ public interface IWorkItemRepository
     Task<IReadOnlyList<IWorkItem>> ListAsync(CancellationToken ct = default);
     Task<IReadOnlyList<IWorkItem>> ListByProjectAsync(Guid projectId, CancellationToken ct = default);
     Task<IWorkItem> AddAsync(IWorkItem workItem, CancellationToken ct = default);
-    Task UpdateAsync(IWorkItem workItem, CancellationToken ct = default);
+    Task<IWorkItem> UpdateAsync(IWorkItem workItem, CancellationToken ct = default);
     Task DeleteAsync(Guid id, CancellationToken ct = default);
 }

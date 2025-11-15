@@ -9,4 +9,5 @@ public interface IWorkItemService
     Task<WorkItemRecord?> GetAsync(Guid projectId, Guid id, CancellationToken ct = default);
     Task<WorkItemRecord> CreateAsync(Guid projectId, CreateWorkItemRequest request, CancellationToken ct = default);
     Task<DeletionResponse> DeleteAsync(Guid projectId, Guid id, CancellationToken ct = default);
+    Task<WorkItemRecord> UpdateAsync(Guid projectId, Guid id, UpdateWorkItemRequest request, CancellationToken ct = default);
 }

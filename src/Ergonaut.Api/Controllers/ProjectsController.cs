@@ -1,5 +1,6 @@
 using Ergonaut.App.Models;
 using Ergonaut.App.Services;
+using Ergonaut.Core.Exceptions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -48,5 +49,28 @@ public sealed class ProjectsController : ControllerBase
     {
         var project = await _projectService.GetProjectByName(projectName, ct);
         return project is null ? NotFound() : Ok(project);
+    }
+
+    [HttpPut("{id:guid}")]
+    [Authorize(Policy = "ProjectsWrite")]
+    public async Task<ActionResult<ProjectRecord>> Put([FromRoute] Guid id, [FromBody] UpdateProjectRequest request, CancellationToken ct)
+    {
+        try
+        {
+            var updated = await _projectService.UpdateAsync(id, request, ct);
+            return Ok(updated);
+        }
+        catch (ProjectNotFoundException)
+        {
+            return NotFound();
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(ex.Message);
+        }
+        catch (Exception)
+        {
+            return StatusCode(500, "An unexpected error occurred.");
+        }
     }
 }

@@ -1,25 +1,26 @@
-@page "/work-items"
+@page "/tasks"
 @rendermode InteractiveServer
 @attribute [StreamRendering]
 
-<PageTitle>Work Items</PageTitle>
+<PageTitle>Tasks</PageTitle>
 
-<h1>Work Items</h1>
+<h1>Tasks</h1>
 
 @if (!string.IsNullOrWhiteSpace(_errorMessage))
 {
     <div class="alert alert-danger mt-3">@_errorMessage</div>
 }
 
-@if (_showCreateModal)
-{
-    <WorkItemsCreateModal IsVisible="_showCreateModal"
-                          Form="_workItemForm"
-                          IsSubmitting="_isSubmitting"
-                          OnClose="HideCreateModal"
-                          OnValidSubmit="CreateWorkItemAsync"
-                          OnInvalidSubmit="HandleInvalidSubmit" />
-}
+
+<WorkItemsCreateModal IsVisible="_showCreateModal" Form="_workItemForm" IsSubmitting="_isSubmitting"
+    OnClose="HideCreateModal" OnValidSubmit="CreateWorkItemAsync" OnInvalidSubmit="HandleInvalidSubmit" />
+
+
+
+<WorkItemDetailsModal IsVisible="_showDetailsModal" SelectedWorkItem="_selectedWorkItem"
+    EditedWorkItem="_editedWorkItem" IsSubmitting="_isSubmitting" OnClose="HideDetailsModal"
+    OnValidSubmit="UpdateWorkItemAsync" OnInvalidSubmit="HandleInvalidSubmit" />
+
 
 @if (_projects is null)
 {
@@ -31,15 +32,12 @@ else if (_projects.Count == 0)
 }
 else
 {
-    <WorkItemsProjectSelector Projects="_projects"
-                              SelectedProjectId="SelectedProjectId"
-                              OnProjectSelected="SetSelectedProject" />
+    <WorkItemsProjectSelector Projects="_projects" SelectedProjectId="SelectedProjectId"
+        OnProjectSelected="SetSelectedProject" />
 
-    <WorkItemsTable WorkItems="_workItems"
-                    IsLoading="_isLoadingWorkItems"
-                    HasSelectedProject="SelectedProjectId is not null"
-                    IsSubmitting="_isSubmitting"
-                    OnDelete="DeleteWorkItemAsync" />
+    <WorkItemsTable WorkItems="_workItems" IsLoading="_isLoadingWorkItems"
+        HasSelectedProject="SelectedProjectId is not null" IsSubmitting="_isSubmitting" OnView="ShowDetailsModal"
+        OnDelete="DeleteWorkItemAsync" />
 }
 
-<button class="btn btn-primary" @onclick="ShowCreateModal"> Create New Work Item</button>
+<button class="btn btn-primary" @onclick="ShowCreateModal"> Create New Task</button>

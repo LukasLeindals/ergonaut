@@ -24,10 +24,9 @@ internal sealed class MockProjectRepository : IProjectRepository
         return Task.FromResult(project);
     }
 
-    public Task UpdateAsync(IProject project, CancellationToken ct = default)
+    public Task<IProject> UpdateAsync(IProject project, CancellationToken ct = default)
     {
-        Add(project);
-        return Task.CompletedTask;
+        return AddAsync(project, ct);
     }
 
     public Task DeleteAsync(Guid id, CancellationToken ct = default)

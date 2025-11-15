@@ -25,6 +25,11 @@ public class ErgonautDbContext : DbContext
             project.Property(p => p.Title)
                    .IsRequired()
                    .HasMaxLength(200);
+            project.Property(p => p.Description)
+                   .HasMaxLength(1000)
+                   .IsRequired(false);
+            project.Property(p => p.SourceLabel)
+                   .IsRequired(false);
         });
 
 

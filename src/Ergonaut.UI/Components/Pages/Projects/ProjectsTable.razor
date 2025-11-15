@@ -15,7 +15,9 @@ else
         <thead>
             <tr>
                 <th>Title</th>
-                <th>Created At</th>
+                <th>Description</th>
+                <th class="text-end">Updated At</th>
+                <th class="text-end">Created At</th>
                 <th class="text-end">Actions</th>
             </tr>
         </thead>
@@ -24,12 +26,17 @@ else
             {
                 <tr>
                     <td>@project.Title</td>
-                    <td>@project.CreatedAt.ToLocalTime()</td>
+                    <td>@project.Description</td>
+                    <td class="text-end">@project.UpdatedAt.ToLocalTime()</td>
+                    <td class="text-end">@project.CreatedAt.ToLocalTime()</td>
                     <td class="text-end">
+                        <button class="btn btn-primary btn-sm me-2" title="View/Edit" disabled="@IsSubmitting"
+                            @onclick="() => { ViewDetails(project); }">
+                            <i class="fa-solid fa-edit"></i> Edit
+                        </button>
                         <button class="btn btn-danger btn-sm" title="Delete" disabled="@IsSubmitting"
                             @onclick="() => DeleteProjectAsync(project)">
                             <i class="fa-solid fa-trash"></i> Delete
-                            @* <span class="visually-hidden">Delete</span> *@
                         </button>
                     </td>
                 </tr>
@@ -41,8 +48,12 @@ else
     [Parameter] public List<ProjectRecord>? Projects { get; set; } = default;
     [Parameter] public bool IsSubmitting { get; set; }
     [Parameter] public EventCallback<ProjectRecord> OnDelete { get; set; }
+    [Parameter] public EventCallback<ProjectRecord> OnViewDetails { get; set; }
     private Task DeleteProjectAsync(ProjectRecord project) =>
     OnDelete.HasDelegate ? OnDelete.InvokeAsync(project) : Task.CompletedTask;
+
+    private Task ViewDetails(ProjectRecord project) =>
+    OnViewDetails.HasDelegate ? OnViewDetails.InvokeAsync(project) : Task.CompletedTask;
 
     private bool _IsLoading => Projects == null;
     private List<ProjectRecord> _Projects => Projects ?? new List<ProjectRecord>();

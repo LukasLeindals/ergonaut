@@ -26,6 +26,13 @@ namespace Ergonaut.Infrastructure.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("Description")
+                        .HasMaxLength(1000)
+                        .HasColumnType("TEXT");
+
+                    b.Property<int?>("SourceLabel")
+                        .HasColumnType("INTEGER");
+
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasMaxLength(200)
@@ -61,11 +68,11 @@ namespace Ergonaut.Infrastructure.Migrations
                     b.Property<Guid>("ProjectId")
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("Source")
-                        .HasColumnType("INTEGER");
-
                     b.Property<string>("SourceData")
                         .HasColumnType("TEXT");
+
+                    b.Property<int?>("SourceLabel")
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("Status")
                         .HasColumnType("INTEGER");

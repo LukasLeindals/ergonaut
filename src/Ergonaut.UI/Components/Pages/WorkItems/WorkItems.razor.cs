@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
+using Ergonaut.Core.Models;
 using Ergonaut.App.Models;
 using Ergonaut.App.Services;
 using Ergonaut.App.Services.ProjectScoped;
@@ -14,13 +15,16 @@ public partial class WorkItems : ComponentBase
 
     private List<ProjectRecord>? _projects;
     private List<WorkItemRecord>? _workItems;
-    private CreateWorkItemRequest _workItemForm = new();
+    private CreateWorkItemRequest _workItemForm = new(sourceLabel: SourceLabel.Ergonaut);
     private Guid? _selectedProjectId;
+    private WorkItemRecord? _selectedWorkItem;
+    private UpdateWorkItemRequest? _editedWorkItem;
 
     private bool _isSubmitting;
     private bool _isLoadingWorkItems;
     private string? _errorMessage;
     private bool _showCreateModal;
+    private bool _showDetailsModal;
 
     protected override async Task OnInitializedAsync()
     {
@@ -69,4 +73,17 @@ public partial class WorkItems : ComponentBase
     }
 
     private void HideCreateModal() => _showCreateModal = false;
+
+    private void ShowDetailsModal(WorkItemRecord workItem)
+    {
+        _selectedWorkItem = workItem;
+        _editedWorkItem = UpdateWorkItemRequest.FromWorkItem(workItem);
+        _showDetailsModal = true;
+    }
+    private void HideDetailsModal()
+    {
+        _selectedWorkItem = null;
+        _editedWorkItem = null;
+        _showDetailsModal = false;
+    }
 }

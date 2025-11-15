@@ -64,4 +64,35 @@ public partial class Projects
             _isSubmitting = false;
         }
     }
+
+    private async Task UpdateProjectAsync()
+    {
+        if (_isSubmitting || _editedProject is null || _selectedProject is null)
+            return;
+
+        _isSubmitting = true;
+        _errorMessage = null;
+
+        Logger.LogInformation("Updating project {ProjectId} ({ProjectTitle})", _selectedProject.Id, _editedProject.Title);
+
+        try
+        {
+            ProjectRecord updated = await projectApi.UpdateAsync(_selectedProject.Id, _editedProject, CancellationToken.None);
+            int index = _projects?.FindIndex(p => p.Id == updated.Id) ?? -1;
+            if (index >= 0)
+            {
+                _projects![index] = updated;
+            }
+            HideDetailsModal();
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Failed to update project");
+            _errorMessage = "We couldn’t update the project. Check the details and try again.";
+        }
+        finally
+        {
+            _isSubmitting = false;
+        }
+    }
 }

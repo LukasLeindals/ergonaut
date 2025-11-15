@@ -11,8 +11,10 @@ builder.Configuration.AddConfigurationSources(builder.Environment);
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
-    .AddInteractiveServerComponents();
-
+    .AddInteractiveServerComponents(options =>
+    {
+        options.DetailedErrors = true;
+    });
 
 
 

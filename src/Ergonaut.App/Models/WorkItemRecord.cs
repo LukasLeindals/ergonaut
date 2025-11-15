@@ -18,10 +18,29 @@ public sealed record WorkItemRecord : IWorkItem
 
     public DateTime UpdatedAt { get; init; }
 
-    public WorkItemSourceLabel Source { get; init; }
+    public WorkItemStatus Status { get; init; }
+
+    public WorkItemPriority? Priority { get; init; }
+
+    public DateTime? DueDate { get; init; }
+
+    public SourceLabel? SourceLabel { get; init; }
 
     public Dictionary<string, JsonElement?>? SourceData { get; init; } = null;
 
+    public IWorkItem Update(string title, WorkItemStatus status, string? description = null, WorkItemPriority? priority = null, DateTime? dueDate = null, SourceLabel? sourceLabel = null, Dictionary<string, JsonElement?>? sourceData = null)
+    {
+        return this with
+        {
+            Title = title,
+            Status = status,
+            Description = description,
+            Priority = priority,
+            DueDate = dueDate,
+            SourceLabel = sourceLabel,
+            SourceData = sourceData
+        };
+    }
     public static WorkItemRecord FromWorkItem(IWorkItem workItem) => new()
     {
         Id = workItem.Id,
@@ -30,7 +49,10 @@ public sealed record WorkItemRecord : IWorkItem
         Description = workItem.Description,
         CreatedAt = workItem.CreatedAt,
         UpdatedAt = workItem.UpdatedAt,
-        Source = workItem.Source,
+        Status = workItem.Status,
+        Priority = workItem.Priority,
+        DueDate = workItem.DueDate,
+        SourceLabel = workItem.SourceLabel,
         SourceData = workItem.SourceData?.ToDictionary(kvp => kvp.Key, kvp => kvp.Value)
     };
 }

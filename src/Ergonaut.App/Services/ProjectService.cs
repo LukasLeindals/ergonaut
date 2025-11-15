@@ -1,6 +1,7 @@
 using Ergonaut.Core.Repositories;
 using Ergonaut.Core.Models.Project;
 using Ergonaut.App.Models;
+using Ergonaut.Core.Exceptions;
 
 namespace Ergonaut.App.Services;
 
@@ -14,13 +15,30 @@ public sealed class ProjectService(IProjectRepository repository) : IProjectServ
 
     public async Task<ProjectRecord> CreateAsync(CreateProjectRequest request, CancellationToken ct = default)
     {
-        var project = await repository.AddAsync(new Project(title: request.Title), ct);
+        IProject project = await repository.AddAsync(new Project(title: request.Title, description: request.Description, sourceLabel: request.SourceLabel), ct);
         return ProjectRecord.FromProject(project);
+    }
+
+    public async Task<ProjectRecord> UpdateAsync(Guid id, UpdateProjectRequest request, CancellationToken ct = default)
+    {
+        IProject? existing = await repository.GetAsync(id, ct);
+        if (existing is null)
+            throw new ProjectNotFoundException(id);
+
+        existing.Update(
+            title: request.Title,
+            description: request.Description,
+            sourceLabel: request.SourceLabel
+        );
+
+        // Assuming the repository handles updating other fields as well
+        IProject updatedProject = await repository.UpdateAsync(existing, ct);
+        return ProjectRecord.FromProject(updatedProject);
     }
 
     public async Task<DeletionResponse> DeleteAsync(Guid id, CancellationToken ct = default)
     {
-        var existing = await repository.GetAsync(id, ct);
+        IProject? existing = await repository.GetAsync(id, ct);
         if (existing is null)
             return new DeletionResponse(false, "Project not found.");
 
@@ -30,13 +48,13 @@ public sealed class ProjectService(IProjectRepository repository) : IProjectServ
 
     public async Task<ProjectRecord?> GetAsync(Guid id, CancellationToken ct = default)
     {
-        var project = await repository.GetAsync(id, ct); // repository stays domain-focused
+        IProject? project = await repository.GetAsync(id, ct); // repository stays domain-focused
         return project is null ? null : ProjectRecord.FromProject(project);
     }
 
     public async Task<ProjectRecord?> GetProjectByName(string projectName, CancellationToken ct = default)
     {
-        var project = await repository.GetByNameAsync(projectName, ct);
+        IProject? project = await repository.GetByNameAsync(projectName, ct);
         return project is null ? null : ProjectRecord.FromProject(project);
     }
 }

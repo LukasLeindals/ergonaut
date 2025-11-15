@@ -13,25 +13,27 @@
                     <button type="button" class="btn-close" aria-label="Close" @onclick="CloseAsync"></button>
                 </div>
 
-                <EditForm Model="Form"
-                          FormName="create-project"
-                          OnValidSubmit="HandleValidSubmitAsync"
-                          OnInvalidSubmit="HandleInvalidSubmitAsync">
+                <EditForm Model="Form" FormName="create-project" OnValidSubmit="HandleValidSubmitAsync"
+                    OnInvalidSubmit="HandleInvalidSubmitAsync">
                     <DataAnnotationsValidator />
                     <div class="modal-body">
-                        <input @bind-Value="Form.Title"
-                               @bind-Value:event="oninput"
-                               class="form-control"
-                               placeholder="Project name" />
-                        <ValidationSummary />
+                        <fieldset disabled="@IsSubmitting">
+                            <div class="mb-3">
+                                <label for="title" class="form-label">Title</label>
+                                <InputText id="title" class="form-control" @bind-Value="Form.Title" />
+                                <ValidationMessage For="@(() => Form.Title)" />
+                            </div>
+                            <div class="mb-3">
+                                <label for="description" class="form-label">Description</label>
+                                <InputTextArea id="description" class="form-control" rows="4"
+                                    @bind-Value="Form.Description" />
+                                <ValidationMessage For="@(() => Form.Description)" />
+                            </div>
+                        </fieldset>
                     </div>
                     <div class="modal-footer">
-                        <button type="button"
-                                class="btn btn-outline-secondary"
-                                @onclick="CloseAsync">Cancel</button>
-                        <button type="submit"
-                                class="btn btn-primary"
-                                disabled="@IsSubmitting">Create</button>
+                        <button type="button" class="btn btn-outline-secondary" @onclick="CloseAsync">Cancel</button>
+                        <button type="submit" class="btn btn-primary" disabled="@IsSubmitting">Create</button>
                     </div>
                 </EditForm>
             </div>
@@ -48,11 +50,11 @@
     [Parameter] public EventCallback<EditContext> OnInvalidSubmit { get; set; }
 
     private Task CloseAsync() =>
-        OnClose.HasDelegate ? OnClose.InvokeAsync(null) : Task.CompletedTask;
+    OnClose.HasDelegate ? OnClose.InvokeAsync(null) : Task.CompletedTask;
 
     private Task HandleValidSubmitAsync() =>
-        OnValidSubmit.HasDelegate ? OnValidSubmit.InvokeAsync(null) : Task.CompletedTask;
+    OnValidSubmit.HasDelegate ? OnValidSubmit.InvokeAsync(null) : Task.CompletedTask;
 
     private Task HandleInvalidSubmitAsync(EditContext context) =>
-        OnInvalidSubmit.HasDelegate ? OnInvalidSubmit.InvokeAsync(context) : Task.CompletedTask;
+    OnInvalidSubmit.HasDelegate ? OnInvalidSubmit.InvokeAsync(context) : Task.CompletedTask;
 }
