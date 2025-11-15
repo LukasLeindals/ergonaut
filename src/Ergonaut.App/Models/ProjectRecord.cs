@@ -26,4 +26,14 @@ public sealed record ProjectRecord : IProject
         UpdatedAt = project.UpdatedAt,
         SourceLabel = project.SourceLabel
     };
+
+    public IProject Update(string title, string? description, SourceLabel? sourceLabel)
+    {
+        return this with
+        {
+            Title = title,
+            Description = description,
+            SourceLabel = sourceLabel
+        };
+    }
 }

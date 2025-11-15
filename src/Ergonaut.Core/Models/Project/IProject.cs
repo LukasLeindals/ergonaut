@@ -9,4 +9,6 @@ public interface IProject
     DateTime CreatedAt { get; }
     DateTime UpdatedAt { get; }
     SourceLabel? SourceLabel { get; }
+
+    IProject Update(string title, string? description, SourceLabel? sourceLabel);
 }

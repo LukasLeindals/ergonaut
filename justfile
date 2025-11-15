@@ -6,11 +6,11 @@ help:
 
 # Launch the Ergonaut UI in watch mode
 ui:
-    @cd src/Ergonaut.UI && dotnet watch
+    @dotnet watch --project src/Ergonaut.UI/Ergonaut.UI.csproj --launch-profile development
 
 # Launch the Ergonaut API in watch mode using the HTTP profile expected by the UI
 api: stop-api
-    @dotnet watch --project src/Ergonaut.Api/Ergonaut.Api.csproj --launch-profile http
+    @dotnet watch --project src/Ergonaut.Api/Ergonaut.Api.csproj --launch-profile development
 
 stop-api:
     kill -9 $(lsof -ti:5075) || echo "Ergonaut API not running"

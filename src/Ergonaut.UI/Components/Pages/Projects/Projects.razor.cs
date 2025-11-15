@@ -12,9 +12,13 @@ public partial class Projects : ComponentBase
 
     private CreateProjectRequest _form = new();
     private List<ProjectRecord>? _projects;
+
+    private UpdateProjectRequest? _editedProject;
+    private ProjectRecord? _selectedProject;
     private bool _isSubmitting;
     private string? _errorMessage;
     private bool _showCreateModal;
+    private bool _showDetailsModal;
 
     protected override async Task OnInitializedAsync()
     {
@@ -43,5 +47,19 @@ public partial class Projects : ComponentBase
     private void HideCreateModal()
     {
         _showCreateModal = false;
+    }
+
+    private void ShowDetailsModal(ProjectRecord project)
+    {
+        _selectedProject = project;
+        _editedProject = UpdateProjectRequest.FromProject(project);
+        _showDetailsModal = true;
+    }
+
+    private void HideDetailsModal()
+    {
+        _selectedProject = null;
+        _editedProject = null;
+        _showDetailsModal = false;
     }
 }

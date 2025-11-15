@@ -2,6 +2,8 @@
 @using Ergonaut.App.Models
 @using Microsoft.AspNetCore.Components
 @using Microsoft.AspNetCore.Components.Forms
+@using Ergonaut.Core.Models
+@using Ergonaut.Core.Models.Project
 
 @if (IsVisible)
 {
@@ -9,31 +11,44 @@
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">New Project</h5>
+                    <h5 class="modal-title">Project: @SelectedProject.Title</h5>
                     <button type="button" class="btn-close" aria-label="Close" @onclick="CloseAsync"></button>
                 </div>
 
-                <EditForm Model="Form" FormName="create-project" OnValidSubmit="HandleValidSubmitAsync"
+                <EditForm Model="EditedProject" FormName="edit-project" OnValidSubmit="HandleValidSubmitAsync"
                     OnInvalidSubmit="HandleInvalidSubmitAsync">
                     <DataAnnotationsValidator />
                     <div class="modal-body">
+                        <ValidationSummary />
+
                         <fieldset disabled="@IsSubmitting">
                             <div class="mb-3">
                                 <label for="title" class="form-label">Title</label>
-                                <InputText id="title" class="form-control" @bind-Value="Form.Title" />
-                                <ValidationMessage For="@(() => Form.Title)" />
+                                <InputText id="title" class="form-control" @bind-Value="EditedProject.Title" />
+                                <ValidationMessage For="@(() => EditedProject.Title)" />
                             </div>
+
                             <div class="mb-3">
                                 <label for="description" class="form-label">Description</label>
                                 <InputTextArea id="description" class="form-control" rows="4"
-                                    @bind-Value="Form.Description" />
-                                <ValidationMessage For="@(() => Form.Description)" />
+                                    @bind-Value="EditedProject.Description" />
+                                <ValidationMessage For="@(() => EditedProject.Description)" />
                             </div>
+
+
+                            <div class="mb-3">
+                                <label for="source" class="form-label">Source</label>
+                                <div class="form-control-plaintext">
+                                    <span class="badge bg-secondary">@GetSourceLabel()</span>
+                                </div>
+
+                            </div>
+
                         </fieldset>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-outline-secondary" @onclick="CloseAsync">Cancel</button>
-                        <button type="submit" class="btn btn-primary" disabled="@IsSubmitting">Create</button>
+                        <button type="submit" class="btn btn-primary" disabled="@IsSubmitting">Save</button>
                     </div>
                 </EditForm>
             </div>
@@ -43,7 +58,8 @@
 
 @code {
     [Parameter] public bool IsVisible { get; set; }
-    [Parameter] public CreateProjectRequest Form { get; set; } = default!;
+    [Parameter] public ProjectRecord SelectedProject { get; set; } = default!;
+    [Parameter] public UpdateProjectRequest EditedProject { get; set; } = default!;
     [Parameter] public bool IsSubmitting { get; set; }
     [Parameter] public EventCallback OnClose { get; set; }
     [Parameter] public EventCallback OnValidSubmit { get; set; }
@@ -57,4 +73,8 @@
 
     private Task HandleInvalidSubmitAsync(EditContext context) =>
     OnInvalidSubmit.HasDelegate ? OnInvalidSubmit.InvokeAsync(context) : Task.CompletedTask;
+
+    private string GetSourceLabel() =>
+    SelectedProject.SourceLabel?.ToString() ?? "Unknown";
+
 }

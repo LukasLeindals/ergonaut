@@ -7,16 +7,16 @@
 
 <div class="row align-items-center g-3 mb-4">
     <div class="col-12 col-md-6">
-        <select class="form-select" value="@SelectedProjectValue" @onchange="HandleSelectionChangeAsync">
+        <InputSelect @bind-Value="SelectedProjectGuid" TValue="Guid?" class="form-select" style="width: 50%;">
             <option value="">Select a project…</option>
             @if (Projects is not null)
             {
                 foreach (var project in Projects)
                 {
-                    <option value="@project.Id.ToString()"> @project.Title </option>
+                    <option value="@project.Id">@project.Title</option>
                 }
             }
-        </select>
+        </InputSelect>
     </div>
     <div class="col-12 col-md-6">
         <p class="mt-4 mt-md-0">
@@ -29,20 +29,23 @@
     [Parameter] public IEnumerable<ProjectRecord>? Projects { get; set; }
     [Parameter] public Guid? SelectedProjectId { get; set; }
     [Parameter] public EventCallback<Guid?> OnProjectSelected { get; set; }
+    [Inject] private ILogger<WorkItemsProjectSelector>? Logger { get; set; }
 
-    private string? SelectedProjectValue => SelectedProjectId?.ToString();
-
-    private async Task HandleSelectionChangeAsync(ChangeEventArgs args)
+    private Guid? SelectedProjectGuid
     {
-        Guid? parsed = null;
-        if (args.Value is string value && Guid.TryParse(value, out var projectId))
+        get => SelectedProjectId;
+        set
         {
-            parsed = projectId;
-        }
+             if (SelectedProjectId == value)
+            {
+                return;
+            }
 
-        if (OnProjectSelected.HasDelegate)
-        {
-            await OnProjectSelected.InvokeAsync(parsed);
+            Logger?.LogDebug("Project changed to {Project}", value);
+            if (OnProjectSelected.HasDelegate)
+            {
+                _ = OnProjectSelected.InvokeAsync(value);
+            }
         }
     }
 }

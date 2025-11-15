@@ -10,6 +10,9 @@ public interface IProjectService
     // Creates a new project from the given request.
     Task<ProjectRecord> CreateAsync(CreateProjectRequest request, CancellationToken ct = default);
 
+    // Updates an existing project by its ID with the given request.
+    Task<ProjectRecord> UpdateAsync(Guid id, UpdateProjectRequest request, CancellationToken ct = default);
+
     // Deletes a project by its ID.
     Task<DeletionResponse> DeleteAsync(Guid id, CancellationToken ct = default);
 

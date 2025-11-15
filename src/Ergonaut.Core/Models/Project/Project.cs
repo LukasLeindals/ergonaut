@@ -12,14 +12,14 @@ namespace Ergonaut.Core.Models.Project
 
         public DateTime UpdatedAt { get; private set; } = DateTime.UtcNow;
 
-        public SourceLabel? SourceLabel { get; private set; } = null;
+        public SourceLabel? SourceLabel { get; private set; }
 
         public Project(string title)
+            : this(title, null, null)
         {
-            Title = NormalizeTitle(title);
         }
 
-        public Project(string title, string? description = null, SourceLabel? sourceLabel = null)
+        public Project(string title, string? description, SourceLabel? sourceLabel)
         {
             Title = NormalizeTitle(title);
             Description = description;
@@ -36,6 +36,16 @@ namespace Ergonaut.Core.Models.Project
         {
             ArgumentException.ThrowIfNullOrWhiteSpace(title);
             return title.Trim();
+        }
+
+        public IProject Update(string title, string? description, SourceLabel? sourceLabel)
+        {
+            Title = NormalizeTitle(title);
+            Description = description;
+            SourceLabel = sourceLabel;
+            
+            UpdatedAt = DateTime.UtcNow;
+            return this;
         }
     }
 }

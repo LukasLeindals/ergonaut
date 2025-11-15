@@ -1,8 +1,7 @@
 using System.Linq;
 using System.Text.Json;
-using Ergonaut.App.Errors;
-using Ergonaut.App.Models;
 using Ergonaut.Core.Exceptions;
+using Ergonaut.App.Models;
 using Ergonaut.Core.Models.WorkItem;
 using Ergonaut.Core.Repositories;
 using Microsoft.Extensions.Logging;

@@ -1,6 +1,7 @@
 using Ergonaut.Core.Repositories;
 using Ergonaut.Core.Models.Project;
 using Ergonaut.App.Models;
+using Ergonaut.Core.Exceptions;
 
 namespace Ergonaut.App.Services;
 
@@ -16,6 +17,23 @@ public sealed class ProjectService(IProjectRepository repository) : IProjectServ
     {
         IProject project = await repository.AddAsync(new Project(title: request.Title, description: request.Description, sourceLabel: request.SourceLabel), ct);
         return ProjectRecord.FromProject(project);
+    }
+
+    public async Task<ProjectRecord> UpdateAsync(Guid id, UpdateProjectRequest request, CancellationToken ct = default)
+    {
+        IProject? existing = await repository.GetAsync(id, ct);
+        if (existing is null)
+            throw new ProjectNotFoundException(id);
+
+        existing.Update(
+            title: request.Title,
+            description: request.Description,
+            sourceLabel: request.SourceLabel
+        );
+
+        // Assuming the repository handles updating other fields as well
+        IProject updatedProject = await repository.UpdateAsync(existing, ct);
+        return ProjectRecord.FromProject(updatedProject);
     }
 
     public async Task<DeletionResponse> DeleteAsync(Guid id, CancellationToken ct = default)

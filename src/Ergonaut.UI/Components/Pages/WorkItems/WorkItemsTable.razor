@@ -18,19 +18,19 @@
         @if (!HasSelectedProject)
         {
             <tr>
-                <td colspan="4"><em>Please select a project to view its work items.</em></td>
+                <td colspan="4"><em>Please select a project to view its tasks.</em></td>
             </tr>
         }
         else if (IsLoading)
         {
             <tr>
-                <td colspan="4"><em>Loading work items...</em></td>
+                <td colspan="4"><em>Loading tasks...</em></td>
             </tr>
         }
         else if (WorkItems is null || WorkItems.Count == 0)
         {
             <tr>
-                <td colspan="4"><em>No work items yet. Create one to get started.</em></td>
+                <td colspan="4"><em>No tasks yet. Create one to get started.</em></td>
             </tr>
         }
         else

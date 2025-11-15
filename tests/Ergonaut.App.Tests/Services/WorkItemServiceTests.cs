@@ -1,5 +1,5 @@
 using Ergonaut.Core.Models;
-using Ergonaut.App.Errors;
+using Ergonaut.Core.Exceptions;
 using Ergonaut.App.Models;
 using Ergonaut.App.Services.ProjectScoped;
 using Ergonaut.Tests.Mock.App;
