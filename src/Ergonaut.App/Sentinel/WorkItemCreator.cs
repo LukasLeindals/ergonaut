@@ -1,8 +1,10 @@
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using System.Text.Json;
 using Ergonaut.Core.LogIngestion;
 using Ergonaut.Core.Models;
 using Ergonaut.Core.Models.WorkItem;
+using Ergonaut.Core.Utils;
 using Ergonaut.App.Services;
 using Ergonaut.App.Services.ProjectScoped;
 using Ergonaut.App.Models;
@@ -59,29 +61,35 @@ public class WorkItemCreator : IWorkItemCreator
         // Conversion logic to create a work item from log event
         var existing = await _workItemService.ListAsync(projectId: project.Id, cancellationToken);
 
-        int? titleCountSuffix;
-
-        WorkItemRecord? lastExisting = existing.ToList().OrderBy(w => w.CreatedAt).ToList().FindLast(w => w.SourceLabel == SourceLabel.Sentinel);
-        if (lastExisting != null)
-        {
-            titleCountSuffix = int.TryParse(lastExisting.Title.Split('#').Last(), out int result) ? result : (int?)null;
-        }
-        else
-        {
-            titleCountSuffix = existing.ToList().Count(p => p.SourceLabel == SourceLabel.Sentinel);
-        }
-
         var workItemRequest = new CreateWorkItemRequest
         {
-            Title = $"Sentinel Alert #{(titleCountSuffix ?? 0) + 1}",
+            Title = CreateTitle(existing),
             Description = logEvent.Message,
             SourceLabel = SourceLabel.Sentinel,
             Status = WorkItemStatus.New,
             Priority = MapLogLevelToPriority(logEvent.Level),
-            // SourceData # TODO: Map relevant log event data
+            SourceData = ExtractSourceData(logEvent)
         };
 
         return workItemRequest;
+    }
+
+    private static string CreateTitle(IEnumerable<WorkItemRecord> existingWorkItems)
+    {
+        string titlePrefix = "Sentinel Alert #";
+        WorkItemRecord? lastExisting = existingWorkItems.OrderBy(w => w.CreatedAt).ToList().FindLast(w => w.Title.StartsWith(titlePrefix));
+
+        if (lastExisting == null)
+        {
+            return $"{titlePrefix}1";
+        }
+
+        if (!int.TryParse(lastExisting.Title.Replace(titlePrefix, ""), out int lastSuffix))
+        {
+            lastSuffix = existingWorkItems.Count(w => w.Title.StartsWith(titlePrefix)) - 1;
+        }
+
+        return $"{titlePrefix}{lastSuffix + 1}";
     }
 
     private static WorkItemPriority? MapLogLevelToPriority(LogLevel level)
@@ -96,5 +104,34 @@ public class WorkItemCreator : IWorkItemCreator
             LogLevel.Trace => WorkItemPriority.Low,
             _ => null,
         };
+    }
+
+    private static Dictionary<string, JsonElement?>? ExtractSourceData(ILogEvent logEvent)
+    {
+        Dictionary<string, JsonElement?> sourceData = logEvent.Metadata is null
+            ? new Dictionary<string, JsonElement?>()
+            : logEvent.Metadata.ToDictionary(
+                entry => entry.Key,
+                entry => entry.Value);
+
+        sourceData["messageTemplate"] = JsonUtils.ConvertToJsonElement(logEvent.MessageTemplate);
+
+        foreach (var kvp in logEvent.ResourceAttributes)
+        {
+            sourceData[kvp.Key] = JsonUtils.ConvertToJsonElement(kvp.Value);
+        }
+
+        foreach (var kvp in logEvent.ScopeAttributes)
+        {
+            sourceData[kvp.Key] = JsonUtils.ConvertToJsonElement(kvp.Value);
+        }
+
+        foreach (var kvp in logEvent.Attributes)
+        {
+            sourceData[kvp.Key] = JsonUtils.ConvertToJsonElement(kvp.Value);
+        }
+
+
+        return sourceData.Count == 0 ? null : sourceData;
     }
 }

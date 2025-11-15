@@ -2,6 +2,7 @@
 Simple Streamlit app that emits an OTLP log record when the user clicks a button.
 """
 
+from datetime import datetime
 import logging
 import os
 from typing import Tuple
@@ -112,7 +113,9 @@ def main() -> None:
                 message.format(**extra_vars),
                 extra=extra_vars | {"messageTemplate": message},
             )
-            st.success("Log event sent! Check the collector output.")
+            st.success(
+                f"Log event sent at {datetime.now():%Y-%m-%d %H:%M:%S}. Check the collector output."
+            )
         except Exception as e:
             st.error(f"Failed to emit log event: {e}")
 

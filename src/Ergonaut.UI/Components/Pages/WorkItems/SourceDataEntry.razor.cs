@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json;
+using Ergonaut.Core.Utils;
 
 namespace Ergonaut.UI.Components.Pages.WorkItems;
 
@@ -25,21 +26,8 @@ public class SourceDataEntry
             throw new ValidationException($"An entry with the key '{Key}' already exists.");
         }
 
-        if (Value == null)
-        {
-            sourceData[Key] = null;
-            return sourceData;
-        }
+        sourceData[Key] = JsonUtils.ConvertToJsonElement(Value);
 
-        try
-        {
-            using var jsonDoc = JsonDocument.Parse(Value);
-            sourceData[Key] = jsonDoc.RootElement.Clone();
-        }
-        catch (JsonException)
-        {
-            throw new ValidationException("Value must be valid JSON (wrap strings in quotes).");
-        }
         return sourceData;
     }
 }
