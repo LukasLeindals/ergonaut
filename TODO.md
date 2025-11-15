@@ -8,9 +8,6 @@ Milestone TODOs:
   - Groups should be independent of each other, i.e. the tasks can/should be done in any order.
 - Within a milestone heading, tasks should be ordered by priority and dependency.
 
-## General
-- Allow updates to projects and work items.
-- Add all fields to request models.
 
 ## Structure & Architecture
 - Refactor LogIngestion to separate adapters, processors, and exporters more clearly.

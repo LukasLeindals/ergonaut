@@ -1,0 +1,134 @@
+@using System.Text.Json
+@using System.Linq.Expressions
+@using System.ComponentModel.DataAnnotations
+
+<div class="mt-4 mb-2">
+    <div class="col d-flex align-items-center">
+        <label id="sourceDataLabel" class="form-label mb-0">@Label</label>
+        <button class="btn btn-link p-0 ms-2" type="button" data-bs-toggle="collapse"
+            data-bs-target="#sourceDataCollapse" aria-expanded="false" aria-controls="sourceDataCollapse"
+            title="Show/Hide Source Data Entries" @onclick="Toggle">
+            <i class="fa-solid @(IsCollapsed ? "fa-chevron-down" : "fa-chevron-up")"></i>
+        </button>
+    </div>
+
+    @if (!IsCollapsed)
+    {
+        <EditForm FormName="newEntryForm" OnSubmit="AddEntry" EditContext="_editContext">
+            <DataAnnotationsValidator />
+            <table class="table table-sm">
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                </thead>
+                @if (SourceData is not null)
+                {
+                    <tbody>
+                        @foreach (var kvp in SourceData)
+                        {
+                            <tr>
+                                <td>@kvp.Key</td>
+                                <td>
+                                    <pre>@kvp.Value?.ToString()</pre>
+                                </td>
+                                <td>
+                                    <button class="btn btn-danger btn-sm" type="button" title="Delete" @onclick="() => RemoveEntry(kvp.Key)">
+                                        <i class="fa-solid fa-trash"></i> Delete
+                                    </button>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                }
+                <tr>
+                    <td>
+                        <InputText id="newKey" @bind-Value="NewEntry.Key" />
+                        <ValidationMessage For="@(() => NewEntry.Key)" />
+                    </td>
+                    <td>
+                        <InputText id="newValue" @bind-Value="NewEntry.Value" />
+                        <ValidationMessage For="@(() => NewEntry.Value)" />
+                    </td>
+                    <td>
+                        <button class="btn btn-sm btn-primary" title="Add" type="submit">
+                            <i class="fa-solid fa-plus"></i> Add
+                        </button>
+                    </td>
+                </tr>
+            </table>
+        </EditForm>
+    }
+</div>
+
+
+
+
+@code {
+    [Parameter] public Dictionary<string, JsonElement?>? SourceData { get; set; }
+
+    [Parameter] public string Label { get; set; } = "Source Data";
+
+    [Parameter] public EventCallback<Dictionary<string, JsonElement?>?> SourceDataChanged { get; set; } // For binding support
+    [Parameter] public Expression<Func<Dictionary<string, JsonElement?>?>>? SourceDataExpression { get; set; } // For binding support
+
+
+public SourceDataEntry NewEntry { get; set; } = new SourceDataEntry();
+
+    private EditContext _editContext = default!;
+    private ValidationMessageStore? _messageStore;
+
+    private bool IsCollapsed { get; set; } = true;
+
+    protected override void OnInitialized()
+    {
+        ResetFormModel();
+        IsCollapsed = SourceData is null || SourceData.Count == 0;
+    }
+
+    private void ResetFormModel()
+    {
+        NewEntry = new SourceDataEntry();
+        _editContext = new EditContext(NewEntry);
+        _messageStore = new ValidationMessageStore(_editContext);
+
+        _editContext.OnValidationRequested += (_, __) => _messageStore?.Clear();
+        _editContext.OnFieldChanged += (_, args) => _messageStore?.Clear(args.FieldIdentifier);
+    }
+
+    private void Toggle() => IsCollapsed = !IsCollapsed;
+
+    private async Task RemoveEntry(string key)
+    {
+        SourceData?.Remove(key);
+        await SourceDataChanged.InvokeAsync(SourceData);
+    }
+
+    private async Task AddEntry(EditContext context)
+    {
+        if (!context.Validate())
+        {
+            return; // DataAnnotations failures already shown
+        }
+
+        try
+        {
+            SourceData = NewEntry.AddEntry(SourceData);
+            ResetFormModel();
+        }
+        catch (ValidationException vex)
+        {
+            // Decide which field the error belongs to
+            var targetField = vex.Message.Contains("key", StringComparison.OrdinalIgnoreCase)
+            ? new FieldIdentifier(NewEntry, nameof(NewEntry.Key))
+            : new FieldIdentifier(NewEntry, nameof(NewEntry.Value));
+
+            _messageStore?.Add(targetField, vex.Message);
+            context.NotifyValidationStateChanged();
+            return;
+        }
+        await SourceDataChanged.InvokeAsync(SourceData);
+    }
+}
