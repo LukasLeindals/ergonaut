@@ -16,8 +16,6 @@ from opentelemetry.sdk._logs import LoggerProvider, LoggingHandler
 from opentelemetry.sdk._logs.export import BatchLogRecordProcessor
 from opentelemetry.sdk.resources import Resource
 
-DEFAULT_ENDPOINT = "http://localhost:4318/v1/logs"
-
 
 class TokenResponse(BaseModel):
     """Model for the token response from Ergonaut authentication API."""
@@ -48,8 +46,7 @@ def _signin_to_ergonaut():
     return token
 
 
-def _build_logger() -> Tuple[logging.Logger, str]:
-    endpoint = os.getenv("OTLP_COLLECTOR_ENDPOINT", DEFAULT_ENDPOINT)
+def _build_logger() -> logging.Logger:
 
     resource = Resource.create(
         {
@@ -59,13 +56,13 @@ def _build_logger() -> Tuple[logging.Logger, str]:
         }
     )
 
-    provider = LoggerProvider(resource=resource)
-    _logs.set_logger_provider(provider)
+    # Only set the provider once; reuse if already initialized
+    provider = _logs.get_logger_provider()
+    if not isinstance(provider, LoggerProvider):
+        provider = LoggerProvider(resource=resource)
+        _logs.set_logger_provider(provider)
 
-    exporter = OTLPLogExporter(
-        endpoint=endpoint,
-        headers=(("Authorization", f"Bearer {os.environ['ERGONAUT_API_TOKEN']}"),),
-    )
+    exporter = OTLPLogExporter()
     provider.add_log_record_processor(BatchLogRecordProcessor(exporter))
 
     handler = LoggingHandler(level=logging.INFO, logger_provider=provider)
@@ -77,11 +74,11 @@ def _build_logger() -> Tuple[logging.Logger, str]:
     logger.addHandler(base_handler)
     logger.propagate = False
 
-    return logger, endpoint
+    return logger
 
 
 @st.cache_resource(show_spinner=False)
-def get_logger() -> Tuple[logging.Logger, str]:
+def get_logger() -> logging.Logger:
     _signin_to_ergonaut()
     return _build_logger()
 
@@ -94,8 +91,8 @@ def main() -> None:
         "Make sure the Ergonaut collector is running and forwarding to the app."
     )
 
-    logger, endpoint = get_logger()
-    st.caption(f"Logs exported to: {endpoint}")
+    logger = get_logger()
+    st.caption(f"Logs exported to: {os.environ['OTLP_COLLECTOR_ENDPOINT']}")
 
     message = st.text_input("A custom log message", value="A custom log message")
     warn_level = st.selectbox(
