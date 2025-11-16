@@ -4,6 +4,7 @@
 @using Microsoft.AspNetCore.Components.Forms
 @using Ergonaut.Core.Models
 @using Ergonaut.Core.Models.WorkItem
+@using System.Text.Json
 
 @if (IsVisible)
 {
@@ -78,6 +79,10 @@
                                     </div>
                                 </div>
                             </div>
+
+
+                            <SourceDataComponent @bind-SourceData="EditedWorkItem.SourceData" />
+
 
 
                         </fieldset>
