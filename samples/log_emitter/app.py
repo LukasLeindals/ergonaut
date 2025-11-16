@@ -116,7 +116,7 @@ def main() -> None:
             st.success(
                 f"Log event sent at {datetime.now():%Y-%m-%d %H:%M:%S}. Check the collector output."
             )
-        except Exception as e:
+        except Exception as e:  # pylint: disable=broad-except
             st.error(f"Failed to emit log event: {e}")
 
 

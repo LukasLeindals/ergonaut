@@ -43,7 +43,7 @@ public class WorkItemCreator : IWorkItemCreator
             return project;
         }
 
-        _logger.LogInformation($"Project '{_config.ProjectName}' not found. Creating new project.");
+        _logger.LogInformation("Project '{ProjectName}' not found. Creating new project.", _config.ProjectName);
         var createRequest = new CreateProjectRequest
         {
             Title = _config.ProjectName,
@@ -114,7 +114,7 @@ public class WorkItemCreator : IWorkItemCreator
                 entry => entry.Key,
                 entry => entry.Value);
 
-        sourceData["messageTemplate"] = JsonUtils.ConvertToJsonElement(logEvent.MessageTemplate);
+        sourceData[LogIngestionConstants.MessageTemplateKey] = JsonUtils.ConvertToJsonElement(logEvent.MessageTemplate);
 
         foreach (var kvp in logEvent.ResourceAttributes)
         {

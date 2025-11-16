@@ -4,6 +4,8 @@ using Ergonaut.App.Models;
 using Ergonaut.App.Services;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Logging;
+using System.Text.Json;
+using Ergonaut.Core.Models.WorkItem;
 
 namespace Ergonaut.App.Sentinel;
 
@@ -31,13 +33,14 @@ public sealed class SentinelLogEventFilter : ILogEventFilter
             throw new ArgumentNullException(nameof(logEvent));
 
         if (RejectLogLevel(logEvent))
-        {
             return false;
-        }
 
-        // IReadOnlyList<WorkItemRecord> existingWorkItems = await GetExistingWorkItems(cancellationToken);
+        IReadOnlyList<WorkItemRecord> existingWorkItems = await GetExistingWorkItems(cancellationToken);
 
-        // existingWorkItems.ToList().FindAll(w =>  w.Source == logEvent.Source);
+        if (RejectMessageTemplate(logEvent, existingWorkItems))
+            return false;
+
+
 
         return true;
     }
@@ -45,6 +48,20 @@ public sealed class SentinelLogEventFilter : ILogEventFilter
     private bool RejectLogLevel(ILogEvent logEvent)
     {
         return logEvent.Level < _config.MinimumLevel;
+    }
+
+    private bool RejectMessageTemplate(ILogEvent logEvent, IReadOnlyList<WorkItemRecord> existingWorkItems)
+    {
+
+        List<WorkItemRecord> matchingTemplates = existingWorkItems.ToList().FindAll(w => ExtractSourceData<string?>(w, LogIngestionConstants.MessageTemplateKey) == logEvent.MessageTemplate);
+
+        if (matchingTemplates.Count > 0)
+        {
+            _logger.LogInformation("Rejecting log event with message template '{MessageTemplate}' because {Count} matching work items already exist.", logEvent.MessageTemplate, matchingTemplates.Count);
+            return true;
+        }
+
+        return false;
     }
 
     private async Task<IReadOnlyList<WorkItemRecord>> GetExistingWorkItems(CancellationToken cancellationToken)
@@ -56,5 +73,31 @@ public sealed class SentinelLogEventFilter : ILogEventFilter
             return Array.Empty<WorkItemRecord>();
         }
         return await _workItemService.ListAsync(projectId: project.Id, cancellationToken);
+    }
+
+    private T? ExtractSourceData<T>(IWorkItem workItem, string attributeName)
+    {
+        if (workItem.SourceData is null ||
+            !workItem.SourceData.TryGetValue(attributeName, out var element) ||
+            element is null)
+        {
+            return default;
+        }
+
+        var json = element.Value;
+
+        try
+        {
+            // cheap path for strings
+            if (typeof(T) == typeof(string) && json.ValueKind == JsonValueKind.String)
+                return (T?)(object?)json.GetString();
+
+            return json.Deserialize<T>();
+        }
+        catch (JsonException ex)
+        {
+            _logger.LogWarning(ex, "Failed to deserialize source data attribute '{AttributeName}' in work item ID {WorkItemId}.", attributeName, workItem.Id);
+            return default;
+        }
     }
 }
