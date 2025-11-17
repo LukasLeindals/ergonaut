@@ -1,8 +1,11 @@
-using System.Text;
+
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using Ergonaut.Api.Configuration;
+using Ergonaut.App.Auth;
+using Ergonaut.App.Extensions;
+using Microsoft.Extensions.Options;
+
 
 namespace Ergonaut.Api.Extensions;
 
@@ -21,27 +24,32 @@ public static class ServiceCollectionExtensions
         return services;
     }
 
-    public static IServiceCollection AddErgonautAuthentication(this IServiceCollection services, IConfiguration configuration)
+    public static IServiceCollection AddErgonautApiAuthentication(this IServiceCollection services, IConfiguration configuration)
     {
-        // temporary dev secrets; move to secure store later
-        var jwtOptions = configuration.GetSection("Jwt").Get<JwtOptions>()
-            ?? throw new InvalidOperationException("Missing Jwt config");
-        services.AddSingleton(jwtOptions);
-
+        services.AddErgonautAuth(configuration);
+        services.AddSingleton<ITokenService, JwtTokenService>();
+        
         services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-            .AddJwtBearer(options =>
+            .AddJwtBearer();
+
+        services.AddSingleton<IConfigureOptions<JwtBearerOptions>>(sp =>
+        {
+            var authSettings = sp.GetRequiredService<IOptions<AuthSettings>>().Value;
+
+            return new ConfigureNamedOptions<JwtBearerOptions>(JwtBearerDefaults.AuthenticationScheme, options =>
             {
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
                     ValidateIssuer = true,
-                    ValidIssuer = jwtOptions.Issuer,
+                    ValidIssuer = authSettings.Issuer,
                     ValidateAudience = true,
-                    ValidAudience = jwtOptions.Audience,
+                    ValidAudience = authSettings.Audience,
                     ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtOptions.Secret)),
+                    IssuerSigningKey = authSettings.GetSigningKey(),
                     ValidateLifetime = true
                 };
             });
+        });
 
 
         return services;

@@ -4,6 +4,7 @@
     <TargetFramework>net9.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>ergonaut-api-9384c9bd-6c1d-4a84-9c77-0f7a6c82b2c3</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>

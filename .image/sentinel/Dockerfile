@@ -14,8 +14,8 @@ RUN dotnet restore src/Ergonaut.Sentinel/Ergonaut.Sentinel.csproj
 RUN dotnet publish src/Ergonaut.Sentinel/Ergonaut.Sentinel.csproj \
     -c Release -o /out /p:UseAppHost=false
 
-# Runtime stage
-FROM mcr.microsoft.com/dotnet/runtime:9.0 AS runtime
+# Runtime stage (needs Microsoft.AspNetCore.App shared framework)
+FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS runtime
 WORKDIR /app
 COPY --from=build /out ./
 # keep config/data paths that Program.cs expects (../../config, ../../data)

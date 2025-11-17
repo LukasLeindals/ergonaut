@@ -7,13 +7,15 @@ namespace Ergonaut.App.Services.ApiScoped;
 public sealed class ApiTokenHandler : DelegatingHandler
 {
     private readonly ApiOptions _options;
+    private readonly ApiServiceIdentity _identity;
     private readonly SemaphoreSlim _lock = new(1, 1);
     private string? _token;
     private DateTimeOffset _expiresAt;
 
-    public ApiTokenHandler(IOptions<ApiOptions> options)
+    public ApiTokenHandler(IOptions<ApiOptions> options, ApiServiceIdentity identity)
     {
         _options = options.Value;
+        _identity = identity;
     }
 
     protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
@@ -36,13 +38,21 @@ public sealed class ApiTokenHandler : DelegatingHandler
             {
                 throw new InvalidOperationException("API base URL is not configured.");
             }
+            if (string.IsNullOrWhiteSpace(_options.Auth.ServiceToken))
+            {
+                throw new InvalidOperationException("API auth service token is not configured.");
+            }
+            if (string.IsNullOrWhiteSpace(_identity.Service))
+            {
+                throw new InvalidOperationException("API auth service name is not configured.");
+            }
 
             var baseUri = new Uri(_options.BaseUrl);
             using var client = new HttpClient { BaseAddress = baseUri };
             var response = await client.PostAsJsonAsync(_options.Auth.Endpoint, new
             {
-                username = _options.Auth.Username,
-                password = _options.Auth.Password
+                Service = _identity.Service,
+                Token = _options.Auth.ServiceToken
             }, ct);
 
             response.EnsureSuccessStatusCode();
@@ -64,4 +74,3 @@ public sealed class ApiTokenHandler : DelegatingHandler
 
     private sealed record TokenResponse(string AccessToken, DateTimeOffset ExpiresAt);
 }
-

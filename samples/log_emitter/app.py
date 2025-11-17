@@ -6,6 +6,7 @@ from datetime import datetime
 import logging
 import os
 import requests
+from urllib.parse import urljoin
 
 from pydantic import BaseModel
 import streamlit as st
@@ -17,32 +18,29 @@ from opentelemetry.sdk.resources import Resource
 
 
 class TokenResponse(BaseModel):
-    """Model for the token response from Ergonaut authentication API."""
-
     accessToken: str
     expiresAt: str
+    refreshToken: str | None = None
+    refreshExpiresAt: str | None = None
 
 
 def _signin_to_ergonaut():
-    token_response = requests.post(
-        "http://localhost:5075/api/v1/auth/token",
-        json={
-            "username": st.secrets["ergonaut"]["username"],
-            "password": st.secrets["ergonaut"]["password"],
-        },
+    base = os.getenv("ERGONAUT_API_BASE", "http://localhost:5075/")
+    endpoint = os.getenv("ERGONAUT_AUTH_ENDPOINT", "api/v1/auth/token")
+    service = os.getenv("ERGONAUT_SERVICE_NAME") or st.secrets["ergonaut"]["service"] # must match registered service name
+    token = os.getenv("ERGONAUT_SERVICE_TOKEN") or st.secrets["ergonaut"]["token"]
+
+    resp = requests.post(
+        urljoin(base, endpoint),
+        json={"Service": service, "Token": token},
         timeout=5,
     )
-    if not token_response.ok:
-        raise RuntimeError(
-            f"Failed to sign in to Ergonaut: {token_response.status_code} {token_response.text}"
-        )
-    try:
-        token = TokenResponse.model_validate(token_response.json())
-    except Exception as e:
-        raise RuntimeError(f"Failed to parse Ergonaut token response: {e}")
-    os.environ["ERGONAUT_API_TOKEN"] = token.accessToken
-    print("Signed in to Ergonaut successfully.")
-    return token
+    resp.raise_for_status()
+    payload = TokenResponse.model_validate(resp.json())
+    os.environ["ERGONAUT_API_TOKEN"] = payload.accessToken
+
+    print("Signed in to Ergonaut API; obtained access token.")
+    return payload
 
 
 def _build_logger() -> logging.Logger:

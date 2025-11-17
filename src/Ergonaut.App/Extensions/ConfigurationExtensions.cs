@@ -1,3 +1,4 @@
+using System.Reflection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 
@@ -18,8 +19,21 @@ public static class ConfigurationExtensions
         config.AddJsonFile(sharedConfig, optional: false, reloadOnChange: true)
             .AddJsonFile(sharedEnvironmentConfig, optional: true, reloadOnChange: true)
             .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
-            .AddJsonFile($"appsettings.{environment.EnvironmentName}.json", optional: true, reloadOnChange: true)
-            .AddEnvironmentVariables();
+            .AddJsonFile($"appsettings.{environment.EnvironmentName}.json", optional: true, reloadOnChange: true);
+
+        // Ensure user-secrets still override the shared config when running locally.
+        if (environment.IsDevelopment())
+        {
+            // Use the entry assembly (the executable project) to locate the correct secrets id.
+            var entryAssembly = Assembly.GetEntryAssembly();
+            if (entryAssembly is not null)
+            {
+                config.AddUserSecrets(entryAssembly, optional: true);
+            }
+        }
+
+        // Environment variables can still override user-secrets when explicitly set.
+        config.AddEnvironmentVariables();
 
         return config;
     }

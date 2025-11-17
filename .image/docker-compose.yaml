@@ -3,6 +3,8 @@ services:
     build:
       context: ..
       dockerfile: .image/api/Dockerfile
+    env_file:
+      - ./api/.env
     environment:
       ASPNETCORE_ENVIRONMENT: ${DOTNET_ENVIRONMENT}
       ASPNETCORE_URLS: http://0.0.0.0:5075
@@ -21,12 +23,12 @@ services:
       dockerfile: .image/ui/Dockerfile
     depends_on:
       - api
+    env_file:
+      - ./ui/.env
     environment:
       ASPNETCORE_ENVIRONMENT: ${DOTNET_ENVIRONMENT}
       ASPNETCORE_URLS: http://0.0.0.0:5242
       Api__BaseUrl: http://api:5075/
-      Api__Auth__Username: dev
-      Api__Auth__Password: dev
     volumes:
       - ../config:/config:ro
       - ../data-protection:/data-protection # Persisted data protection keys
@@ -38,14 +40,17 @@ services:
       context: ..
       dockerfile: .image/sentinel/Dockerfile
     depends_on:
-      - api
-      - kafka
-      - otelcol
+      kafka:
+        condition: service_healthy
+      api:
+        condition: service_started
+      otelcol:
+        condition: service_started
+    env_file:
+      - ./sentinel/.env
     environment:
       ASPNETCORE_ENVIRONMENT: ${DOTNET_ENVIRONMENT}
       Api__BaseUrl: http://api:5075/
-      Api__Auth__Username: dev
-      Api__Auth__Password: dev
       LogIngestion__Kafka__BootstrapServers: kafka:9092
       ConnectionStrings__Ergonaut: Data Source=/data/sqlite/ergonaut.db
     volumes:
@@ -69,7 +74,7 @@ services:
     environment:
       COLLECTOR_OTLP_ENABLED: "true"
     ports:
-      - "16686:16686"  # UI
+      - "16686:16686" # UI
 
   zookeeper:
     image: confluentinc/cp-zookeeper:7.6.0
@@ -81,6 +86,18 @@ services:
     image: confluentinc/cp-kafka:7.6.0
     depends_on:
       - zookeeper
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "kafka-topics",
+          "--bootstrap-server",
+          "localhost:9092",
+          "--list",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 10
     ports:
       - "9092:9092"
     environment:
