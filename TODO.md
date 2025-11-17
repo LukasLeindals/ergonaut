@@ -14,6 +14,8 @@ Milestone TODOs:
 - Re-evaluate placement of certain services (e.g., WorkItemCreator) in the project structure.
 - Investigate oppportunity for using MVVM or similar patterns in the app structure.
 - Is async where possible and done correctly.
+- Make sure concepts from teaching materials are applied where appropriate.
+  - Refactor if necessary.
 
 ## Authentication & Authorization
 - Clean up authentication and authorization.
