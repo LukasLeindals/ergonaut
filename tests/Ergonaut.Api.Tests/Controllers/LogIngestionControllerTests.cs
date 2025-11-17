@@ -139,11 +139,11 @@ public sealed class LogIngestionControllerTests
     private static OtlpLogIngestionPipeline CreatePipeline(IEventProducer<ILogEvent> producer)
     {
         var parser = new OtlpLogPayloadParser();
-        var _options = new LogIngestionOptions
+        var logIngestionOptions = new LogIngestionOptions
         {
             TraceViewerBaseUrl = "https://traces.example.com"
         };
-        var options = Microsoft.Extensions.Options.Options.Create(_options);
+        var options = Microsoft.Extensions.Options.Options.Create(logIngestionOptions);
         return new OtlpLogIngestionPipeline(parser, producer, NullLogger<OtlpLogIngestionPipeline>.Instance, options);
     }
 

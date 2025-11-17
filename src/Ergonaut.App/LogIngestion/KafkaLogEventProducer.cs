@@ -11,8 +11,8 @@ public sealed class KafkaLogEventProducer : IEventProducer<ILogEvent>, IDisposab
 {
 
     private readonly KafkaLogEventOptions _options;
-    private ProducerConfig _producerConfig;
-    private IProducer<string?, byte[]> _producer;
+    private readonly ProducerConfig _producerConfig;
+    private readonly IProducer<string?, byte[]> _producer;
     private readonly ILogger<KafkaLogEventProducer> _logger;
 
     public KafkaLogEventProducer(KafkaLogEventOptions options, ILogger<KafkaLogEventProducer> logger)

@@ -14,6 +14,7 @@ public class Worker : BackgroundService
     private readonly IServiceScopeFactory _scopeFactory;
     private readonly KafkaLogEventOptions _kafkaOptions;
     private static readonly MemoryCache _recent = new(new MemoryCacheOptions { SizeLimit = 10_000 });
+    private static readonly object CacheMarker = new();
 
     public Worker(ILogger<Worker> logger, IEventConsumer<ILogEvent> logEventConsumer, ILogEventFilter logEventFilter, IServiceScopeFactory scopeFactory, IOptions<KafkaLogEventOptions> kafkaOptions)
     {
@@ -62,15 +63,16 @@ public class Worker : BackgroundService
         if (string.IsNullOrEmpty(fingerPrint))
             return false;
 
-        if (_recent.TryGetValue(fingerPrint, out _))
-            return true;
+        bool isDuplicate = true;
+        _recent.GetOrCreate(fingerPrint, entry =>
+        {
+            entry.SetSize(1);
+            entry.SetSlidingExpiration(TimeSpan.FromMinutes(5));
+            isDuplicate = false;
+            return CacheMarker;
+        });
 
-
-        var cacheEntryOptions = new MemoryCacheEntryOptions()
-            .SetSize(1)
-            .SetSlidingExpiration(TimeSpan.FromMinutes(10));
-        _recent.Set(fingerPrint, true, cacheEntryOptions);
-        return false;
+        return isDuplicate;
 
     }
 }

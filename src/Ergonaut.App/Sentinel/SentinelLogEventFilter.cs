@@ -55,7 +55,7 @@ public sealed class SentinelLogEventFilter : ILogEventFilter
 
         var useTemplate = !string.IsNullOrWhiteSpace(logEvent.MessageTemplate);
         if (!useTemplate)
-            _logger.LogInformation("Log event has no message template; using message instead.");
+            _logger.LogDebug("Log event has no message template; using message instead.");
 
         var attributeName = useTemplate ? LogIngestionConstants.MessageTemplateKey : LogIngestionConstants.MessageKey;
         var attributeValue = useTemplate ? logEvent.MessageTemplate : logEvent.Message;

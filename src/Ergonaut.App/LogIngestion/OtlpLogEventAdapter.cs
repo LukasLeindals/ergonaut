@@ -13,7 +13,7 @@ namespace Ergonaut.App.LogIngestion;
 /// <summary>
 /// Translates Open Telemetry Protocol (OTLP) log records into domain log events.
 /// </summary>
-public sealed class OtlpLogEventAdapter
+public static class OtlpLogEventAdapter
 {
     public static LogIngestionResult Transform(ExportLogsServiceRequest request, LogIngestionOptions options, CancellationToken cancellationToken = default)
     {
@@ -229,14 +229,14 @@ public sealed class OtlpLogEventAdapter
     private static IReadOnlyDictionary<string, JsonElement?>? CreateMetadata(LogRecord logRecord, LogIngestionOptions options)
     {
 
-        Dictionary<string, JsonElement?>? metadata = new();
+        Dictionary<string, JsonElement?> metadata = new();
 
         var traceUrl = !string.IsNullOrWhiteSpace(options.TraceViewerBaseUrl) && logRecord.TraceId is { Length: > 0 }
              ? $"{options.TraceViewerBaseUrl.TrimEnd('/')}/trace/{ToHexString(logRecord.TraceId)}"
              : null;
         if (traceUrl is not null)
         {
-            metadata["trace.url"] = JsonDocument.Parse($"\"{traceUrl}\"").RootElement;
+            metadata["trace.url"] = JsonSerializer.SerializeToElement(traceUrl);
         }
 
         if (metadata.Count == 0)
