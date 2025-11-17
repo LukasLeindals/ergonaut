@@ -5,7 +5,6 @@ Simple Streamlit app that emits an OTLP log record when the user clicks a button
 from datetime import datetime
 import logging
 import os
-from typing import Tuple
 import requests
 
 from pydantic import BaseModel
@@ -113,8 +112,18 @@ def main() -> None:
             st.success(
                 f"Log event sent at {datetime.now():%Y-%m-%d %H:%M:%S}. Check the collector output."
             )
+            st.session_state["log_history"] = st.session_state.get(
+                "log_history", []
+            ) + [
+                f"[{warn_level} {datetime.now():%Y-%m-%d %H:%M:%S}] {message.format(**extra_vars)}"
+            ]
         except Exception as e:  # pylint: disable=broad-except
             st.error(f"Failed to emit log event: {e}")
+
+    if "log_history" in st.session_state:
+        st.subheader("Log history")
+        for log_entry in reversed(st.session_state["log_history"]):
+            st.text(log_entry)
 
 
 if __name__ == "__main__":

@@ -23,18 +23,18 @@ public class Worker : BackgroundService
     }
     public async ValueTask HandleEvent(ILogEvent logEvent, CancellationToken cancellationToken)
     {
-        _logger.LogInformation("Accepting log event");
+        _logger.LogInformation("Handling log event using Sentinel filter");
         bool accept = await _logEventFilter.Accept(logEvent, cancellationToken);
         if (accept)
         {
-            _logger.LogInformation("Processing log event");
+            _logger.LogInformation("Processing log event with message: {Message}", logEvent.Message);
             using var scope = _scopeFactory.CreateScope();
             var workItemCreator = scope.ServiceProvider.GetRequiredService<IWorkItemCreator>();
             await workItemCreator.CreateWorkItem(logEvent, cancellationToken);
         }
         else
         {
-            _logger.LogInformation("Ignoring log event");
+            _logger.LogInformation("Ignoring log event with message: {Message}", logEvent.Message);
         }
     }
 

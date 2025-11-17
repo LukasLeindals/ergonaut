@@ -64,6 +64,13 @@ services:
       - "4317:4317" # OTLP gRPC receiver
       - "55681:55681" # OTLP HTTP receiver
 
+  jaeger:
+    image: jaegertracing/all-in-one:latest
+    environment:
+      COLLECTOR_OTLP_ENABLED: "true"
+    ports:
+      - "16686:16686"  # UI
+
   zookeeper:
     image: confluentinc/cp-zookeeper:7.6.0
     environment:

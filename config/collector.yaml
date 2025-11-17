@@ -10,6 +10,10 @@ exporters:
     compression: none
     headers:
       Authorization: "Bearer ${ERGONAUT_API_TOKEN}"
+  otlp/jaeger:
+    endpoint: jaeger:4317 # talks to Jaeger collector inside compose
+    tls:
+      insecure: true
 
 processors:
   batch: {}
@@ -23,4 +27,4 @@ service:
     traces:
       receivers: [otlp]
       processors: [batch]
-      exporters: [otlphttp]
+      exporters: [otlphttp, otlp/jaeger]

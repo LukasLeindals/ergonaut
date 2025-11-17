@@ -26,6 +26,7 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection AddLogIngestion(this IServiceCollection services)
     {
         services.AddOptions<KafkaLogEventOptions>().BindConfiguration("LogIngestion:Kafka").ValidateDataAnnotations().ValidateOnStart();
+        services.AddOptions<LogIngestionOptions>().BindConfiguration("LogIngestion").ValidateDataAnnotations().ValidateOnStart();
         services.AddSingleton<IEventProducer<ILogEvent>, KafkaLogEventProducer>();
         services.AddSingleton<IEventConsumer<ILogEvent>, KafkaLogEventConsumer>();
 
