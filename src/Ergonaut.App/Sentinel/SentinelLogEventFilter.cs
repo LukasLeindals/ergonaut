@@ -53,11 +53,17 @@ public sealed class SentinelLogEventFilter : ILogEventFilter
     private bool RejectMessageTemplate(ILogEvent logEvent, IReadOnlyList<WorkItemRecord> existingWorkItems)
     {
 
-        List<WorkItemRecord> matchingTemplates = existingWorkItems.ToList().FindAll(
-            w =>
-            w.Status != WorkItemStatus.Done &&
-            ExtractSourceData<string?>(w, LogIngestionConstants.MessageTemplateKey) == logEvent.MessageTemplate
-        );
+        var useTemplate = !string.IsNullOrWhiteSpace(logEvent.MessageTemplate);
+        if (!useTemplate)
+            _logger.LogInformation("Log event has no message template; using message instead.");
+
+        var attributeName = useTemplate ? LogIngestionConstants.MessageTemplateKey : LogIngestionConstants.MessageKey;
+        var attributeValue = useTemplate ? logEvent.MessageTemplate : logEvent.Message;
+
+        var matchingTemplates = existingWorkItems
+            .Where(w => w.Status != WorkItemStatus.Done &&
+                        ExtractSourceData<string?>(w, attributeName) == attributeValue)
+            .ToList();
 
         if (matchingTemplates.Count > 0)
         {
