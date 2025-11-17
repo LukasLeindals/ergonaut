@@ -1,33 +1,16 @@
 # TODO
 
-TODOs for the project.
+MVP-first: only items required for the first-edition functional prototype. Non-MVP work lives in `FUTURE_WORK.md`.
 
-Milestone TODOs:
-- Should be given a subheading for larger groups of tasks that can be performed independently.
-  - Avoid creating groups with only one task unless it is a major task.
-  - Groups should be independent of each other, i.e. the tasks can/should be done in any order.
-- Within a milestone heading, tasks should be ordered by priority and dependency.
+## Milestone 1 — Prototype Stability
+- Refactor LogIngestion to clearly separate adapters, processors, and exporters.
+- Ensure async usage is correct (awaiting, cancellation, avoiding thread-blocking paths).
+- Apply concepts from the teaching materials where appropriate; refactor if needed.
+- Clean up authentication/authorization: use long-lived tokens where required; remove any hardcoded secrets.
 
+## Milestone 2 — Release Prep
+- Re-evaluate placement of cross-cutting services (e.g., `WorkItemCreator`) in the project structure.
 
-## Structure & Architecture
-- Refactor LogIngestion to separate adapters, processors, and exporters more clearly.
-- Re-evaluate placement of certain services (e.g., WorkItemCreator) in the project structure.
-- Investigate oppportunity for using MVVM or similar patterns in the app structure.
-
-## Authentication & Authorization
-- Clean up authentication and authorization.
-  - Long-lived tokens.
-  - No hardcoded secrets.
-
-## Sentinel MVP
-
-- Add application stack traces.
-- Configuration options for Sentinel (e.g., time window for deduplication, log event severity threshold for work item creation).
-
-## Checks
-- Is async where possible and done correctly.
-
-## Sentinel Future
-- Datadog integration.
-- LLM layer for better work item description generation and deduplication.
+## Notes
+- Group tasks by independent milestones; order items by priority/dependency within each group.
 
