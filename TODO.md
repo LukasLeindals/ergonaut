@@ -13,6 +13,7 @@ Milestone TODOs:
 - Refactor LogIngestion to separate adapters, processors, and exporters more clearly.
 - Re-evaluate placement of certain services (e.g., WorkItemCreator) in the project structure.
 - Investigate oppportunity for using MVVM or similar patterns in the app structure.
+- Is async where possible and done correctly.
 
 ## Authentication & Authorization
 - Clean up authentication and authorization.
@@ -22,12 +23,11 @@ Milestone TODOs:
 ## Sentinel MVP
 
 - Add application stack traces.
+  - Catch uncaught exceptions and possibly add them to `extra` field in log events.
 - Configuration options for Sentinel (e.g., time window for deduplication, log event severity threshold for work item creation).
 
-## Checks
-- Is async where possible and done correctly.
+## Examples
+- Add python example application
+- Add C# example application
 
-## Sentinel Future
-- Datadog integration.
-- LLM layer for better work item description generation and deduplication.
 
