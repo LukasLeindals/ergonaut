@@ -12,7 +12,7 @@ public sealed class KafkaLogEventConsumer : IEventConsumer<ILogEvent>, IDisposab
     private readonly KafkaLogEventOptions _options;
     private readonly ILogger<KafkaLogEventConsumer> _logger;
 
-    private IConsumer<Null, byte[]>? _consumer;
+    private IConsumer<string?, byte[]>? _consumer;
 
     public KafkaLogEventConsumer(KafkaLogEventOptions options, ILogger<KafkaLogEventConsumer> logger)
     {
@@ -24,7 +24,7 @@ public sealed class KafkaLogEventConsumer : IEventConsumer<ILogEvent>, IDisposab
             GroupId = _options.GroupId,
             AutoOffsetReset = AutoOffsetReset.Earliest
         };
-        _consumer = new ConsumerBuilder<Null, byte[]>(config)
+        _consumer = new ConsumerBuilder<string?, byte[]>(config)
             .SetErrorHandler((_, e) => _logger.LogError("Kafka consumer error: {Reason}", e.Reason))
             .Build();
     }

@@ -30,4 +30,7 @@ public interface ILogEvent
 
     IReadOnlyDictionary<string, string?> ResourceAttributes { get; }
     IReadOnlyDictionary<string, string?> ScopeAttributes { get; }
+
+
+    string? GetFingerprint();
 }

@@ -73,4 +73,10 @@ public sealed record LogEvent : ILogEvent
 
     // From scope
     public IReadOnlyDictionary<string, string?> ScopeAttributes { get; init; }
+
+    public string? GetFingerprint()
+    {
+        // Simple fingerprint based on message and source; can be extended as needed
+        return $"{Source}__{Message}__{Timestamp}__{TraceId}__{SpanId}".GetHashCode().ToString();
+    }
 }
