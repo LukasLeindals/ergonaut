@@ -1,5 +1,7 @@
 using System.Text.Json;
 using Microsoft.Extensions.Logging;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace Ergonaut.Core.LogIngestion;
 
@@ -73,4 +75,17 @@ public sealed record LogEvent : ILogEvent
 
     // From scope
     public IReadOnlyDictionary<string, string?> ScopeAttributes { get; init; }
+
+    public string? GetFingerprint() => GetFingerprint(true);
+
+    public string? GetFingerprint(bool includeTimestamp)
+    {
+        string fingerPrint = $"{Source}__{Message}__{TraceId}__{SpanId}";
+
+        if (includeTimestamp)
+            fingerPrint += $"__{Timestamp}";
+
+        using var sha256 = SHA256.Create();
+        return Convert.ToHexString(sha256.ComputeHash(Encoding.UTF8.GetBytes(fingerPrint)));
+    }
 }

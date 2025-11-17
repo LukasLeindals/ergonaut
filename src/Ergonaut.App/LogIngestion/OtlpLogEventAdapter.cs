@@ -6,15 +6,16 @@ using OpenTelemetry.Proto.Common.V1;
 using OpenTelemetry.Proto.Logs.V1;
 using OpenTelemetry.Proto.Resource.V1;
 using OpenTelemetry.Proto.Collector.Logs.V1;
+using System.Text.Json;
 
 namespace Ergonaut.App.LogIngestion;
 
 /// <summary>
 /// Translates Open Telemetry Protocol (OTLP) log records into domain log events.
 /// </summary>
-public sealed class OtlpLogEventAdapter
+public static class OtlpLogEventAdapter
 {
-    public static LogIngestionResult Transform(ExportLogsServiceRequest request, CancellationToken cancellationToken = default)
+    public static LogIngestionResult Transform(ExportLogsServiceRequest request, LogIngestionOptions options, CancellationToken cancellationToken = default)
     {
         if (request is null)
             throw new ArgumentNullException(nameof(request));
@@ -33,7 +34,7 @@ public sealed class OtlpLogEventAdapter
                 {
                     cancellationToken.ThrowIfCancellationRequested();
 
-                    if (!TryConvert(out var logEvent, logRecord, resourceLogs, scopeLogs))
+                    if (!TryConvert(out var logEvent, options, logRecord, resourceLogs, scopeLogs))
                     {
                         dropped++;
                         var severity = logRecord.SeverityText ?? logRecord.SeverityNumber.ToString();
@@ -49,7 +50,7 @@ public sealed class OtlpLogEventAdapter
         return LogIngestionResult.Success(events, dropped, warnings);
     }
 
-    public static bool TryConvert(out ILogEvent logEvent, LogRecord logRecord, ResourceLogs resourceLogs, ScopeLogs scopeLogs)
+    public static bool TryConvert(out ILogEvent logEvent, LogIngestionOptions options, LogRecord logRecord, ResourceLogs resourceLogs, ScopeLogs scopeLogs)
     {
         if (logRecord is null)
             throw new ArgumentNullException(nameof(logRecord));
@@ -67,7 +68,7 @@ public sealed class OtlpLogEventAdapter
             timestamp: ResolveTimestamp(logRecord),
             level: MapSeverity(logRecord.SeverityNumber),
             messageTemplate: ExtractMessageTemplate(logRecord),
-            metadata: null,
+            metadata: CreateMetadata(logRecord, options),
             traceId: ToHexString(logRecord.TraceId),
             spanId: ToHexString(logRecord.SpanId),
             tags: null,
@@ -223,5 +224,26 @@ public sealed class OtlpLogEventAdapter
         }
 
         return dict;
+    }
+
+    private static IReadOnlyDictionary<string, JsonElement?>? CreateMetadata(LogRecord logRecord, LogIngestionOptions options)
+    {
+
+        Dictionary<string, JsonElement?> metadata = new();
+
+        var traceUrl = !string.IsNullOrWhiteSpace(options.TraceViewerBaseUrl) && logRecord.TraceId is { Length: > 0 }
+             ? $"{options.TraceViewerBaseUrl.TrimEnd('/')}/trace/{ToHexString(logRecord.TraceId)}"
+             : null;
+        if (traceUrl is not null)
+        {
+            metadata["trace.url"] = JsonSerializer.SerializeToElement(traceUrl);
+        }
+
+        if (metadata.Count == 0)
+        {
+            return null;
+        }
+
+        return metadata;
     }
 }

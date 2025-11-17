@@ -11,8 +11,8 @@ public sealed class KafkaLogEventProducer : IEventProducer<ILogEvent>, IDisposab
 {
 
     private readonly KafkaLogEventOptions _options;
-    private ProducerConfig _producerConfig;
-    private IProducer<Null, byte[]> _producer;
+    private readonly ProducerConfig _producerConfig;
+    private readonly IProducer<string?, byte[]> _producer;
     private readonly ILogger<KafkaLogEventProducer> _logger;
 
     public KafkaLogEventProducer(KafkaLogEventOptions options, ILogger<KafkaLogEventProducer> logger)
@@ -24,9 +24,9 @@ public sealed class KafkaLogEventProducer : IEventProducer<ILogEvent>, IDisposab
             BootstrapServers = _options.BootstrapServers,
             ClientId = "ErgonautLogEventProducer",
             EnableIdempotence = true, // ensure exactly-once delivery
-            Acks = Acks.All // wait for all replicas to acknowledge
+            Acks = Acks.All, // wait for all replicas to acknowledge
         };
-        _producer = new ProducerBuilder<Null, byte[]>(_producerConfig)
+        _producer = new ProducerBuilder<string?, byte[]>(_producerConfig)
             .SetErrorHandler((_, e) => _logger.LogError("Kafka producer error: {Reason}", e.Reason))
             .Build();
     }
@@ -45,8 +45,9 @@ public sealed class KafkaLogEventProducer : IEventProducer<ILogEvent>, IDisposab
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            var message = new Message<Null, byte[]>
+            var message = new Message<string?, byte[]>
             {
+                Key = logEvent.GetFingerprint(),
                 Value = new KafkaLogEventEnvelope(logEvent).Wrap()
             };
 

@@ -52,6 +52,10 @@ public sealed class LogIngestionControllerTests
         var timestamp = new DateTimeOffset(2025, 1, 15, 12, 45, 0, TimeSpan.Zero);
         var exportRequest = BuildExportRequest(timestamp);
         var payload = exportRequest.ToByteArray();
+        var options = new LogIngestionOptions
+        {
+            TraceViewerBaseUrl = "https://traces.example.com"
+        };
 
         var parsedRequest = ExportLogsServiceRequest.Parser.ParseFrom(payload);
 
@@ -59,6 +63,7 @@ public sealed class LogIngestionControllerTests
         Assert.True(
             OtlpLogEventAdapter.TryConvert(
                 out var convertedEvent,
+                options,
                 parsedRequest.ResourceLogs[0].ScopeLogs[0].LogRecords[0],
                 parsedRequest.ResourceLogs[0],
                 parsedRequest.ResourceLogs[0].ScopeLogs[0]));
@@ -134,7 +139,12 @@ public sealed class LogIngestionControllerTests
     private static OtlpLogIngestionPipeline CreatePipeline(IEventProducer<ILogEvent> producer)
     {
         var parser = new OtlpLogPayloadParser();
-        return new OtlpLogIngestionPipeline(parser, producer, NullLogger<OtlpLogIngestionPipeline>.Instance);
+        var logIngestionOptions = new LogIngestionOptions
+        {
+            TraceViewerBaseUrl = "https://traces.example.com"
+        };
+        var options = Microsoft.Extensions.Options.Options.Create(logIngestionOptions);
+        return new OtlpLogIngestionPipeline(parser, producer, NullLogger<OtlpLogIngestionPipeline>.Instance, options);
     }
 
     private static ExportLogsServiceRequest BuildExportRequest(DateTimeOffset timestamp)

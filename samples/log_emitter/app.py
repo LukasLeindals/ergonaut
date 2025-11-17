@@ -5,7 +5,6 @@ Simple Streamlit app that emits an OTLP log record when the user clicks a button
 from datetime import datetime
 import logging
 import os
-from typing import Tuple
 import requests
 
 from pydantic import BaseModel
@@ -15,8 +14,6 @@ from opentelemetry.exporter.otlp.proto.http._log_exporter import OTLPLogExporter
 from opentelemetry.sdk._logs import LoggerProvider, LoggingHandler
 from opentelemetry.sdk._logs.export import BatchLogRecordProcessor
 from opentelemetry.sdk.resources import Resource
-
-DEFAULT_ENDPOINT = "http://localhost:4318/v1/logs"
 
 
 class TokenResponse(BaseModel):
@@ -48,8 +45,7 @@ def _signin_to_ergonaut():
     return token
 
 
-def _build_logger() -> Tuple[logging.Logger, str]:
-    endpoint = os.getenv("OTLP_COLLECTOR_ENDPOINT", DEFAULT_ENDPOINT)
+def _build_logger() -> logging.Logger:
 
     resource = Resource.create(
         {
@@ -59,13 +55,13 @@ def _build_logger() -> Tuple[logging.Logger, str]:
         }
     )
 
-    provider = LoggerProvider(resource=resource)
-    _logs.set_logger_provider(provider)
+    # Only set the provider once; reuse if already initialized
+    provider = _logs.get_logger_provider()
+    if not isinstance(provider, LoggerProvider):
+        provider = LoggerProvider(resource=resource)
+        _logs.set_logger_provider(provider)
 
-    exporter = OTLPLogExporter(
-        endpoint=endpoint,
-        headers=(("Authorization", f"Bearer {os.environ['ERGONAUT_API_TOKEN']}"),),
-    )
+    exporter = OTLPLogExporter()
     provider.add_log_record_processor(BatchLogRecordProcessor(exporter))
 
     handler = LoggingHandler(level=logging.INFO, logger_provider=provider)
@@ -77,11 +73,11 @@ def _build_logger() -> Tuple[logging.Logger, str]:
     logger.addHandler(base_handler)
     logger.propagate = False
 
-    return logger, endpoint
+    return logger
 
 
 @st.cache_resource(show_spinner=False)
-def get_logger() -> Tuple[logging.Logger, str]:
+def get_logger() -> logging.Logger:
     _signin_to_ergonaut()
     return _build_logger()
 
@@ -94,8 +90,8 @@ def main() -> None:
         "Make sure the Ergonaut collector is running and forwarding to the app."
     )
 
-    logger, endpoint = get_logger()
-    st.caption(f"Logs exported to: {endpoint}")
+    logger = get_logger()
+    st.caption(f"Logs exported to: {os.environ['OTLP_COLLECTOR_ENDPOINT']}")
 
     message = st.text_input("A custom log message", value="A custom log message")
     warn_level = st.selectbox(
@@ -116,8 +112,18 @@ def main() -> None:
             st.success(
                 f"Log event sent at {datetime.now():%Y-%m-%d %H:%M:%S}. Check the collector output."
             )
+            st.session_state["log_history"] = st.session_state.get(
+                "log_history", []
+            ) + [
+                f"[{warn_level} {datetime.now():%Y-%m-%d %H:%M:%S}] {message.format(**extra_vars)}"
+            ]
         except Exception as e:  # pylint: disable=broad-except
             st.error(f"Failed to emit log event: {e}")
+
+    if "log_history" in st.session_state:
+        st.subheader("Log history")
+        for log_entry in reversed(st.session_state["log_history"]):
+            st.text(log_entry)
 
 
 if __name__ == "__main__":

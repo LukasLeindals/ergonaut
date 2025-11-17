@@ -6,10 +6,14 @@ receivers:
 
 exporters:
   otlphttp:
-    endpoint: ${env:OTLP__EXPORT_ENDPOINT}
+    endpoint: ${env:OTEL_EXPORTER_OTLP_ENDPOINT}
     compression: none
     headers:
       Authorization: "Bearer ${ERGONAUT_API_TOKEN}"
+  otlp/jaeger:
+    endpoint: jaeger:4317 # talks to Jaeger collector inside compose
+    tls:
+      insecure: true
 
 processors:
   batch: {}
@@ -20,3 +24,7 @@ service:
       receivers: [otlp]
       processors: [batch]
       exporters: [otlphttp]
+    traces:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [otlphttp, otlp/jaeger]

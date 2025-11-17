@@ -21,10 +21,7 @@ Milestone TODOs:
 
 ## Sentinel MVP
 
-- Update work items to contain more information from log events for better deduplication and context.
-- Add simple deduplication based on log template.
-  - Posibly also add a configurable otlp attribute to use for filtering.
-- Deduplicate work item creation for identical log events occurring within a configurable time window.
+- Add application stack traces.
 - Configuration options for Sentinel (e.g., time window for deduplication, log event severity threshold for work item creation).
 
 ## Checks

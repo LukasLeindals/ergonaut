@@ -115,6 +115,7 @@ public class WorkItemCreator : IWorkItemCreator
                 entry => entry.Value);
 
         sourceData[LogIngestionConstants.MessageTemplateKey] = JsonUtils.ConvertToJsonElement(logEvent.MessageTemplate);
+        sourceData[LogIngestionConstants.MessageKey] = JsonUtils.ConvertToJsonElement(logEvent.Message);
 
         foreach (var kvp in logEvent.ResourceAttributes)
         {

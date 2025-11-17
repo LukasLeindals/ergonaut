@@ -38,7 +38,7 @@ test:
     dotnet test -clp:ErrorsOnly --logger:"console;verbosity=detailed"
 
 run-log-emitter:
-    cd samples/log_emitter && poetry run streamlit run app.py
+    cd samples/log_emitter && sh main.sh
 
 start-otelcol:
     @echo "Starting OpenTelemetry Collector..."

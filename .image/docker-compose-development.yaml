@@ -5,11 +5,19 @@ services:
     volumes:
       - ../config/collector.yaml:/etc/otelcol/config.yaml
     environment:
-      OTLP__EXPORT_ENDPOINT: http://host.docker.internal:5075/api/otlp
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://host.docker.internal:5075/api/otlp
     ports:
       - "4318:4318"   # OTLP HTTP receiver
       - "4317:4317"   # OTLP gRPC receiver
       - "55681:55681" # OTLP HTTP receiver
+
+  jaeger:
+    image: jaegertracing/all-in-one:latest
+    environment:
+      COLLECTOR_OTLP_ENABLED: "true"
+    ports:
+      - "16686:16686"  # UI
+
 
   zookeeper:
     image: confluentinc/cp-zookeeper:7.6.0
