@@ -117,7 +117,8 @@ public sealed class LogIngestionControllerTests
 
         var options = Microsoft.Extensions.Options.Options.Create(new LogIngestionOptions
         {
-            TraceViewerBaseUrl = "https://traces.example.com"
+            TraceViewerBaseUrl = "https://traces.example.com",
+            ApiKey = "test-key"
         });
 
         var controller = new OtlpLogIngestionController(CreatePipeline(sink, options), NullLogger<OtlpLogIngestionController>.Instance, options)
@@ -130,7 +131,11 @@ public sealed class LogIngestionControllerTests
                     {
                         ContentType = contentType,
                         ContentLength = payload.LongLength,
-                        Body = bodyStream
+                        Body = bodyStream,
+                        Headers =
+                        {
+                            ["Authorization"] = "Bearer test-key"
+                        }
                     }
                 }
             }
