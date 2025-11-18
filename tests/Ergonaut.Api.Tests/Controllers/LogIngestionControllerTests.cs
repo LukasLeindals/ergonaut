@@ -115,7 +115,12 @@ public sealed class LogIngestionControllerTests
         bodyStream.Write(payload, 0, payload.Length);
         bodyStream.Position = 0;
 
-        var controller = new OtlpLogIngestionController(CreatePipeline(sink), NullLogger<OtlpLogIngestionController>.Instance)
+        var options = Microsoft.Extensions.Options.Options.Create(new LogIngestionOptions
+        {
+            TraceViewerBaseUrl = "https://traces.example.com"
+        });
+
+        var controller = new OtlpLogIngestionController(CreatePipeline(sink, options), NullLogger<OtlpLogIngestionController>.Instance, options)
         {
             ControllerContext = new ControllerContext
             {
@@ -136,14 +141,9 @@ public sealed class LogIngestionControllerTests
         return controller;
     }
 
-    private static OtlpLogIngestionPipeline CreatePipeline(IEventProducer<ILogEvent> producer)
+    private static OtlpLogIngestionPipeline CreatePipeline(IEventProducer<ILogEvent> producer, Microsoft.Extensions.Options.IOptions<LogIngestionOptions> options)
     {
         var parser = new OtlpLogPayloadParser();
-        var logIngestionOptions = new LogIngestionOptions
-        {
-            TraceViewerBaseUrl = "https://traces.example.com"
-        };
-        var options = Microsoft.Extensions.Options.Options.Create(logIngestionOptions);
         return new OtlpLogIngestionPipeline(parser, producer, NullLogger<OtlpLogIngestionPipeline>.Instance, options);
     }
 

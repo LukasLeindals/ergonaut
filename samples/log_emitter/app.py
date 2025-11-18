@@ -5,43 +5,13 @@ Simple Streamlit app that emits an OTLP log record when the user clicks a button
 from datetime import datetime
 import logging
 import os
-import requests
-from urllib.parse import urljoin
 
-from pydantic import BaseModel
 import streamlit as st
 from opentelemetry import _logs
 from opentelemetry.exporter.otlp.proto.http._log_exporter import OTLPLogExporter
 from opentelemetry.sdk._logs import LoggerProvider, LoggingHandler
 from opentelemetry.sdk._logs.export import BatchLogRecordProcessor
 from opentelemetry.sdk.resources import Resource
-
-
-class TokenResponse(BaseModel):
-    accessToken: str
-    expiresAt: str
-    refreshToken: str | None = None
-    refreshExpiresAt: str | None = None
-
-
-def _signin_to_ergonaut():
-    base = os.getenv("ERGONAUT_API_BASE", "http://localhost:5075/")
-    endpoint = os.getenv("ERGONAUT_AUTH_ENDPOINT", "api/v1/auth/token")
-    service = os.getenv("ERGONAUT_SERVICE_NAME") or st.secrets["ergonaut"]["service"] # must match registered service name
-    token = os.getenv("ERGONAUT_SERVICE_TOKEN") or st.secrets["ergonaut"]["token"]
-
-    resp = requests.post(
-        urljoin(base, endpoint),
-        json={"Service": service, "Token": token},
-        timeout=5,
-    )
-    resp.raise_for_status()
-    payload = TokenResponse.model_validate(resp.json())
-    os.environ["ERGONAUT_API_TOKEN"] = payload.accessToken
-
-    print("Signed in to Ergonaut API; obtained access token.")
-    return payload
-
 
 def _build_logger() -> logging.Logger:
 
@@ -76,7 +46,7 @@ def _build_logger() -> logging.Logger:
 
 @st.cache_resource(show_spinner=False)
 def get_logger() -> logging.Logger:
-    _signin_to_ergonaut()
+    # _signin_to_ergonaut()
     return _build_logger()
 
 

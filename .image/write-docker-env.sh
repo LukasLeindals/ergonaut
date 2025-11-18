@@ -9,6 +9,7 @@ FILENAME=".env"
 ui_token=$(dotnet user-secrets --project "$ROOT_DIR/src/Ergonaut.UI/Ergonaut.UI.csproj" list | awk -F' = ' '/Api:Auth:ServiceToken/ {print $2}')
 signing_key=$(dotnet user-secrets --project "$ROOT_DIR/src/Ergonaut.Api/Ergonaut.Api.csproj" list | awk -F' = ' '/Auth:SigningKey/ {print $2}')
 api_secrets=$(dotnet user-secrets --project "$ROOT_DIR/src/Ergonaut.Api/Ergonaut.Api.csproj" list)
+log_ingestion_api_key=$(printf "%s\n" "$api_secrets" | awk -F' = ' '/LogIngestion:ApiKey/ {print $2}')
 
 api_ui_token=$(printf "%s\n" "$api_secrets" | awk -F' = ' '/Auth:ServiceCredentials:Ergonaut.UI:Token/ {print $2}')
 api_sentinel_token=$(printf "%s\n" "$api_secrets" | awk -F' = ' '/Auth:ServiceCredentials:Ergonaut.Sentinel:Token/ {print $2}')
@@ -21,7 +22,7 @@ api_creds_env=$(printf "%s\n" "$api_secrets" | awk -F' = ' '
     print key"="val;
   }')
 
-if [[ -z "$ui_token" || -z "$signing_key" || -z "$api_ui_token" || -z "$api_sentinel_token" ]]; then
+if [[ -z "$ui_token" || -z "$signing_key" || -z "$log_ingestion_api_key" || -z "$api_ui_token" || -z "$api_sentinel_token" ]]; then
   echo "Missing secrets. Run 'just set-tokens' first." >&2
   exit 1
 fi
@@ -30,24 +31,30 @@ echo "Writing $FILENAME file for API image..."
 mkdir -p "$ROOT_DIR/.image/api"
 cat > "$ROOT_DIR/.image/api/$FILENAME" <<EOF
 Auth__SigningKey=$signing_key
+LogIngestion__ApiKey=$log_ingestion_api_key
 EOF
 printf "%s\n" "$api_creds_env" >> "$ROOT_DIR/.image/api/$FILENAME"
 
 echo "Writing $FILENAME file for UI image..."
 mkdir -p "$ROOT_DIR/.image/ui"
 cat > "$ROOT_DIR/.image/ui/$FILENAME" <<EOF
-DOTNET_ENVIRONMENT=Staging
 Api__Auth__ServiceToken=$ui_token
 EOF
 
-echo "Writing $FILENAME file for Sentinel image..."
+echo "Writing $FILENAME file for sentinel image..."
 mkdir -p "$ROOT_DIR/.image/sentinel"
 cat > "$ROOT_DIR/.image/sentinel/$FILENAME" <<EOF
-DOTNET_ENVIRONMENT=Staging
 Api__Auth__ServiceToken=$api_sentinel_token
+EOF
+
+echo "Writing $FILENAME file for otel-collector image..."
+mkdir -p "$ROOT_DIR/.image/otel-collector"
+cat > "$ROOT_DIR/.image/otel-collector/$FILENAME" <<EOF
+LOG_INGESTION_API_KEY=$log_ingestion_api_key
 EOF
 
 echo "Wrote:"
 echo "  .image/api/$FILENAME"
 echo "  .image/ui/$FILENAME"
 echo "  .image/sentinel/$FILENAME"
+echo "  .image/otel-collector/$FILENAME"

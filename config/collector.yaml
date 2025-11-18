@@ -9,7 +9,7 @@ exporters:
     endpoint: ${env:OTEL_EXPORTER_OTLP_ENDPOINT}
     compression: none
     headers:
-      Authorization: "Bearer ${ERGONAUT_API_TOKEN}"
+      Authorization: "Bearer ${LOG_INGESTION_API_KEY}"
   otlp/jaeger:
     endpoint: jaeger:4317 # talks to Jaeger collector inside compose
     tls:

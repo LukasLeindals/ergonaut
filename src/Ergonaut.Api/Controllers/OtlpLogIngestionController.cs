@@ -4,6 +4,7 @@ using System.IO;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Ergonaut.App.LogIngestion;
 using Ergonaut.Core.LogIngestion;
 using Ergonaut.Core.LogIngestion.PayloadParser;
 using Google.Protobuf;
@@ -11,13 +12,14 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using OpenTelemetry.Proto.Collector.Logs.V1;
 
 namespace Ergonaut.Api.Controllers;
 
 [ApiController]
 [Route("api/otlp/v1/logs")]
-[AllowAnonymous]
+[AllowAnonymous] // Uses explicit API-key check below.
 public sealed class OtlpLogIngestionController : ControllerBase
 {
     private const string SOURCE = "HTTP OTLP Log Ingestion Endpoint";
@@ -25,11 +27,16 @@ public sealed class OtlpLogIngestionController : ControllerBase
 
     private readonly ILogIngestionPipeline _pipeline;
     private readonly ILogger<OtlpLogIngestionController> _logger;
+    private readonly LogIngestionOptions _options;
 
-    public OtlpLogIngestionController(ILogIngestionPipeline pipeline, ILogger<OtlpLogIngestionController> logger)
+    public OtlpLogIngestionController(
+        ILogIngestionPipeline pipeline,
+        ILogger<OtlpLogIngestionController> logger,
+        IOptions<LogIngestionOptions> options)
     {
         _pipeline = pipeline ?? throw new ArgumentNullException(nameof(pipeline));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+        _options = options?.Value ?? throw new ArgumentNullException(nameof(options));
     }
 
     [HttpPost]
@@ -37,6 +44,11 @@ public sealed class OtlpLogIngestionController : ControllerBase
     [Produces("application/x-protobuf", "application/json")]
     public async Task<IActionResult> IngestAsync(CancellationToken cancellationToken)
     {
+        if (!IsAuthorized(Request))
+        {
+            return Unauthorized("Missing or invalid log ingestion credential.");
+        }
+
         if (Request.ContentLength is 0)
         {
             return BadRequest("Payload is required.");
@@ -68,6 +80,28 @@ public sealed class OtlpLogIngestionController : ControllerBase
             ContentFormat.Json => Content(Formatter.Format(response), "application/json", Encoding.UTF8),
             _ => File(response.ToByteArray(), "application/x-protobuf")
         };
+    }
+
+    private bool IsAuthorized(HttpRequest request)
+    {
+        var apiKey = _options.ApiKey;
+        if (string.IsNullOrWhiteSpace(apiKey))
+            return false;
+
+        // Prefer explicit x-api-key header; also allow "Bearer <key>" for OTEL collector convenience.
+        if (request.Headers.TryGetValue("x-api-key", out var xApiKey) &&
+            string.Equals(xApiKey.ToString(), apiKey, StringComparison.Ordinal))
+            return true;
+
+        if (request.Headers.TryGetValue("Authorization", out var auth) &&
+            auth.ToString().StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase))
+        {
+            var token = auth.ToString().Substring("Bearer ".Length).Trim();
+            if (string.Equals(token, apiKey, StringComparison.Ordinal))
+                return true;
+        }
+
+        return false;
     }
 
     private async Task<ReadOnlyMemory<byte>> ReadBodyAsync(CancellationToken cancellationToken)
