@@ -6,18 +6,18 @@ set -euo pipefail
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 FILENAME=".env"
 
-ui_token=$(dotnet user-secrets --project "$ROOT_DIR/src/Ergonaut.UI/Ergonaut.UI.csproj" list | awk -F' = ' '/Api:Auth:ServiceToken/ {print $2}')
-signing_key=$(dotnet user-secrets --project "$ROOT_DIR/src/Ergonaut.Api/Ergonaut.Api.csproj" list | awk -F' = ' '/Auth:SigningKey/ {print $2}')
+ui_token=$(dotnet user-secrets --project "$ROOT_DIR/src/Ergonaut.UI/Ergonaut.UI.csproj" list | awk -F' = ' '/Api:Auth:ServiceToken/ {print substr($0, index($0, " = ") + 3)}')
+signing_key=$(dotnet user-secrets --project "$ROOT_DIR/src/Ergonaut.Api/Ergonaut.Api.csproj" list | awk -F' = ' '/Auth:SigningKey/ {print substr($0, index($0, " = ") + 3)}')
 api_secrets=$(dotnet user-secrets --project "$ROOT_DIR/src/Ergonaut.Api/Ergonaut.Api.csproj" list)
-log_ingestion_api_key=$(printf "%s\n" "$api_secrets" | awk -F' = ' '/LogIngestion:ApiKey/ {print $2}')
+log_ingestion_api_key=$(printf "%s\n" "$api_secrets" | awk -F' = ' '/LogIngestion:ApiKey/ {print substr($0, index($0, " = ") + 3)}')
 
-api_ui_token=$(printf "%s\n" "$api_secrets" | awk -F' = ' '/Auth:ServiceCredentials:Ergonaut.UI:Token/ {print $2}')
-api_sentinel_token=$(printf "%s\n" "$api_secrets" | awk -F' = ' '/Auth:ServiceCredentials:Ergonaut.Sentinel:Token/ {print $2}')
+api_ui_token=$(printf "%s\n" "$api_secrets" | awk -F' = ' '/Auth:ServiceCredentials:Ergonaut.UI:Token/ {print substr($0, index($0, " = ") + 3)}')
+api_sentinel_token=$(printf "%s\n" "$api_secrets" | awk -F' = ' '/Auth:ServiceCredentials:Ergonaut.Sentinel:Token/ {print substr($0, index($0, " = ") + 3)}')
 
 # Convert all Auth:ServiceCredentials keys to env format (colon -> double underscore)
 api_creds_env=$(printf "%s\n" "$api_secrets" | awk -F' = ' '
   /^Auth:ServiceCredentials:/ {
-    key=$1; val=$2;
+    key=$1; val=substr($0, index($0, " = ") + 3);
     gsub(":", "__", key);
     print key"="val;
   }')

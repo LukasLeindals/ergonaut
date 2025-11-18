@@ -91,7 +91,7 @@ public sealed class OtlpLogIngestionController : ControllerBase
         var apiKey = _options.ApiKey;
         if (string.IsNullOrWhiteSpace(apiKey))
         {
-            _logger.LogError("Log ingestion API key is not configured; rejecting all ingestion requests.");
+            _logger.LogWarning("Log ingestion API key is not configured; rejecting all ingestion requests.");
             return false;
         }
 

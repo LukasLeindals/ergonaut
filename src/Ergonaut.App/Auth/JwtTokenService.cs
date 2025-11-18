@@ -23,7 +23,7 @@ public sealed class JwtTokenService : ITokenService
 
         var claimList = claims.ToList();
         claimList.Add(new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString("N")));
-        claimList.Add(new Claim(JwtRegisteredClaimNames.Iat, DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString(), ClaimValueTypes.Integer64));
+        claimList.Add(new Claim(JwtRegisteredClaimNames.Iat, new DateTimeOffset(now).ToUnixTimeSeconds().ToString(), ClaimValueTypes.Integer64));
 
         var token = new JwtSecurityToken(
             issuer: _settings.Issuer,

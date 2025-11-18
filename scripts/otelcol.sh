@@ -1,6 +1,12 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+OS="$(uname | tr '[:upper:]' '[:lower:]')"
+if [[ "$OS" != "darwin" ]]; then
+    echo "This script is intended to run on macOS (darwin) only." >&2
+    exit 1
+fi
+
 ACTION="${1:-}"
 
 if [[ "$ACTION" == "install" ]]; then
