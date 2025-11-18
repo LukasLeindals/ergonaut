@@ -28,7 +28,7 @@ public static class ServiceCollectionExtensions
     {
         services.AddErgonautAuth(configuration);
         services.AddSingleton<ITokenService, JwtTokenService>();
-        
+
         services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer();
 
@@ -46,7 +46,8 @@ public static class ServiceCollectionExtensions
                     ValidAudience = authSettings.Audience,
                     ValidateIssuerSigningKey = true,
                     IssuerSigningKey = authSettings.GetSigningKey(),
-                    ValidateLifetime = true
+                    ValidateLifetime = true,
+                    ClockSkew = TimeSpan.FromMinutes(2) // allow a 2 minute clock skew
                 };
             });
         });
