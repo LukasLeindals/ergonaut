@@ -1,9 +1,10 @@
 set_api_tokens () {
-    KEY=$(openssl rand -base64 32)
+    SIGNING_KEY=$(openssl rand -base64 32)
+    LOG_KEY=$(openssl rand -base64 32)
     echo "Setting Auth:SigningKey for Ergonaut.Api via user-secrets..."
-    dotnet user-secrets --project src/Ergonaut.Api/Ergonaut.Api.csproj set "Auth:SigningKey" "$KEY" >/dev/null
+    dotnet user-secrets --project src/Ergonaut.Api/Ergonaut.Api.csproj set "Auth:SigningKey" "$SIGNING_KEY" >/dev/null
     echo "Setting LogIngestion:ApiKey for Ergonaut.Api via user-secrets..."
-    dotnet user-secrets --project src/Ergonaut.Api/Ergonaut.Api.csproj set "LogIngestion:ApiKey" "$KEY" >/dev/null
+    dotnet user-secrets --project src/Ergonaut.Api/Ergonaut.Api.csproj set "LogIngestion:ApiKey" "$LOG_KEY" >/dev/null
 }
 
 set_service_token () {
