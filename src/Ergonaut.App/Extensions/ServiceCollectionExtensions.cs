@@ -20,7 +20,7 @@ public static class ServiceCollectionExtensions
         services.AddOptions<AuthSettings>()
             .Bind(configuration.GetSection("Auth"))
             .ValidateDataAnnotations()
-            .Validate(s => !string.IsNullOrWhiteSpace(s.SigningKey) || !string.IsNullOrWhiteSpace(s.SigningKeyPath), "Need a signing key")
+            .Validate(s => !string.IsNullOrWhiteSpace(s.SigningKey) || !string.IsNullOrWhiteSpace(s.SigningKeyPath), "Auth signing key is required. Configure either Auth:SigningKey or Auth:SigningKeyPath in your configuration.")
             .ValidateOnStart();
 
         return services;

@@ -8,7 +8,7 @@ if [[ "$ACTION" == "install" ]]; then
     curl -LO https://github.com/open-telemetry/opentelemetry-collector-releases/releases/download/v0.101.0/otelcol_0.101.0_darwin_arm64.tar.gz
     tar -xzf otelcol_0.101.0_darwin_arm64.tar.gz
     sudo mv otelcol /usr/local/bin/   # or another directory on your PATH
-    exit 1
+    exit 0
 fi
 
 if [[ "$ACTION" == "run" ]]; then
@@ -18,13 +18,13 @@ if [[ "$ACTION" == "run" ]]; then
     else
         otelcol --config config/collector.yaml
     fi
-    exit 1
+    exit 0
 fi
 
 if [[ "$ACTION" == "stop" ]]; then
     echo "Stopping OpenTelemetry Collector..."
     pkill -TERM -f "otelcol --config config/collector.yaml" || echo "Otelcol not running"
-    exit 1
+    exit 0
 fi
 
 echo "Usage: otelcol.sh <install|run|stop>" >&2

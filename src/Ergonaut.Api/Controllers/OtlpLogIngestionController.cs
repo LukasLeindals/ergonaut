@@ -86,7 +86,10 @@ public sealed class OtlpLogIngestionController : ControllerBase
     {
         var apiKey = _options.ApiKey;
         if (string.IsNullOrWhiteSpace(apiKey))
+        {
+            _logger.LogError("Log ingestion API key is not configured; rejecting all ingestion requests.");
             return false;
+        }
 
         // Prefer explicit x-api-key header; also allow "Bearer <key>" for OTEL collector convenience.
         if (request.Headers.TryGetValue("x-api-key", out var xApiKey) &&
