@@ -43,9 +43,9 @@ public sealed class OtlpLogIngestionController : ControllerBase
     [Consumes("application/x-protobuf", "application/json")]
     [Produces("application/x-protobuf", "application/json")]
     public async Task<IActionResult> IngestAsync(
-        [FromHeader(Name = "Authorization")] string? authorization,
-        [FromHeader(Name = "x-api-key")] string? apiKey,
-        CancellationToken cancellationToken)
+        [FromHeader(Name = "Authorization")] string? authorization = null,
+        [FromHeader(Name = "x-api-key")] string? apiKey = null,
+        CancellationToken cancellationToken = default)
     {
         if (!IsAuthorized(authorization, apiKey))
         {

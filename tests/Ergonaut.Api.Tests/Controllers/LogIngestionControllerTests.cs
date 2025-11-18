@@ -33,7 +33,7 @@ public sealed class LogIngestionControllerTests
         var sink = new RecordingLogEventSink();
         var controller = CreateController(payload, "application/json", sink);
 
-        var result = await controller.IngestAsync(CancellationToken.None);
+        var result = await controller.IngestAsync("Bearer test-key", null, CancellationToken.None);
 
         var contentResult = Assert.IsType<ContentResult>(result);
         Assert.StartsWith("application/json", contentResult.ContentType, StringComparison.OrdinalIgnoreCase);
@@ -72,7 +72,7 @@ public sealed class LogIngestionControllerTests
         var sink = new RecordingLogEventSink();
         var controller = CreateController(payload, "application/x-protobuf", sink);
 
-        var result = await controller.IngestAsync(CancellationToken.None);
+        var result = await controller.IngestAsync("Bearer test-key", null, CancellationToken.None);
 
         var fileResult = Assert.IsType<FileContentResult>(result);
         Assert.Equal("application/x-protobuf", fileResult.ContentType);
@@ -121,24 +121,17 @@ public sealed class LogIngestionControllerTests
             ApiKey = "test-key"
         });
 
-        var controller = new OtlpLogIngestionController(CreatePipeline(sink, options), NullLogger<OtlpLogIngestionController>.Instance, options)
+        var controller = new OtlpLogIngestionController(CreatePipeline(sink, options), NullLogger<OtlpLogIngestionController>.Instance, options);
+
+        var httpContext = new DefaultHttpContext();
+        httpContext.Request.ContentType = contentType;
+        httpContext.Request.ContentLength = payload.LongLength;
+        httpContext.Request.Body = bodyStream;
+        httpContext.Request.Headers.Authorization = "Bearer test-key";
+
+        controller.ControllerContext = new ControllerContext
         {
-            ControllerContext = new ControllerContext
-            {
-                HttpContext = new DefaultHttpContext
-                {
-                    Request =
-                    {
-                        ContentType = contentType,
-                        ContentLength = payload.LongLength,
-                        Body = bodyStream,
-                        Headers =
-                        {
-                            ["Authorization"] = "Bearer test-key"
-                        }
-                    }
-                }
-            }
+            HttpContext = httpContext
         };
 
         controller.HttpContext.Request.Body.Position = 0;
