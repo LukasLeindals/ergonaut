@@ -42,9 +42,12 @@ public sealed class OtlpLogIngestionController : ControllerBase
     [HttpPost]
     [Consumes("application/x-protobuf", "application/json")]
     [Produces("application/x-protobuf", "application/json")]
-    public async Task<IActionResult> IngestAsync(CancellationToken cancellationToken)
+    public async Task<IActionResult> IngestAsync(
+        [FromHeader(Name = "Authorization")] string? authorization,
+        [FromHeader(Name = "x-api-key")] string? apiKey,
+        CancellationToken cancellationToken)
     {
-        if (!IsAuthorized(Request))
+        if (!IsAuthorized(authorization, apiKey))
         {
             return Unauthorized("Missing or invalid log ingestion credential.");
         }
@@ -82,7 +85,7 @@ public sealed class OtlpLogIngestionController : ControllerBase
         };
     }
 
-    private bool IsAuthorized(HttpRequest request)
+    private bool IsAuthorized(string? authorizationHeader, string? apiKeyHeader)
     {
         var apiKey = _options.ApiKey;
         if (string.IsNullOrWhiteSpace(apiKey))
@@ -92,14 +95,14 @@ public sealed class OtlpLogIngestionController : ControllerBase
         }
 
         // Prefer explicit x-api-key header; also allow "Bearer <key>" for OTEL collector convenience.
-        if (request.Headers.TryGetValue("x-api-key", out var xApiKey) &&
-            string.Equals(xApiKey.ToString(), apiKey, StringComparison.Ordinal))
+        if (!string.IsNullOrWhiteSpace(apiKeyHeader) &&
+            string.Equals(apiKeyHeader, apiKey, StringComparison.Ordinal))
             return true;
 
-        if (request.Headers.TryGetValue("Authorization", out var auth) &&
-            auth.ToString().StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase))
+        if (!string.IsNullOrWhiteSpace(authorizationHeader) &&
+            authorizationHeader.StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase))
         {
-            var token = auth.ToString().Substring("Bearer ".Length).Trim();
+            var token = authorizationHeader.Substring("Bearer ".Length).Trim();
             if (string.Equals(token, apiKey, StringComparison.Ordinal))
                 return true;
         }
