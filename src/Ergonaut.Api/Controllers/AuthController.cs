@@ -1,5 +1,7 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Security.Cryptography;
+using System.Text;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
@@ -25,7 +27,7 @@ public sealed class AuthController : ControllerBase
     public ActionResult<TokenResponse> IssueToken([FromBody] TokenRequest request)
     {
         var credential = _authSettings.GetServiceCredential(request.Service);
-        if (credential is null || string.IsNullOrWhiteSpace(credential.Token) || request.Token != credential.Token)
+        if (credential is null || !IsValidToken(request.Token, credential.Token))
             return Unauthorized("Invalid service token.");
 
         var subject = request.Service;
@@ -38,10 +40,24 @@ public sealed class AuthController : ControllerBase
 
     private static IEnumerable<Claim> BuildClaims(string subject, ServiceCredential credential)
     {
-        var scopes = credential.Scopes ?? Array.Empty<string>();
+        var scopes = credential?.Scopes ?? Array.Empty<string>();
         var claims = scopes.Select(s => new Claim("scope", s)).ToList();
         claims.Add(new Claim(JwtRegisteredClaimNames.Sub, subject));
         return claims;
+    }
+
+    private static bool IsValidToken(string? presented, string? expected)
+    {
+        if (string.IsNullOrWhiteSpace(presented) || string.IsNullOrWhiteSpace(expected))
+            return false;
+
+        var presentedBytes = Encoding.UTF8.GetBytes(presented);
+        var expectedBytes = Encoding.UTF8.GetBytes(expected);
+
+        if (presentedBytes.Length != expectedBytes.Length)
+            return false;
+
+        return CryptographicOperations.FixedTimeEquals(presentedBytes, expectedBytes);
     }
 
     public sealed record TokenRequest(string Service, string Token);

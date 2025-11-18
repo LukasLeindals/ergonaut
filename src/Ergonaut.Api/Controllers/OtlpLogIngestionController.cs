@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
 using Ergonaut.App.LogIngestion;
@@ -96,14 +97,14 @@ public sealed class OtlpLogIngestionController : ControllerBase
 
         // Prefer explicit x-api-key header; also allow "Bearer <key>" for OTEL collector convenience.
         if (!string.IsNullOrWhiteSpace(apiKeyHeader) &&
-            string.Equals(apiKeyHeader, apiKey, StringComparison.Ordinal))
+            TimeConstantEquals(apiKeyHeader, apiKey))
             return true;
 
         if (!string.IsNullOrWhiteSpace(authorizationHeader) &&
             authorizationHeader.StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase))
         {
             var token = authorizationHeader.Substring("Bearer ".Length).Trim();
-            if (string.Equals(token, apiKey, StringComparison.Ordinal))
+            if (TimeConstantEquals(token, apiKey))
                 return true;
         }
 
@@ -125,6 +126,15 @@ public sealed class OtlpLogIngestionController : ControllerBase
         contentType is not null && contentType.Contains("json", StringComparison.OrdinalIgnoreCase)
             ? ContentFormat.Json
             : ContentFormat.Protobuf;
+
+    private static bool TimeConstantEquals(string a, string b)
+    {
+        if (a is null || b is null) return false;
+        var aBytes = Encoding.UTF8.GetBytes(a);
+        var bBytes = Encoding.UTF8.GetBytes(b);
+        if (aBytes.Length != bBytes.Length) return false;
+        return CryptographicOperations.FixedTimeEquals(aBytes, bBytes);
+    }
 
     private static IReadOnlyDictionary<string, string?> GetHeaders(IHeaderDictionary headers)
     {

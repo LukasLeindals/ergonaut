@@ -1,6 +1,5 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using System.Security.Cryptography;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 
@@ -35,15 +34,6 @@ public sealed class JwtTokenService : ITokenService
             signingCredentials: new SigningCredentials(signingKey, SecurityAlgorithms.HmacSha256));
 
         return _handler.WriteToken(token);
-    }
-
-    public RefreshToken CreateRefreshToken(string subject)
-    {
-        Span<byte> bytes = stackalloc byte[32];
-        RandomNumberGenerator.Fill(bytes);
-        var token = Convert.ToBase64String(bytes);
-        var expires = DateTimeOffset.UtcNow.AddDays(_settings.RefreshTokenTtlDays);
-        return new RefreshToken(token, expires);
     }
 
 }

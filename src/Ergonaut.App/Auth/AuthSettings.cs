@@ -13,7 +13,6 @@ public class AuthSettings
     public string? SigningKey { get; set; }
     public string? SigningKeyPath { get; set; } // Path to PEM-encoded RSA private key.
     [Range(1, 1440)] public int AccessTokenTtlMinutes { get; set; } = 30;
-    [Range(1, 60)] public int RefreshTokenTtlDays { get; set; } = 14;
     [Range(1, 1440)] public int ServiceTokenTtlMinutes { get; set; } = 1440; // ~24h
     // Keyed by service name (e.g., "sentinel", "log-emitter")
     public Dictionary<string, ServiceCredential> ServiceCredentials { get; set; } = new();

@@ -57,7 +57,7 @@ data/sqlite/*
 *.DS_Store
 samples/log_emitter/.streamlit/secrets.toml
 .env
-.image/api/.env.local
-.image/ui/.env.local
-.image/sentinel/.env.local
+.image/api/.env
+.image/ui/.env
+.image/sentinel/.env
 data-protection/*

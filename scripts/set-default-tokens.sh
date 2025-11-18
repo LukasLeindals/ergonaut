@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
+
+set -euo pipefail
+
 set_api_tokens () {
     SIGNING_KEY=$(openssl rand -base64 32)
     LOG_KEY=$(openssl rand -base64 32)
