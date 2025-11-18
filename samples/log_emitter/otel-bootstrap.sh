@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+# https://pypi.org/project/opentelemetry-instrumentation/
+
 echo "🔍 Running OpenTelemetry Bootstrap to detect required instrumentations..."
 echo
 

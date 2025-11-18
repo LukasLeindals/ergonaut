@@ -33,7 +33,7 @@ public sealed class LogIngestionControllerTests
         var sink = new RecordingLogEventSink();
         var controller = CreateController(payload, "application/json", sink);
 
-        var result = await controller.IngestAsync(CancellationToken.None);
+        var result = await controller.IngestAsync("Bearer test-key", null, CancellationToken.None);
 
         var contentResult = Assert.IsType<ContentResult>(result);
         Assert.StartsWith("application/json", contentResult.ContentType, StringComparison.OrdinalIgnoreCase);
@@ -72,7 +72,7 @@ public sealed class LogIngestionControllerTests
         var sink = new RecordingLogEventSink();
         var controller = CreateController(payload, "application/x-protobuf", sink);
 
-        var result = await controller.IngestAsync(CancellationToken.None);
+        var result = await controller.IngestAsync("Bearer test-key", null, CancellationToken.None);
 
         var fileResult = Assert.IsType<FileContentResult>(result);
         Assert.Equal("application/x-protobuf", fileResult.ContentType);
@@ -115,20 +115,23 @@ public sealed class LogIngestionControllerTests
         bodyStream.Write(payload, 0, payload.Length);
         bodyStream.Position = 0;
 
-        var controller = new OtlpLogIngestionController(CreatePipeline(sink), NullLogger<OtlpLogIngestionController>.Instance)
+        var options = Microsoft.Extensions.Options.Options.Create(new LogIngestionOptions
         {
-            ControllerContext = new ControllerContext
-            {
-                HttpContext = new DefaultHttpContext
-                {
-                    Request =
-                    {
-                        ContentType = contentType,
-                        ContentLength = payload.LongLength,
-                        Body = bodyStream
-                    }
-                }
-            }
+            TraceViewerBaseUrl = "https://traces.example.com",
+            ApiKey = "test-key"
+        });
+
+        var controller = new OtlpLogIngestionController(CreatePipeline(sink, options), NullLogger<OtlpLogIngestionController>.Instance, options);
+
+        var httpContext = new DefaultHttpContext();
+        httpContext.Request.ContentType = contentType;
+        httpContext.Request.ContentLength = payload.LongLength;
+        httpContext.Request.Body = bodyStream;
+        httpContext.Request.Headers.Authorization = "Bearer test-key";
+
+        controller.ControllerContext = new ControllerContext
+        {
+            HttpContext = httpContext
         };
 
         controller.HttpContext.Request.Body.Position = 0;
@@ -136,14 +139,9 @@ public sealed class LogIngestionControllerTests
         return controller;
     }
 
-    private static OtlpLogIngestionPipeline CreatePipeline(IEventProducer<ILogEvent> producer)
+    private static OtlpLogIngestionPipeline CreatePipeline(IEventProducer<ILogEvent> producer, Microsoft.Extensions.Options.IOptions<LogIngestionOptions> options)
     {
         var parser = new OtlpLogPayloadParser();
-        var logIngestionOptions = new LogIngestionOptions
-        {
-            TraceViewerBaseUrl = "https://traces.example.com"
-        };
-        var options = Microsoft.Extensions.Options.Options.Create(logIngestionOptions);
         return new OtlpLogIngestionPipeline(parser, producer, NullLogger<OtlpLogIngestionPipeline>.Instance, options);
     }
 

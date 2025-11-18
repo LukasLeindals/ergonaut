@@ -40,26 +40,10 @@ test:
 run-log-emitter:
     cd samples/log_emitter && sh main.sh
 
-start-otelcol:
-    @echo "Starting OpenTelemetry Collector..."
-    @if pid=$(pgrep -f "otelcol --config config/collector.yaml"); then \
-        echo "otelcol already running with pid ${pid}"; \
-    else \
-        otelcol --config config/collector.yaml; \
-    fi
-
-stop-otelcol:
-    @pkill -TERM -f "otelcol --config config/collector.yaml" || echo "otelcol not running"
-
-install-otelcol:
-    curl -LO https://github.com/open-telemetry/opentelemetry-collector-releases/releases/download/v0.101.0/otelcol_0.101.0_darwin_arm64.tar.gz
-    tar -xzf otelcol_0.101.0_darwin_arm64.tar.gz
-    sudo mv otelcol /usr/local/bin/   # or another directory on your PATH
-
 run-docker-development:
     @docker compose -f .image/docker-compose-development.yaml up --build -d --remove-orphans
 
-run-docker:
+run-docker: write-docker-env
     export DOTNET_ENVIRONMENT=Staging && \
     docker compose \
     -f .image/docker-compose.yaml \
@@ -72,6 +56,9 @@ build-docker project:
     docker build -f .image/{{ project }}/Dockerfile .
 
 compose-docker target:
+    if [ -z "{{ target }}" ]; then \
+        echo "Usage: just compose-docker <target> (e.g. target=api)"; exit 1; \
+    fi
     export DOTNET_ENVIRONMENT=Staging && \
     docker compose -f .image/docker-compose.yaml up -d --build {{ target }}
 
@@ -80,3 +67,20 @@ get-process port:
 
 list-process name="Ergonaut.Api":
     @ps aux | grep {{ name }}
+
+add-service-credential service scopes="":
+    @bash scripts/add-service-credential.sh "{{ service }}" "{{ scopes }}"
+
+remove-service-credential service:
+    @bash scripts/remove-service-credential.sh "{{ service }}"
+
+show-user-secrets project:
+    @echo "User-secrets for project {{ project }}:" && \
+    dotnet user-secrets --project src/{{ project }}/{{ project }}.csproj list
+
+set-tokens:
+    @bash scripts/set-default-tokens.sh
+
+# Create .image/.env.local from user-secrets for Docker compose
+write-docker-env:
+    @.image/write-docker-env.sh

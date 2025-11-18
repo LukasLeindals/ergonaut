@@ -51,11 +51,3 @@ Work is underway to introduce a log-monitor worker that will:
 
 ## Documentation & Diagrams
 Architecture diagrams reside in `docs/uml/` (PlantUML, Draw.io). Keep the diagrams in sync with code changes—especially the `components.puml` component map.
-
-## Contributing
-- Review `AGENTS.md` for collaboration principles (mentor mindset, design-first, safe-by-default).
-- Use feature branches and keep commits focused on a single concern.
-- Add tests in `tests/` whenever behaviour changes—log automation work should include integration coverage for project-scoped services.
-
----
-Questions or ideas? Open an issue or add to `TODO.md` so the team can triage and plan the next iteration.

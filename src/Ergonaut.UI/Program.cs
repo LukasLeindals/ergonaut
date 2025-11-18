@@ -19,7 +19,7 @@ builder.Services.AddRazorComponents()
 
 
 
-builder.Services.AddErgonautApiServices();
+builder.Services.AddErgonautApiServices("Ergonaut.UI");
 
 
 var keysPath = Path.Combine(builder.Environment.ContentRootPath, "..", "..", "data-protection");

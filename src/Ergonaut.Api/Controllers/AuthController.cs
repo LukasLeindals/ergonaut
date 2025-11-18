@@ -1,10 +1,11 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Tokens;
-using Ergonaut.Api.Configuration;
+using Microsoft.Extensions.Options;
+using Ergonaut.App.Auth;
 
 namespace Ergonaut.Api.Controllers;
 
@@ -12,39 +13,53 @@ namespace Ergonaut.Api.Controllers;
 [Route("api/v1/auth")]
 public sealed class AuthController : ControllerBase
 {
-    private readonly JwtOptions _jwtOptions;
+    private readonly AuthSettings _authSettings;
+    private readonly ITokenService _tokenService;
 
-    public AuthController(JwtOptions jwtOptions) => _jwtOptions = jwtOptions;
+    public AuthController(IOptions<AuthSettings> authSettings, ITokenService tokenService)
+    {
+        _authSettings = authSettings.Value;
+        _tokenService = tokenService;
+    }
 
     [HttpPost("token")]
     [AllowAnonymous]
     public ActionResult<TokenResponse> IssueToken([FromBody] TokenRequest request)
     {
-        if (request.Username != "dev" || request.Password != "dev")
-            return Unauthorized();
+        var credential = _authSettings.GetServiceCredential(request.Service);
+        if (credential is null || !IsValidToken(request.Token, credential.Token))
+            return Unauthorized("Invalid service token.");
 
-        var now = DateTime.UtcNow;
-        var claims = new[]
-        {
-            new Claim(JwtRegisteredClaimNames.Sub, request.Username),
-            new Claim("scope", "projects:read"),
-            new Claim("scope", "projects:write"),
-            new Claim("scope", "workitems:read"),
-            new Claim("scope", "workitems:write"),
-        };
+        var subject = request.Service;
+        var claims = BuildClaims(subject, credential);
+        var accessToken = _tokenService.CreateAccessToken(claims, _authSettings.ServiceTokenTtlMinutes);
+        var accessExpires = DateTime.UtcNow.AddMinutes(_authSettings.ServiceTokenTtlMinutes);
 
-        var signingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtOptions.Secret));
-        var jwt = new JwtSecurityToken(
-            issuer: _jwtOptions.Issuer,
-            audience: _jwtOptions.Audience,
-            claims: claims,
-            notBefore: now,
-            expires: now.AddMinutes(30),
-            signingCredentials: new SigningCredentials(signingKey, SecurityAlgorithms.HmacSha256));
-
-        return Ok(new TokenResponse(new JwtSecurityTokenHandler().WriteToken(jwt), now.AddMinutes(30)));
+        return Ok(new TokenResponse(accessToken, accessExpires));
     }
 
-    public sealed record TokenRequest(string Username, string Password);
+    private static IEnumerable<Claim> BuildClaims(string subject, ServiceCredential credential)
+    {
+        var scopes = credential?.Scopes ?? Array.Empty<string>();
+        var claims = scopes.Select(s => new Claim("scope", s)).ToList();
+        claims.Add(new Claim(JwtRegisteredClaimNames.Sub, subject));
+        return claims;
+    }
+
+    private static bool IsValidToken(string? presented, string? expected)
+    {
+        if (string.IsNullOrWhiteSpace(presented) || string.IsNullOrWhiteSpace(expected))
+            return false;
+
+        var presentedBytes = Encoding.UTF8.GetBytes(presented);
+        var expectedBytes = Encoding.UTF8.GetBytes(expected);
+
+        if (presentedBytes.Length != expectedBytes.Length)
+            return false;
+
+        return CryptographicOperations.FixedTimeEquals(presentedBytes, expectedBytes);
+    }
+
+    public sealed record TokenRequest(string Service, string Token);
     public sealed record TokenResponse(string AccessToken, DateTime ExpiresAt);
 }

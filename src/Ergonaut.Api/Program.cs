@@ -13,7 +13,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddErgonautSwagger();
 
 builder.Services.AddErgonautPolicies();
-builder.Services.AddErgonautAuthentication(builder.Configuration);
+builder.Services.AddErgonautApiAuthentication(builder.Configuration);
 builder.Services.AddInfrastructure(builder.Configuration, builder.Environment);
 builder.Services.AddApplicationServices();
 builder.Services.AddLogIngestion();

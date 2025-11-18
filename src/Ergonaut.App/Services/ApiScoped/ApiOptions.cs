@@ -8,7 +8,6 @@ public sealed class ApiOptions
     public sealed class AuthOptions
     {
         public string Endpoint { get; set; } = "api/v1/auth/token";
-        public string Username { get; set; } = string.Empty;
-        public string Password { get; set; } = string.Empty;
+        public string ServiceToken { get; set; } = string.Empty;
     }
 }

@@ -5,7 +5,7 @@ using Ergonaut.Core.EventIngestion;
 using Ergonaut.Core.LogIngestion;
 using Ergonaut.Core.LogIngestion.PayloadParser;
 using Ergonaut.App.Sentinel;
-using Ergonaut.App.Services.ApiScoped;
+using Ergonaut.App.Auth;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 
@@ -15,6 +15,16 @@ namespace Ergonaut.App.Extensions;
 public static class ServiceCollectionExtensions
 {
 
+    public static IServiceCollection AddErgonautAuth(this IServiceCollection services, IConfiguration configuration)
+    {
+        services.AddOptions<AuthSettings>()
+            .Bind(configuration.GetSection("Auth"))
+            .ValidateDataAnnotations()
+            .Validate(s => !string.IsNullOrWhiteSpace(s.SigningKey) || !string.IsNullOrWhiteSpace(s.SigningKeyPath), "Auth signing key is required. Configure either Auth:SigningKey or Auth:SigningKeyPath in your configuration.")
+            .ValidateOnStart();
+
+        return services;
+    }
     public static IServiceCollection AddApplicationServices(this IServiceCollection services)
     {
         services.AddScoped<IProjectService, ProjectService>();

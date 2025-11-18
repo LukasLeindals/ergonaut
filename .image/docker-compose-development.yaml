@@ -4,6 +4,8 @@ services:
     command: ["--config=/etc/otelcol/config.yaml"]
     volumes:
       - ../config/collector.yaml:/etc/otelcol/config.yaml
+    env_file:
+      - ./otel-collector/.env
     environment:
       OTEL_EXPORTER_OTLP_ENDPOINT: http://host.docker.internal:5075/api/otlp
     ports:

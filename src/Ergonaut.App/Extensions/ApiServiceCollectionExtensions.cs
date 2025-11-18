@@ -24,9 +24,12 @@ public static class ApiServiceCollectionExtensions
 
         client.BaseAddress = new Uri(options.BaseUrl);
     }
-    public static IServiceCollection AddErgonautApiServices(this IServiceCollection services)
+    public static IServiceCollection AddErgonautApiServices(this IServiceCollection services, string serviceName)
     {
-        services.Configure<ApiOptions>(services.BuildServiceProvider().GetRequiredService<IConfiguration>().GetSection("Api"));
+        services.AddOptions<ApiOptions>()
+            .BindConfiguration("Api");
+
+        services.AddSingleton(new ApiServiceIdentity(serviceName));
 
         services.AddTransient<ApiTokenHandler>();
         services.AddHttpClient<IProjectService, ApiProjectService>(ConfigureErgonautApiClient).AddHttpMessageHandler<ApiTokenHandler>();
