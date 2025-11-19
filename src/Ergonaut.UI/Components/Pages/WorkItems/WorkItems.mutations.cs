@@ -21,7 +21,7 @@ public partial class WorkItems
         _isSubmitting = true;
         _errorMessage = null;
 
-        Logger.LogInformation("Creating work item {WorkItemTitle} for project {ProjectId}", _workItemForm.Title, projectId);
+        _logger.LogInformation("Creating work item {WorkItemTitle} for project {ProjectId}", _workItemForm.Title, projectId);
 
         try
         {
@@ -33,11 +33,11 @@ public partial class WorkItems
         }
         catch (OperationCanceledException)
         {
-            Logger.LogInformation("Work item creation canceled.");
+            _logger.LogInformation("Work item creation canceled.");
         }
         catch (Exception ex)
         {
-            Logger.LogError(ex, "Failed to create work item");
+            _logger.LogError(ex, "Failed to create work item");
             _errorMessage = "We couldn’t create the work item. Check the details and try again.";
         }
         finally
@@ -60,7 +60,7 @@ public partial class WorkItems
         _isSubmitting = true;
         _errorMessage = null;
 
-        Logger.LogInformation("Deleting work item {WorkItemId} from project {ProjectId}", workItem.Id, workItem.ProjectId);
+        _logger.LogInformation("Deleting work item {WorkItemId} from project {ProjectId}", workItem.Id, workItem.ProjectId);
 
         try
         {
@@ -71,17 +71,17 @@ public partial class WorkItems
             }
             else
             {
-                Logger.LogWarning("Failed to delete work item: {Reason}", deletionResponse.Message);
+                _logger.LogWarning("Failed to delete work item: {Reason}", deletionResponse.Message);
                 _errorMessage = deletionResponse.Message;
             }
         }
         catch (OperationCanceledException)
         {
-            Logger.LogInformation("Work item deletion canceled for {WorkItemId}.", workItem.Id);
+            _logger.LogInformation("Work item deletion canceled for {WorkItemId}.", workItem.Id);
         }
         catch (Exception ex)
         {
-            Logger.LogError(ex, "Failed to delete work item {WorkItemId}", workItem.Id);
+            _logger.LogError(ex, "Failed to delete work item {WorkItemId}", workItem.Id);
             _errorMessage = "We couldn’t delete the work item. Please try again.";
         }
         finally
@@ -110,7 +110,7 @@ public partial class WorkItems
         _isSubmitting = true;
         _errorMessage = null;
 
-        Logger.LogInformation("Updating work item {WorkItemId} in project {ProjectId}", _selectedWorkItem.Id, projectId);
+        _logger.LogInformation("Updating work item {WorkItemId} in project {ProjectId}", _selectedWorkItem.Id, projectId);
 
         try
         {
@@ -124,11 +124,11 @@ public partial class WorkItems
         }
         catch (OperationCanceledException)
         {
-            Logger.LogInformation("Work item update canceled for {WorkItemId}.", _selectedWorkItem.Id);
+            _logger.LogInformation("Work item update canceled for {WorkItemId}.", _selectedWorkItem.Id);
         }
         catch (Exception ex)
         {
-            Logger.LogError(ex, "Failed to update work item {WorkItemId}", _selectedWorkItem.Id);
+            _logger.LogError(ex, "Failed to update work item {WorkItemId}", _selectedWorkItem.Id);
             _errorMessage = "We couldn’t update the work item. Check the details and try again.";
         }
         finally

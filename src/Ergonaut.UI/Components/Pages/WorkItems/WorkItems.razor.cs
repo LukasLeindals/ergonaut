@@ -11,9 +11,9 @@ namespace Ergonaut.UI.Components.Pages.WorkItems;
 
 public partial class WorkItems : ComponentBase, IDisposable
 {
-    [Inject] private IProjectService projectApi { get; set; } = default!;
+    [Inject] private IProjectService _projectApi { get; set; } = default!;
     [Inject] private IWorkItemService _workItemApi { get; set; } = default!;
-    [Inject] private ILogger<WorkItems> Logger { get; set; } = default!;
+    [Inject] private ILogger<WorkItems> _logger { get; set; } = default!;
 
     private List<ProjectRecord>? _projects;
     private List<WorkItemRecord>? _workItems;
@@ -33,8 +33,15 @@ public partial class WorkItems : ComponentBase, IDisposable
 
     protected override async Task OnInitializedAsync()
     {
-        await LoadProjectsAsync(ComponentToken);
-        await LoadWorkItemsAsync(ComponentToken);
+        try
+        {
+            await LoadProjectsAsync(ComponentToken);
+            await LoadWorkItemsAsync(ComponentToken);
+        }
+        catch (OperationCanceledException)
+        {
+            _logger.LogInformation("Component initialization canceled.");
+        }
     }
 
     private Guid? SelectedProjectId => _selectedProjectId;
@@ -54,7 +61,7 @@ public partial class WorkItems : ComponentBase, IDisposable
         }
         catch (OperationCanceledException)
         {
-            Logger.LogInformation("Project selection change canceled.");
+            _logger.LogInformation("Project selection change canceled.");
         }
     }
 
@@ -62,8 +69,8 @@ public partial class WorkItems : ComponentBase, IDisposable
 
     private void HandleInvalidSubmit(EditContext context)
     {
-        Logger.LogInformation("Invalid work item submission: {Title}", _workItemForm.Title);
-        Logger.LogWarning("Invalid submit; errors: {Errors}", string.Join(", ", context.GetValidationMessages()));
+        _logger.LogInformation("Invalid work item submission: {Title}", _workItemForm.Title);
+        _logger.LogWarning("Invalid submit; errors: {Errors}", string.Join(", ", context.GetValidationMessages()));
     }
 
     private void ShowCreateModal()
