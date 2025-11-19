@@ -1,4 +1,4 @@
-namespace Ergonaut.Core.LogIngestion.PayloadParser;
+namespace Ergonaut.App.LogIngestion.PayloadParser;
 
 /// <summary>
 /// Represents the outcome of parsing a raw log payload.

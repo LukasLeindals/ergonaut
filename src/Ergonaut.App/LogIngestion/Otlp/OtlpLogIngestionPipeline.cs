@@ -1,11 +1,11 @@
-using Ergonaut.Core.EventIngestion;
+using Ergonaut.App.LogIngestion;
+using Ergonaut.App.LogIngestion.PayloadParser;
 using Ergonaut.Core.LogIngestion;
-using Ergonaut.Core.LogIngestion.PayloadParser;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using OpenTelemetry.Proto.Collector.Logs.V1;
 
-namespace Ergonaut.App.LogIngestion;
+namespace Ergonaut.App.LogIngestion.Otlp;
 
 /// <summary>
 /// OTLP-specific implementation of <see cref="ILogIngestionPipeline"/> that composes parsing, transformation, and dispatch.

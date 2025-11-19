@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace Ergonaut.App.LogIngestion;
+namespace Ergonaut.App.LogIngestion.Kafka;
 
 public sealed class KafkaLogEventOptions
 {

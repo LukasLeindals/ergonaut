@@ -1,4 +1,4 @@
-namespace Ergonaut.App.LogIngestion;
+namespace Ergonaut.App.LogIngestion.Otlp;
 
 public sealed class OtlpLogIngestionOptions
 {

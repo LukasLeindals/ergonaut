@@ -8,7 +8,7 @@ using OpenTelemetry.Proto.Resource.V1;
 using OpenTelemetry.Proto.Collector.Logs.V1;
 using System.Text.Json;
 
-namespace Ergonaut.App.LogIngestion;
+namespace Ergonaut.App.LogIngestion.Otlp;
 
 /// <summary>
 /// Translates Open Telemetry Protocol (OTLP) log records into domain log events.

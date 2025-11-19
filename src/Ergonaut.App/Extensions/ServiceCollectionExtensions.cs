@@ -1,11 +1,12 @@
 using Ergonaut.App.LogIngestion;
 using Ergonaut.App.Services;
 using Ergonaut.App.Services.ProjectScoped;
-using Ergonaut.Core.EventIngestion;
 using Ergonaut.Core.LogIngestion;
-using Ergonaut.Core.LogIngestion.PayloadParser;
 using Ergonaut.App.Sentinel;
 using Ergonaut.App.Auth;
+using Ergonaut.App.LogIngestion.Kafka;
+using Ergonaut.App.LogIngestion.Otlp;
+using Ergonaut.App.LogIngestion.PayloadParser;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 

@@ -2,11 +2,11 @@ using System;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Ergonaut.Core.LogIngestion.PayloadParser;
+using Ergonaut.App.LogIngestion.PayloadParser;
 using Google.Protobuf;
 using OpenTelemetry.Proto.Collector.Logs.V1;
 
-namespace Ergonaut.App.LogIngestion;
+namespace Ergonaut.App.LogIngestion.Otlp;
 
 /// <summary>
 /// Parses OTLP log payloads delivered over HTTP in either protobuf or JSON encoding.

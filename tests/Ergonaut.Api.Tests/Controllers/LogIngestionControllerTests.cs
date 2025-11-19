@@ -3,8 +3,9 @@ using System.Text;
 using Ergonaut.Api.Controllers;
 using Ergonaut.App.Extensions;
 using Ergonaut.App.LogIngestion;
+using Ergonaut.App.LogIngestion.Otlp;
 using Ergonaut.Core.LogIngestion;
-using Ergonaut.Core.EventIngestion;
+
 using Google.Protobuf;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;

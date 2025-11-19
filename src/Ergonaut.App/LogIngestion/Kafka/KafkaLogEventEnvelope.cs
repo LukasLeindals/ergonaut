@@ -2,8 +2,7 @@ using System.Text.Json;
 using Ergonaut.Core.LogIngestion;
 
 
-namespace Ergonaut.App.LogIngestion;
-
+namespace Ergonaut.App.LogIngestion.Kafka;
 
 public sealed class KafkaLogEventEnvelope
 {

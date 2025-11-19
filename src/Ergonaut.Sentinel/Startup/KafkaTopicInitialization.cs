@@ -1,7 +1,7 @@
 using Confluent.Kafka;
 using Confluent.Kafka.Admin;
 using Microsoft.Extensions.Options;
-using Ergonaut.App.LogIngestion;
+using Ergonaut.App.LogIngestion.Kafka;
 
 namespace Ergonaut.Sentinel.Startup;
 

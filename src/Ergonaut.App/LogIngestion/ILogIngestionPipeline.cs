@@ -1,5 +1,5 @@
-using Ergonaut.Core.LogIngestion.PayloadParser;
-namespace Ergonaut.Core.LogIngestion;
+using Ergonaut.App.LogIngestion.PayloadParser;
+namespace Ergonaut.App.LogIngestion;
 
 public interface ILogIngestionPipeline
 {

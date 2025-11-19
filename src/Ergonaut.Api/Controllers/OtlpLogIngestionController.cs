@@ -1,18 +1,12 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
+
 using System.Text;
 using System.Security.Cryptography;
-using System.Threading;
-using System.Threading.Tasks;
 using Ergonaut.App.LogIngestion;
-using Ergonaut.Core.LogIngestion;
-using Ergonaut.Core.LogIngestion.PayloadParser;
+using Ergonaut.App.LogIngestion.PayloadParser;
+using Ergonaut.App.LogIngestion.Otlp;
 using Google.Protobuf;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using OpenTelemetry.Proto.Collector.Logs.V1;
 
