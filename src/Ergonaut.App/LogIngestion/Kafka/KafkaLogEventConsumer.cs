@@ -1,6 +1,6 @@
-namespace Ergonaut.App.LogIngestion;
+namespace Ergonaut.App.LogIngestion.Kafka;
 
-using Ergonaut.Core.EventIngestion;
+using Ergonaut.App.LogIngestion;
 using Ergonaut.Core.LogIngestion;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Logging;

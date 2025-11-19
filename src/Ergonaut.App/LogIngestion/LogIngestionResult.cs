@@ -1,7 +1,6 @@
-using System;
-using System.Collections.Generic;
+using Ergonaut.Core.LogIngestion;
 
-namespace Ergonaut.Core.LogIngestion;
+namespace Ergonaut.App.LogIngestion;
 
 /// <summary>
 /// Summarizes the outcome of a log ingestion attempt.

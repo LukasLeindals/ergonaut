@@ -1,9 +1,13 @@
-using Ergonaut.Core.EventIngestion;
+using Ergonaut.App.LogIngestion;
+using Ergonaut.App.LogIngestion.Kafka;
 using Ergonaut.Core.LogIngestion;
 using Ergonaut.App.Sentinel;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Caching.Memory;
-using Ergonaut.App.LogIngestion;
+
 namespace Ergonaut.Sentinel;
 
 public class Worker : BackgroundService

@@ -1,4 +1,4 @@
-namespace Ergonaut.Core.LogIngestion.PayloadParser;
+namespace Ergonaut.App.LogIngestion.PayloadParser;
 
 /// <summary>
 /// Describes the environment in which an ingestion request was received.

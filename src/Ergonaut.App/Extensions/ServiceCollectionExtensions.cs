@@ -1,11 +1,12 @@
 using Ergonaut.App.LogIngestion;
 using Ergonaut.App.Services;
 using Ergonaut.App.Services.ProjectScoped;
-using Ergonaut.Core.EventIngestion;
 using Ergonaut.Core.LogIngestion;
-using Ergonaut.Core.LogIngestion.PayloadParser;
 using Ergonaut.App.Sentinel;
 using Ergonaut.App.Auth;
+using Ergonaut.App.LogIngestion.Kafka;
+using Ergonaut.App.LogIngestion.Otlp;
+using Ergonaut.App.LogIngestion.PayloadParser;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 
@@ -36,7 +37,7 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection AddLogIngestion(this IServiceCollection services)
     {
         services.AddOptions<KafkaLogEventOptions>().BindConfiguration("LogIngestion:Kafka").ValidateDataAnnotations().ValidateOnStart();
-        services.AddOptions<LogIngestionOptions>().BindConfiguration("LogIngestion").ValidateDataAnnotations().ValidateOnStart();
+        services.AddOptions<OtlpLogIngestionOptions>().BindConfiguration("LogIngestion").ValidateDataAnnotations().ValidateOnStart();
         services.AddSingleton<IEventProducer<ILogEvent>, KafkaLogEventProducer>();
         services.AddSingleton<IEventConsumer<ILogEvent>, KafkaLogEventConsumer>();
 

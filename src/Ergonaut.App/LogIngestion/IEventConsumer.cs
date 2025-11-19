@@ -1,4 +1,4 @@
-namespace Ergonaut.Core.EventIngestion;
+namespace Ergonaut.App.LogIngestion;
 
 public interface IEventConsumer<T>
 {

@@ -1,6 +1,6 @@
-namespace Ergonaut.App.LogIngestion;
+namespace Ergonaut.App.LogIngestion.Otlp;
 
-public sealed class LogIngestionOptions
+public sealed class OtlpLogIngestionOptions
 {
     /// <summary>
     /// Optional static API key for OTLP ingestion; if set, requests must present this key.

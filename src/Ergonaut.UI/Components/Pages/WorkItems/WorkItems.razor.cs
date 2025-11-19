@@ -5,13 +5,15 @@ using Ergonaut.App.Models;
 using Ergonaut.App.Services;
 using Ergonaut.App.Services.ProjectScoped;
 
+using System.Threading;
+
 namespace Ergonaut.UI.Components.Pages.WorkItems;
 
-public partial class WorkItems : ComponentBase
+public partial class WorkItems : ComponentBase, IDisposable
 {
-    [Inject] private IProjectService projectApi { get; set; } = default!;
+    [Inject] private IProjectService _projectApi { get; set; } = default!;
     [Inject] private IWorkItemService _workItemApi { get; set; } = default!;
-    [Inject] private ILogger<WorkItems> Logger { get; set; } = default!;
+    [Inject] private ILogger<WorkItems> _logger { get; set; } = default!;
 
     private List<ProjectRecord>? _projects;
     private List<WorkItemRecord>? _workItems;
@@ -19,6 +21,9 @@ public partial class WorkItems : ComponentBase
     private Guid? _selectedProjectId;
     private WorkItemRecord? _selectedWorkItem;
     private UpdateWorkItemRequest? _editedWorkItem;
+
+    private readonly CancellationTokenSource _componentCts = new();
+    private CancellationToken ComponentToken => _componentCts.Token;
 
     private bool _isSubmitting;
     private bool _isLoadingWorkItems;
@@ -28,35 +33,44 @@ public partial class WorkItems : ComponentBase
 
     protected override async Task OnInitializedAsync()
     {
-        await LoadProjectsAsync();
-        await LoadWorkItemsAsync();
-    }
-
-    private Guid? SelectedProjectId
-    {
-        get => _selectedProjectId;
-        set
+        try
         {
-            if (_selectedProjectId != value)
-            {
-                _selectedProjectId = value;
-                _ = InvokeAsync(async () =>
-                {
-                    await LoadWorkItemsAsync();
-                    StateHasChanged();
-                });
-            }
+            await LoadProjectsAsync(ComponentToken);
+            await LoadWorkItemsAsync(ComponentToken);
+        }
+        catch (OperationCanceledException)
+        {
+            _logger.LogInformation("Component initialization canceled.");
         }
     }
 
-    private void SetSelectedProject(Guid? projectId) => SelectedProjectId = projectId;
+    private Guid? SelectedProjectId => _selectedProjectId;
+
+    private async Task SetSelectedProject(Guid? projectId)
+    {
+        if (_selectedProjectId == projectId)
+        {
+            return;
+        }
+
+        _selectedProjectId = projectId;
+
+        try
+        {
+            await LoadWorkItemsAsync(ComponentToken);
+        }
+        catch (OperationCanceledException)
+        {
+            _logger.LogInformation("Project selection change canceled.");
+        }
+    }
 
     private void ResetWorkItemForm() => _workItemForm = new();
 
     private void HandleInvalidSubmit(EditContext context)
     {
-        Logger.LogInformation("Invalid work item submission: {Title}", _workItemForm.Title);
-        Logger.LogWarning("Invalid submit; errors: {Errors}", string.Join(", ", context.GetValidationMessages()));
+        _logger.LogInformation("Invalid work item submission: {Title}", _workItemForm.Title);
+        _logger.LogWarning("Invalid submit; errors: {Errors}", string.Join(", ", context.GetValidationMessages()));
     }
 
     private void ShowCreateModal()
@@ -85,5 +99,14 @@ public partial class WorkItems : ComponentBase
         _selectedWorkItem = null;
         _editedWorkItem = null;
         _showDetailsModal = false;
+    }
+    public void Dispose()
+    {
+        if (!_componentCts.IsCancellationRequested)
+        {
+            _componentCts.Cancel();
+        }
+
+        _componentCts.Dispose();
     }
 }

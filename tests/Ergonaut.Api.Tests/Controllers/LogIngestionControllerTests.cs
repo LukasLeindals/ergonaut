@@ -3,8 +3,9 @@ using System.Text;
 using Ergonaut.Api.Controllers;
 using Ergonaut.App.Extensions;
 using Ergonaut.App.LogIngestion;
+using Ergonaut.App.LogIngestion.Otlp;
 using Ergonaut.Core.LogIngestion;
-using Ergonaut.Core.EventIngestion;
+
 using Google.Protobuf;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -52,7 +53,7 @@ public sealed class LogIngestionControllerTests
         var timestamp = new DateTimeOffset(2025, 1, 15, 12, 45, 0, TimeSpan.Zero);
         var exportRequest = BuildExportRequest(timestamp);
         var payload = exportRequest.ToByteArray();
-        var options = new LogIngestionOptions
+        var options = new OtlpLogIngestionOptions
         {
             TraceViewerBaseUrl = "https://traces.example.com"
         };
@@ -115,7 +116,7 @@ public sealed class LogIngestionControllerTests
         bodyStream.Write(payload, 0, payload.Length);
         bodyStream.Position = 0;
 
-        var options = Microsoft.Extensions.Options.Options.Create(new LogIngestionOptions
+        var options = Microsoft.Extensions.Options.Options.Create(new OtlpLogIngestionOptions
         {
             TraceViewerBaseUrl = "https://traces.example.com",
             ApiKey = "test-key"
@@ -139,7 +140,7 @@ public sealed class LogIngestionControllerTests
         return controller;
     }
 
-    private static OtlpLogIngestionPipeline CreatePipeline(IEventProducer<ILogEvent> producer, Microsoft.Extensions.Options.IOptions<LogIngestionOptions> options)
+    private static OtlpLogIngestionPipeline CreatePipeline(IEventProducer<ILogEvent> producer, Microsoft.Extensions.Options.IOptions<OtlpLogIngestionOptions> options)
     {
         var parser = new OtlpLogPayloadParser();
         return new OtlpLogIngestionPipeline(parser, producer, NullLogger<OtlpLogIngestionPipeline>.Instance, options);

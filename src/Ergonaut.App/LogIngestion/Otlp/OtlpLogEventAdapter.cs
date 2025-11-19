@@ -8,14 +8,14 @@ using OpenTelemetry.Proto.Resource.V1;
 using OpenTelemetry.Proto.Collector.Logs.V1;
 using System.Text.Json;
 
-namespace Ergonaut.App.LogIngestion;
+namespace Ergonaut.App.LogIngestion.Otlp;
 
 /// <summary>
 /// Translates Open Telemetry Protocol (OTLP) log records into domain log events.
 /// </summary>
 public static class OtlpLogEventAdapter
 {
-    public static LogIngestionResult Transform(ExportLogsServiceRequest request, LogIngestionOptions options, CancellationToken cancellationToken = default)
+    public static LogIngestionResult Transform(ExportLogsServiceRequest request, OtlpLogIngestionOptions options, CancellationToken cancellationToken = default)
     {
         if (request is null)
             throw new ArgumentNullException(nameof(request));
@@ -50,7 +50,7 @@ public static class OtlpLogEventAdapter
         return LogIngestionResult.Success(events, dropped, warnings);
     }
 
-    public static bool TryConvert(out ILogEvent logEvent, LogIngestionOptions options, LogRecord logRecord, ResourceLogs resourceLogs, ScopeLogs scopeLogs)
+    public static bool TryConvert(out ILogEvent logEvent, OtlpLogIngestionOptions options, LogRecord logRecord, ResourceLogs resourceLogs, ScopeLogs scopeLogs)
     {
         if (logRecord is null)
             throw new ArgumentNullException(nameof(logRecord));
@@ -226,7 +226,7 @@ public static class OtlpLogEventAdapter
         return dict;
     }
 
-    private static IReadOnlyDictionary<string, JsonElement?>? CreateMetadata(LogRecord logRecord, LogIngestionOptions options)
+    private static IReadOnlyDictionary<string, JsonElement?>? CreateMetadata(LogRecord logRecord, OtlpLogIngestionOptions options)
     {
 
         Dictionary<string, JsonElement?> metadata = new();
