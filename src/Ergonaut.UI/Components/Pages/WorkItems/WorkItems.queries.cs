@@ -1,14 +1,16 @@
+using System.Threading;
+
 namespace Ergonaut.UI.Components.Pages.WorkItems;
 
 public partial class WorkItems
 {
-    private async Task LoadProjectsAsync()
+    private async Task LoadProjectsAsync(CancellationToken cancellationToken)
     {
         Logger.LogInformation("Loading projects...");
         try
         {
             _errorMessage = null;
-            _projects = (await projectApi.ListAsync(CancellationToken.None))
+            _projects = (await projectApi.ListAsync(cancellationToken))
                 .OrderBy(p => p.Title, StringComparer.CurrentCultureIgnoreCase)
                 .ToList();
         }
@@ -19,7 +21,7 @@ public partial class WorkItems
         }
     }
 
-    private async Task LoadWorkItemsAsync()
+    private async Task LoadWorkItemsAsync(CancellationToken cancellationToken)
     {
         if (SelectedProjectId is not Guid projectId)
         {
@@ -33,8 +35,12 @@ public partial class WorkItems
         {
             _isLoadingWorkItems = true;
             _errorMessage = null;
-            _workItems = (await _workItemApi.ListAsync(projectId, CancellationToken.None)).ToList();
+            _workItems = (await _workItemApi.ListAsync(projectId, cancellationToken)).ToList();
             Logger.LogInformation("Loaded {WorkItemCount} work items for project {ProjectId}", _workItems.Count, projectId);
+        }
+        catch (OperationCanceledException)
+        {
+            Logger.LogInformation("Work item load for project {ProjectId} canceled.", projectId);
         }
         catch (Exception ex)
         {

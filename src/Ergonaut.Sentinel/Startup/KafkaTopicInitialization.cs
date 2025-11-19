@@ -1,7 +1,12 @@
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using Confluent.Kafka;
 using Confluent.Kafka.Admin;
-using Microsoft.Extensions.Options;
 using Ergonaut.App.LogIngestion.Kafka;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace Ergonaut.Sentinel.Startup;
 
@@ -20,12 +25,14 @@ internal sealed class KafkaTopicInitializerHostedService : IHostedService
 
     public async Task StartAsync(CancellationToken cancellationToken)
     {
+        cancellationToken.ThrowIfCancellationRequested();
+
         var adminConfig = new AdminClientConfig { BootstrapServers = _options.BootstrapServers };
         using var admin = new AdminClientBuilder(adminConfig).Build();
 
         try
         {
-            await admin.CreateTopicsAsync(
+            var createTopicsTask = admin.CreateTopicsAsync(
                 new[]
                 {
                     new TopicSpecification
@@ -35,6 +42,8 @@ internal sealed class KafkaTopicInitializerHostedService : IHostedService
                         ReplicationFactor = 1
                     }
                 });
+
+            await createTopicsTask.WaitAsync(cancellationToken);
 
             _logger.LogInformation("Created Kafka topic '{Topic}'.", _options.Topic);
         }

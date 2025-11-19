@@ -1,4 +1,5 @@
 using System;
+using System.Threading;
 using Ergonaut.App.Models;
 using Ergonaut.Core.Models.WorkItem;
 
@@ -24,11 +25,15 @@ public partial class WorkItems
 
         try
         {
-            WorkItemRecord created = await _workItemApi.CreateAsync(projectId, _workItemForm, CancellationToken.None);
+            WorkItemRecord created = await _workItemApi.CreateAsync(projectId, _workItemForm, ComponentToken);
             _workItems ??= new();
             _workItems.Insert(0, created);
             ResetWorkItemForm();
             HideCreateModal();
+        }
+        catch (OperationCanceledException)
+        {
+            Logger.LogInformation("Work item creation canceled.");
         }
         catch (Exception ex)
         {
@@ -59,7 +64,7 @@ public partial class WorkItems
 
         try
         {
-            DeletionResponse deletionResponse = await _workItemApi.DeleteAsync(projectId, workItem.Id, CancellationToken.None);
+            DeletionResponse deletionResponse = await _workItemApi.DeleteAsync(projectId, workItem.Id, ComponentToken);
             if (deletionResponse.Success)
             {
                 _workItems?.Remove(workItem);
@@ -69,6 +74,10 @@ public partial class WorkItems
                 Logger.LogWarning("Failed to delete work item: {Reason}", deletionResponse.Message);
                 _errorMessage = deletionResponse.Message;
             }
+        }
+        catch (OperationCanceledException)
+        {
+            Logger.LogInformation("Work item deletion canceled for {WorkItemId}.", workItem.Id);
         }
         catch (Exception ex)
         {
@@ -105,13 +114,17 @@ public partial class WorkItems
 
         try
         {
-            WorkItemRecord updated = await _workItemApi.UpdateAsync(projectId, _selectedWorkItem.Id, _editedWorkItem, CancellationToken.None);
+            WorkItemRecord updated = await _workItemApi.UpdateAsync(projectId, _selectedWorkItem.Id, _editedWorkItem, ComponentToken);
             int index = _workItems?.FindIndex(w => w.Id == updated.Id) ?? -1;
             if (index >= 0)
             {
                 _workItems![index] = updated;
             }
             HideDetailsModal();
+        }
+        catch (OperationCanceledException)
+        {
+            Logger.LogInformation("Work item update canceled for {WorkItemId}.", _selectedWorkItem.Id);
         }
         catch (Exception ex)
         {

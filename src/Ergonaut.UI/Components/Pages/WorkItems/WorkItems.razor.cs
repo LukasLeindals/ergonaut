@@ -5,9 +5,11 @@ using Ergonaut.App.Models;
 using Ergonaut.App.Services;
 using Ergonaut.App.Services.ProjectScoped;
 
+using System.Threading;
+
 namespace Ergonaut.UI.Components.Pages.WorkItems;
 
-public partial class WorkItems : ComponentBase
+public partial class WorkItems : ComponentBase, IDisposable
 {
     [Inject] private IProjectService projectApi { get; set; } = default!;
     [Inject] private IWorkItemService _workItemApi { get; set; } = default!;
@@ -20,6 +22,9 @@ public partial class WorkItems : ComponentBase
     private WorkItemRecord? _selectedWorkItem;
     private UpdateWorkItemRequest? _editedWorkItem;
 
+    private readonly CancellationTokenSource _componentCts = new();
+    private CancellationToken ComponentToken => _componentCts.Token;
+
     private bool _isSubmitting;
     private bool _isLoadingWorkItems;
     private string? _errorMessage;
@@ -28,28 +33,30 @@ public partial class WorkItems : ComponentBase
 
     protected override async Task OnInitializedAsync()
     {
-        await LoadProjectsAsync();
-        await LoadWorkItemsAsync();
+        await LoadProjectsAsync(ComponentToken);
+        await LoadWorkItemsAsync(ComponentToken);
     }
 
-    private Guid? SelectedProjectId
+    private Guid? SelectedProjectId => _selectedProjectId;
+
+    private async Task SetSelectedProject(Guid? projectId)
     {
-        get => _selectedProjectId;
-        set
+        if (_selectedProjectId == projectId)
         {
-            if (_selectedProjectId != value)
-            {
-                _selectedProjectId = value;
-                _ = InvokeAsync(async () =>
-                {
-                    await LoadWorkItemsAsync();
-                    StateHasChanged();
-                });
-            }
+            return;
+        }
+
+        _selectedProjectId = projectId;
+
+        try
+        {
+            await LoadWorkItemsAsync(ComponentToken);
+        }
+        catch (OperationCanceledException)
+        {
+            Logger.LogInformation("Project selection change canceled.");
         }
     }
-
-    private void SetSelectedProject(Guid? projectId) => SelectedProjectId = projectId;
 
     private void ResetWorkItemForm() => _workItemForm = new();
 
@@ -85,5 +92,14 @@ public partial class WorkItems : ComponentBase
         _selectedWorkItem = null;
         _editedWorkItem = null;
         _showDetailsModal = false;
+    }
+    public void Dispose()
+    {
+        if (!_componentCts.IsCancellationRequested)
+        {
+            _componentCts.Cancel();
+        }
+
+        _componentCts.Dispose();
     }
 }
