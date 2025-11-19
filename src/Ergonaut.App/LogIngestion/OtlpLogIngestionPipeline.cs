@@ -16,13 +16,13 @@ public sealed class OtlpLogIngestionPipeline : ILogIngestionPipeline
     private readonly IEventProducer<ILogEvent> _eventProducer;
     private readonly ILogger<OtlpLogIngestionPipeline> _logger;
 
-    private readonly LogIngestionOptions _options;
+    private readonly OtlpLogIngestionOptions _options;
 
     public OtlpLogIngestionPipeline(
         IPayloadParser<ExportLogsServiceRequest> parser,
         IEventProducer<ILogEvent> eventProducer,
         ILogger<OtlpLogIngestionPipeline> logger,
-        IOptions<LogIngestionOptions> options)
+        IOptions<OtlpLogIngestionOptions> options)
     {
         _parser = parser ?? throw new ArgumentNullException(nameof(parser));
         _eventProducer = eventProducer ?? throw new ArgumentNullException(nameof(eventProducer));

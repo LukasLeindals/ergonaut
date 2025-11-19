@@ -28,12 +28,12 @@ public sealed class OtlpLogIngestionController : ControllerBase
 
     private readonly ILogIngestionPipeline _pipeline;
     private readonly ILogger<OtlpLogIngestionController> _logger;
-    private readonly LogIngestionOptions _options;
+    private readonly OtlpLogIngestionOptions _options;
 
     public OtlpLogIngestionController(
         ILogIngestionPipeline pipeline,
         ILogger<OtlpLogIngestionController> logger,
-        IOptions<LogIngestionOptions> options)
+        IOptions<OtlpLogIngestionOptions> options)
     {
         _pipeline = pipeline ?? throw new ArgumentNullException(nameof(pipeline));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
