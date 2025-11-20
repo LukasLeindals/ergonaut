@@ -13,9 +13,16 @@ Sentinel is an automation worker that watches your logs/telemetry and creates ta
 ```bash
 just run-docker
 ```
-2) Point your log/telemetry pipeline to an OTLP collector the Sentinel worker can reach.
+    - This will:
+        - Start the database in a Docker volume.
+        - Create Auth tokens and create the relevant `.env` files.
+        - Run the API on `http://localhost:5075`.
+        - Run the UI on `http://localhost:5242`.
+        - Run an OTLP collector.
+        - Run a Sentinel worker.
+1) Point your log/telemetry pipeline to an OTLP collector the Sentinel worker can reach.
     - It is a good idea to ensure `messageTemplate` is included in log records as an attribute as this is used to deduplicate similar logs.
-3) View automation results in the UI or via the API.
+2) View automation results in the UI or via the API.
 
 
 See `examples/sentinel-python` for a sample Sentinel worker in Python, where the `logger.py` file shows how to add a logging handler that emits OTLP logs.
