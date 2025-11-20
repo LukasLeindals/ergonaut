@@ -55,7 +55,7 @@ public sealed class SentinelLogEventFilter : ILogEventFilter
 
         var useTemplate = !string.IsNullOrWhiteSpace(logEvent.MessageTemplate);
         if (!useTemplate)
-            _logger.LogDebug("Log event has no message template; using message instead.");
+            _logger.LogInformation("Log event has no message template; using message instead.");
 
         var attributeName = useTemplate ? LogIngestionConstants.MessageTemplateKey : LogIngestionConstants.MessageKey;
         var attributeValue = useTemplate ? logEvent.MessageTemplate : logEvent.Message;
@@ -67,7 +67,7 @@ public sealed class SentinelLogEventFilter : ILogEventFilter
 
         if (matchingTemplates.Count > 0)
         {
-            _logger.LogInformation("Rejecting log event with message template '{MessageTemplate}' because {Count} matching work items already exist.", logEvent.MessageTemplate, matchingTemplates.Count);
+            _logger.LogInformation("Rejecting log event with message template '{MessageTemplate}' because {Count} matching work items already exist.", attributeValue, matchingTemplates.Count);
             return true;
         }
 

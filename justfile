@@ -40,17 +40,14 @@ add-migration name:
 test:
     dotnet test -clp:ErrorsOnly --logger:"console;verbosity=detailed"
 
-run-log-emitter:
-    cd samples/log_emitter && sh main.sh
-
-example-sentinel-python:
-    cd examples/sentinel-python && PYTHONPATH=. poetry run uvicorn src.api:app --reload
-
-example-sentinel-python-ui:
-    cd examples/sentinel-python && PYTHONPATH=. poetry run streamlit run src/ui.py
-
-example-sentinel-python-docker:
-    cd examples/sentinel-python && docker compose -f docker-compose.yaml up -d --remove-orphans
+example-sentinel-python action:
+    if [ "{{ action }}" = "run-ui" ]; then \
+        cd examples/sentinel-python && PYTHONPATH=. poetry run streamlit run src/ui.py; \
+    elif [ "{{ action }}" = "run-api" ]; then \
+        cd examples/sentinel-python && docker compose -f docker-compose.yaml up -d --remove-orphans; \
+    else \
+        echo "Unknown action '{{ action }}'. Supported actions are: run-ui, run-docker"; exit 1; \
+    fi
 
 run-docker-development:
     @docker compose -f .image/docker-compose-development.yaml up --build -d --remove-orphans

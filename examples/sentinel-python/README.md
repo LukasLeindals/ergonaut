@@ -1,24 +1,24 @@
 # Sentinel Python Example
 
-## Setup
+FastAPI + Streamlit demo that emits structured logs via OTLP to your collector.
 
-To set up the environment for this example, follow these steps:
+## Prereqs
+- Docker (with BuildKit)
+- OpenTelemetry collector reachable at `otelcol:4318` on the `telemetry` network
 
-1. Install the required dependencies:
+## Run order (all via `just`, from repo root)
+1) Start the Api and Sentinel service through docker:
+   ```bash
+   just run-docker
+   ```
+2) Start the Python API in Docker (mapped to `http://localhost:8000`):
+   ```bash
+   just example-sentinel-python run-api
+   ```
+3) (Optional) Launch the Streamlit UI against that API:
+   ```bash
+   just example-sentinel-python run-ui
+   ```
 
-```bash
-cd examples/sentinel-python
-poetry install
-sh otel-bootstrap.sh 
-```
-
-## Run with Docker
-
-Build and run the FastAPI service inside a container without installing Poetry locally:
-
-```bash
-cd examples/sentinel-python
-docker compose up --build
-```
-
-The API listens on `http://localhost:8000/emit_log` by default. Override the telemetry target by exporting `OTEL_EXPORTER_OTLP_ENDPOINT` before running `docker compose`. (If you run the Streamlit UI separately, it continues to read `OTLP_COLLECTOR_ENDPOINT`.)
+Notes
+- Ensure the `telemetry` Docker network and collector are running before step 2 (the compose file expects `otelcol:4318`).

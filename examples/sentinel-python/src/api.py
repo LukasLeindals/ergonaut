@@ -18,9 +18,11 @@ def emit_log(request: EmitLogRequest):
     """Emit a log record with the specified message and level."""
     message = request.message_template.format(**request.extra)
     level = request.level or random.choice(LOG_LEVELS)
-    
+
     log_method = getattr(app.state.logger, level.lower())
-    log_method(message, extra=request.extra)
+    log_method(
+        message, extra=request.extra | {"message_template": request.message_template}
+    )
 
     return EmitLogResponse(
         formatted_message=message,
