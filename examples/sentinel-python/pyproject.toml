@@ -1,0 +1,37 @@
+[tool.poetry]
+name = "sentinel-python"
+version = "0.0.0"
+description = "Example Python application for Sentinel."
+readme = "README.md"
+package-mode = false
+
+[tool.poetry.dependencies]
+python = ">=3.11,<3.12"
+opentelemetry-api = ">=1.25.0"
+opentelemetry-sdk = ">=1.25.0"
+opentelemetry-exporter-otlp = ">=1.25.0"
+opentelemetry-distro = ">=0.59b0"
+
+streamlit = "1.37.0"
+requests = "^2.32.3"
+pydantic = "2.12.3"
+fastapi = "^0.121.3"
+uvicorn = "^0.30.0"
+
+opentelemetry-instrumentation-asyncio = "0.59b0"
+opentelemetry-instrumentation-dbapi = "0.59b0"
+opentelemetry-instrumentation-logging = "0.59b0"
+opentelemetry-instrumentation-sqlite3 = "0.59b0"
+opentelemetry-instrumentation-threading = "0.59b0"
+opentelemetry-instrumentation-urllib = "0.59b0"
+opentelemetry-instrumentation-wsgi = "0.59b0"
+opentelemetry-instrumentation-click = "0.59b0"
+opentelemetry-instrumentation-fastapi = "0.59b0"
+opentelemetry-instrumentation-grpc = "0.59b0"
+opentelemetry-instrumentation-jinja2 = "0.59b0"
+opentelemetry-instrumentation-requests = "0.59b0"
+opentelemetry-instrumentation-starlette = "0.59b0"
+opentelemetry-instrumentation-tornado = "0.59b0"
+opentelemetry-instrumentation-tortoiseorm = "0.59b0"
+opentelemetry-instrumentation-urllib3 = "0.59b0"
+

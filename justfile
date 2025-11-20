@@ -40,10 +40,19 @@ test:
 run-log-emitter:
     cd samples/log_emitter && sh main.sh
 
+example-sentinel-python:
+    cd examples/sentinel-python && poetry run uvicorn src.api:app --reload
+
+example-sentinel-python-ui:
+    cd examples/sentinel-python && poetry run opentelemetry-instrument streamlit run src/ui.py
+
+example-sentinel-python-docker:
+    cd examples/sentinel-python && docker compose -f docker-compose.yaml up -d --remove-orphans
+
 run-docker-development:
     @docker compose -f .image/docker-compose-development.yaml up --build -d --remove-orphans
 
-run-docker: write-docker-env
+run-docker: write-docker-env create-docker-networks
     export DOTNET_ENVIRONMENT=Staging && \
     docker compose \
     -f .image/docker-compose.yaml \
@@ -84,3 +93,7 @@ set-tokens:
 # Create .image/.env.local from user-secrets for Docker compose
 write-docker-env:
     @.image/write-docker-env.sh
+
+create-docker-networks:
+    @docker network create telemetry || echo "Docker network 'telemetry' already exists"
+    @docker network create ergonaut || echo "Docker network 'ergonaut' already exists"
