@@ -16,6 +16,8 @@ services:
       - ../data:/data
     ports:
       - "5075:5075"
+    networks:
+      - ergonaut
 
   ui:
     build:
@@ -34,6 +36,8 @@ services:
       - ../data-protection:/data-protection # Persisted data protection keys
     ports:
       - "5242:5242"
+    networks:
+      - ergonaut
 
   sentinel:
     build:
@@ -56,33 +60,16 @@ services:
     volumes:
       - ../config:/config:ro
       - ../data:/data
-
-  otelcol:
-    image: otel/opentelemetry-collector-contrib:0.85.0
-    command: ["--config=/etc/otelcol/config.yaml"]
-    env_file:
-      - ./otel-collector/.env
-    environment:
-      OTEL_EXPORTER_OTLP_ENDPOINT: http://api:5075/api/otlp
-    volumes:
-      - ../config/collector.yaml:/etc/otelcol/config.yaml
-    ports:
-      - "4318:4318" # OTLP HTTP receiver
-      - "4317:4317" # OTLP gRPC receiver
-      - "55681:55681" # OTLP HTTP receiver
-
-  jaeger:
-    image: jaegertracing/all-in-one:latest
-    environment:
-      COLLECTOR_OTLP_ENABLED: "true"
-    ports:
-      - "16686:16686" # UI
+    networks:
+      - ergonaut
 
   zookeeper:
     image: confluentinc/cp-zookeeper:7.6.0
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_TICK_TIME: 2000
+    networks:
+      - ergonaut
 
   kafka:
     image: confluentinc/cp-kafka:7.6.0
@@ -109,3 +96,40 @@ services:
       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    networks:
+      - ergonaut
+
+  otelcol:
+    image: otel/opentelemetry-collector-contrib:0.85.0
+    command: ["--config=/etc/otelcol/config.yaml"]
+    env_file:
+      - ./otel-collector/.env
+    environment:
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://api:5075/api/otlp
+    volumes:
+      - ../config/collector.yaml:/etc/otelcol/config.yaml
+    ports:
+      - "4318:4318" # OTLP HTTP receiver
+      - "4317:4317" # OTLP gRPC receiver
+      - "55681:55681" # OTLP HTTP receiver
+    networks:
+      telemetry:
+        aliases:
+          - otelcol
+      ergonaut: {}
+
+  jaeger:
+    image: jaegertracing/all-in-one:latest
+    environment:
+      COLLECTOR_OTLP_ENABLED: "true"
+    ports:
+      - "16686:16686" # UI
+    networks:
+      - telemetry
+      - ergonaut
+
+networks:
+  telemetry:
+    external: true
+  ergonaut:
+    external: false

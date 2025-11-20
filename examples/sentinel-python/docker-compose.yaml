@@ -1,0 +1,18 @@
+services:
+  sentinel-python-api:
+    build:
+      context: .
+    image: sentinel-python-api:local
+    ports:
+      - "8000:8000"
+    environment:
+      UVICORN_PORT: 8000
+      OTEL_EXPORTER_OTLP_ENDPOINT: "http://otelcol:4318"
+      OTEL_SERVICE_NAME: "ergonaut-streamlit-demo"
+    restart: unless-stopped
+    networks:
+      - telemetry
+
+networks:
+  telemetry:
+    external: true

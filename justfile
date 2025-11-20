@@ -1,4 +1,7 @@
 #!/usr/bin/env just --justfile
+# Use BuildKit for all docker builds by default.
+
+export DOCKER_BUILDKIT := "1"
 
 # List all available just recipes
 help:
@@ -37,13 +40,19 @@ add-migration name:
 test:
     dotnet test -clp:ErrorsOnly --logger:"console;verbosity=detailed"
 
-run-log-emitter:
-    cd samples/log_emitter && sh main.sh
+example-sentinel-python action:
+    if [ "{{ action }}" = "run-ui" ]; then \
+        cd examples/sentinel-python && PYTHONPATH=. poetry run streamlit run src/ui.py; \
+    elif [ "{{ action }}" = "run-api" ]; then \
+        cd examples/sentinel-python && docker compose -f docker-compose.yaml up -d --remove-orphans; \
+    else \
+        echo "Unknown action '{{ action }}'. Supported actions are: run-ui, run-docker"; exit 1; \
+    fi
 
 run-docker-development:
     @docker compose -f .image/docker-compose-development.yaml up --build -d --remove-orphans
 
-run-docker: write-docker-env
+run-docker: write-docker-env create-docker-networks build-proto-tools
     export DOTNET_ENVIRONMENT=Staging && \
     docker compose \
     -f .image/docker-compose.yaml \
@@ -84,3 +93,10 @@ set-tokens:
 # Create .image/.env.local from user-secrets for Docker compose
 write-docker-env:
     @.image/write-docker-env.sh
+
+create-docker-networks:
+    @docker network create telemetry || echo "Docker network 'telemetry' already exists"
+    @docker network create ergonaut || echo "Docker network 'ergonaut' already exists"
+
+build-proto-tools:
+    docker build -f .image/proto-tools/Dockerfile -t ergonaut/proto-tools:latest .
