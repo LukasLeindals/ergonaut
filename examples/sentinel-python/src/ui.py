@@ -5,8 +5,8 @@ Simple Streamlit app that emits an OTLP log record when the user clicks a button
 import os
 from urllib.parse import urljoin
 import requests
-
 import streamlit as st
+
 from src.models import EmitLogRequest, EmitLogResponse, LOG_LEVELS
 
 

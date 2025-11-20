@@ -1,0 +1,16 @@
+bin/
+obj/
+**/bin/
+**/obj/
+**/TestResults/
+**/.vs/
+**/.DS_Store
+**/*.user
+**/*.swp
+node_modules/
+.venv/
+**/__pycache__/
+**/.pytest_cache/
+.git/
+data-protection/
+.image/ui/out/

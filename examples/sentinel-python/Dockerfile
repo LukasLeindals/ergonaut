@@ -1,4 +1,5 @@
 # syntax=docker/dockerfile:1.7
+
 FROM python:3.11-slim AS base
 
 ENV PYTHONDONTWRITEBYTECODE=1 \
@@ -9,14 +10,20 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 
 WORKDIR /app
 
-RUN apt-get update \
+RUN --mount=type=cache,target=/var/cache/apt \
+    --mount=type=cache,target=/var/lib/apt \
+    apt-get update \
     && apt-get install -y --no-install-recommends curl \
-    && pip install --no-cache-dir "poetry==${POETRY_VERSION}" \
     && rm -rf /var/lib/apt/lists/*
+
+RUN --mount=type=cache,target=/root/.cache/pip \
+    pip install "poetry==${POETRY_VERSION}"
 
 COPY pyproject.toml poetry.lock ./
 
-RUN poetry install --no-root
+RUN --mount=type=cache,target=/root/.cache/pypoetry \
+    --mount=type=cache,target=/root/.cache/pip \
+    poetry install --no-root
 
 COPY src ./src
 COPY docker-entrypoint.sh ./
