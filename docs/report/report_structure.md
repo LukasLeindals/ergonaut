@@ -36,6 +36,8 @@
   - [ ] Blazor Server: minimal download/fast first paint; code stays on the server for better governance; works on thin/older browsers ([Blazor hosting models](https://learn.microsoft.com/en-us/dotnet/architecture/blazor-for-web-forms-developers/hosting-models)).
   - [ ] EF Core: cross-platform ORM with swappable providers (SQLite default, easily switch to SQL Server/Postgres/MySQL) and reduced data-access boilerplate ([EF Core providers list](https://learn.microsoft.com/en-us/ef/core/providers/index)).
   - [ ] OTLP: vendor-neutral telemetry transport for logs/metrics/traces, reducing exporter sprawl and lock-in ([OTLP 1.0 release](https://www.infoq.com/news/2023/08/otlp-version-one-released/)).
+  - [ ] Docker: consistent dev/test environment and simple one-command startup via `just run-docker`; aligns with container-first deployment patterns ([Docker overview](https://docs.docker.com/get-started/overview/)).
+  - [ ] Kafka (if/when adopted for high-volume ingest): durable log for stream processing and backpressure handling; pairs well with OTLP exporters and decouples Sentinel scaling from producers ([Kafka introduction](https://kafka.apache.org/intro)).
 - [ ] References: README overview, `docs/uml` diagrams, and `examples/sentinel-python` for automation pattern.
 
 ### 1.5 Constraints and Assumptions
