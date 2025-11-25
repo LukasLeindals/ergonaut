@@ -39,6 +39,7 @@
   - [ ] Docker: consistent dev/test environment and simple one-command startup via `just run-docker`; aligns with container-first deployment patterns ([Docker overview](https://docs.docker.com/get-started/overview/)).
   - [ ] Kafka (if/when adopted for high-volume ingest): durable log for stream processing and backpressure handling; pairs well with OTLP exporters and decouples Sentinel scaling from producers ([Kafka introduction](https://kafka.apache.org/intro)).
 - [ ] References: README overview, `docs/uml` diagrams, and `examples/sentinel-python` for automation pattern.
+- [ ] Internal reference: `teaching_material/ProC10withNET6.pdf` — Chapter 1 (Architecture overview, pp. 1–30) and Chapter 3 (Layering/SOLID, pp. 55–90) to align terminology and patterns.
 
 ### 1.5 Constraints and Assumptions
 - [ ] Time-boxed prototype deadline; dev-oriented auth tokens; dependence on an OTLP collector.
@@ -51,12 +52,14 @@
 - [ ] DDD layering, separation of concerns, loose coupling via interfaces/DTOs.
 - [ ] Target qualities: maintainability, testability, evolvability; acknowledged trade-offs vs. performance.
 - [ ] Key architectural decisions/ADRs with rationale.
+- [ ] Reference: `teaching_material/ProC10withNET6.pdf`, Chapter 3 (Layering/SOLID/service boundaries, pp. 55–90).
 
 ### 2.2 Domain Model
 - [ ] Core aggregates: Project, Task, AutomationRule; invariants and lifecycle rules.
 - [ ] Value objects/enums: status, priority, rule conditions; domain events if present.
 - [ ] How domain rules prevent invalid state and duplication.
 - [ ] FIGURE (high): Domain aggregates mapped to persistence (`docs/report/figures/domain_and_data.puml`).
+- [ ] Reference: `teaching_material/ProC10withNET6.pdf`, Chapter 4 (Domain modelling: entities vs value objects, invariants, pp. 91–130).
 
 ### 2.3 Application Layer
 - [ ] Command/query services, validation pipeline, transaction boundaries.
