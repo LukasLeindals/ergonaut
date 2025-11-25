@@ -3,14 +3,14 @@
 
 ## 01_Intro
 ### 1.0 Hook: Why Ergonaut Matters (read this first)
-- [ ] One-paragraph “catch” that ties Ergonaut to real pain: scattered tasks, siloed automation, and brittle domain rules.
-- [ ] Crisp value prop: single domain core reused by API/UI/Sentinel for safe automation without bypassing business logic.
+- [ ] One-paragraph “catch” that ties Ergonaut to real pain: scattered tasks, siloed automation, brittle domain rules, and slow incident triage.
+- [ ] Crisp value prop: Sentinel-first automation that reuses the domain core; API/UI act as governed surfaces to review and act on Sentinel-created work.
 - [ ] Short promise of evidence: point to architecture diagram, demo path, and metrics sections for proof.
 - [ ] FIGURE (medium): A before/after sketch showing chaotic workflows vs. Ergonaut’s unified, automated flow.
 - [ ] External references that validate observability-driven ticket automation (for comparison and credibility): [Automatically create a Jira Software issue from a detected problem in Dynatrace](https://www.atlassian.com/devops/observability-tutorials/jira-dynatrace-issue); [Send Dynatrace notifications to Jira](https://docs.dynatrace.com/docs/analyze-explore-automate/notifications-and-alerting/problem-notifications/jira-integration); [Rootly & Jira Integration: Auto‑Create Incident Tickets](https://rootly.com/sre/rootly-jira-integration-auto-create-incident-tickets); [Atlassian + Dynatrace: automate issue creation from Dynatrace problems](https://www.atlassian.com/solutions/devops/integrations/dynatrace); [Atlassian Marketplace case: Dynatrace Integration for Jira reduces MTTR via auto ticketing](https://marketplace.atlassian.com/archive/1223165).
 
 ### 1.1 Purpose and Problem Framing
-- [ ] State the real-world need: reliable project/task tracking with automation that respects domain rules.
+- [ ] State the real-world need: Sentinel-driven detection → triage → task creation that respects domain rules, with API/UI as the auditable control panels.
 - [ ] Position this submission as a functional prototype deliverable; clarify scope vs. full product.
 - [ ] Frame the primary research/engineering questions the prototype addresses.
 
@@ -25,7 +25,7 @@
 - [ ] Roles/responsibilities matrix for review and decision making.
 
 ### 1.4 System Overview
-- [ ] Layer map: `Ergonaut.Core` (domain), `Ergonaut.App` (use cases), `Ergonaut.Infrastructure` (EF Core), `Ergonaut.Api` (REST/JWT), `Ergonaut.UI` (Blazor Server), Sentinel worker.
+- [ ] Layer map (Sentinel-first): Sentinel worker (automation entry), `Ergonaut.Core` (domain), `Ergonaut.App` (use cases), `Ergonaut.Infrastructure` (EF Core), `Ergonaut.Api` (REST/JWT), `Ergonaut.UI` (Blazor Server).
 - [ ] Default runtime context: SQLite at `data/sqlite/ergonaut.db`, Docker stack via `just run-docker`.
 - [ ] Primary user journey summarised for orientation.
 - [ ] FIGURE (high): Layered architecture diagram showing Core/App/Infrastructure/Api/UI/Sentinel and data/telemetry flows to give readers an immediate mental model.
@@ -60,19 +60,19 @@
 - [ ] Resiliency and resource management plans (retries, timeouts, caching, connection limits).
 
 ### 2.5 API Layer
-- [ ] REST surface, JWT auth flow, middleware stack (auth, exception, logging, CORS if used).
+- [ ] REST surface, JWT auth flow, middleware stack (auth, exception, logging, CORS if used); positioned primarily as Sentinel’s governed ingress/egress and as the UI’s backend.
 - [ ] Versioning stance and error/response conventions; exemplar endpoint shapes.
 - [ ] Input validation strategy, rate limiting posture, pagination/ filtering conventions.
 - [ ] FIGURE (medium): Sequence diagram for a representative API call (e.g., create task) from request through middleware to domain commit, illustrating control flow and responsibilities.
 
 ### 2.6 UI Layer
-- [ ] Blazor Server topology, navigation map, data-fetch patterns, and state handling.
+- [ ] Blazor Server topology, navigation map, data-fetch patterns, and state handling; emphasize UI as a review/override surface for Sentinel-generated tasks rather than a standalone task board product.
 - [ ] Accessibility/UX considerations; responsive design notes; prototype-level shortcuts.
 - [ ] Client vs. server validation balance and error-handling UX.
 - [ ] FIGURE (medium): UI sitemap/wireframe collage showing main pages and navigation to contextualize the user journey.
 
 ### 2.7 Sentinel Automation
-- [ ] OTLP ingestion → rule evaluation → task creation via App services.
+- [ ] OTLP ingestion → rule evaluation → task creation via App services; highlight Sentinel as the primary differentiator and source of most task flow.
 - [ ] Deduplication using `messageTemplate`; throttling/flood protection strategy.
 - [ ] Deployment topology expectations and security boundaries for the worker.
 - [ ] FIGURE (high): Sequence/flow diagram from OTLP log emission to rule match to task creation, emphasizing deduplication and failure paths.
@@ -103,18 +103,18 @@
 - [ ] FIGURE (medium): Simplified ER diagram of core tables to aid readers who follow the persistence view.
 
 ### 3.4 API Details
-- [ ] Representative requests/responses for auth and project/task CRUD; automation-related endpoints.
+- [ ] Representative requests/responses for auth and project/task CRUD; automation-related endpoints (Sentinel posting tasks/events, querying automation status).
 - [ ] Middleware configuration and policies (auth, exception, logging, CORS).
 - [ ] Error codes taxonomy, pagination, filtering, and sorting conventions.
 
 ### 3.5 UI Details
 - [ ] Main pages/components and their backing services; loading/error states.
 - [ ] State persistence model (server-side circuits) and any client interactions.
-- [ ] Input validation UX, form behaviors, navigation edge cases.
+- [ ] Input validation UX, form behaviors, navigation edge cases; clarify UI’s role as visibility and governance over Sentinel output (not the primary capture surface).
 - [ ] FIGURE (low): Annotated screenshot or mock of a key page (e.g., project/task board) showing data bindings and states.
 
 ### 3.6 Automation Flow
-- [ ] Sentinel worker configuration, OTLP endpoint expectations, rule match flow to App services.
+- [ ] Sentinel worker configuration, OTLP endpoint expectations, rule match flow to App services (central scenario for the system).
 - [ ] Failure handling/retry semantics and observability hooks.
 - [ ] Minimal run instructions (`just run-docker`, environment variables).
 - [ ] FIGURE (medium): Deployment diagram placing the worker, API, DB, and collector to show network paths and ports.
@@ -142,7 +142,7 @@
 - [ ] FIGURE (medium): Kanban-style status board screenshot or table summarizing features vs. completion to visualize readiness.
 
 ### 4.2 Demonstration Path
-- [ ] Stepwise walkthrough: start stack → authenticate → create project/task → emit OTLP event → observe automated task.
+- [ ] Stepwise walkthrough: start stack → authenticate → emit OTLP event → Sentinel creates/updates task → review/verify in UI/API (task CRUD as supporting flows).
 - [ ] Expected observable outputs (API responses, UI screens) and success checkpoints.
 - [ ] FIGURE (medium): Swimlane or sequence diagram of the demo flow to help presenters follow timing and actors.
 
