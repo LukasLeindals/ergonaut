@@ -61,3 +61,8 @@ samples/log_emitter/.streamlit/secrets.toml
 .image/ui/.env
 .image/sentinel/.env
 data-protection/*
+
+# python
+__pycache__/
+*.pyc
+

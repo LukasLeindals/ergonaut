@@ -52,14 +52,14 @@ example-sentinel-python action:
 run-docker-development:
     @docker compose -f .image/docker-compose-development.yaml up --build -d --remove-orphans
 
-run-docker: write-docker-env create-docker-networks build-proto-tools
+run-docker: stop-docker write-docker-env create-docker-networks build-proto-tools
     export DOTNET_ENVIRONMENT=Staging && \
     docker compose \
     -f .image/docker-compose.yaml \
     up --build -d --remove-orphans
 
 stop-docker:
-    @docker compose -f .image/docker-compose.yaml down
+    @docker compose -f .image/docker-compose.yaml down -v --remove-orphans
 
 build-docker project:
     docker build -f .image/{{ project }}/Dockerfile .
