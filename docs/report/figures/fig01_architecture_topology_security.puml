@@ -1,11 +1,15 @@
 @startuml
-title Architecture, Deployment & Trust Boundaries (Sentinel-first)
+title Figure 01 – Sentinel-First Architecture, Deployment, and Trust Boundaries
 
+left to right direction
+skinparam dpi 110
 skinparam backgroundColor #ffffff
 skinparam componentStyle rectangle
-skinparam wrapWidth 180
-skinparam maxMessageSize 150
+skinparam wrapWidth 120
+skinparam maxMessageSize 90
 skinparam shadowing false
+skinparam defaultTextAlignment left
+skinparam defaultFontSize 12
 
 rectangle "OTLP Collector" as Collector #f7f7ff
 rectangle "Sentinel Worker\n(automation engine)" as Sentinel #ffe6cc
@@ -40,17 +44,6 @@ Infra -[#707070]-> DB
 API -[#707070,dashed]-> IdP : Token validate
 UI -[#707070,dashed]-> IdP : Token acquire
 User -[#707070]-> UI
-
-rectangle "Trust Boundary: Internal Network" #transparent {
-  Collector
-  Sentinel
-  API
-  UI
-  App
-  Core
-  Infra
-  DB
-}
 
 legend right
   Orange: automation (Sentinel)

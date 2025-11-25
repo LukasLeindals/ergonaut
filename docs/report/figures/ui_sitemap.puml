@@ -1,5 +1,9 @@
 @startuml
-title UI Sitemap (Review/Governance Focus)
+title Figure 04 – UI Sitemap (Review/Governance Focus)
+
+left to right direction
+skinparam dpi 110
+skinparam defaultFontSize 12
 
 skinparam rectangle {
   BackgroundColor #f8fbff

@@ -100,3 +100,6 @@ create-docker-networks:
 
 build-proto-tools:
     docker build -f .image/proto-tools/Dockerfile -t ergonaut/proto-tools:latest .
+
+export-figures:
+    plantuml -tsvg docs/report/figures/*.puml

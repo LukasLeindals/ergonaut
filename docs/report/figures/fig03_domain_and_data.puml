@@ -1,10 +1,13 @@
 @startuml
-title Domain Aggregates Mapped to Persistence
+title Figure 03 – Domain Aggregates Mapped to Persistence
 
+left to right direction
+skinparam dpi 110
 skinparam backgroundColor #ffffff
 skinparam classAttributeIconSize 0
+skinparam wrapWidth 120
+skinparam defaultFontSize 12
 
-' Domain view
 class Project {
   ProjectId : Guid
   Name : string
@@ -32,15 +35,31 @@ class AutomationRule {
   IsEnabled : bool
 }
 
-enum TaskSource { Sentinel; UI; API }
-enum TaskStatus { New; InProgress; Done; Blocked }
-enum Priority { Low; Medium; High; Critical }
-enum ProjectStatus { Active; Archived }
+enum TaskSource {
+  Sentinel
+  UI
+  API
+}
+enum TaskStatus {
+  New
+  InProgress
+  Done
+  Blocked
+}
+enum Priority {
+  Low
+  Medium
+  High
+  Critical
+}
+enum ProjectStatus {
+  Active
+  Archived
+}
 
 Project "1" --> "*" Task : contains
 AutomationRule "1" --> "1" TaskTemplate : produces
 
-' Data view
 entity "Projects" as Projects {
   * ProjectId : GUID <<PK>>
   --

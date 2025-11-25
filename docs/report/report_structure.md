@@ -28,7 +28,7 @@
 - [ ] Layer map (Sentinel-first): Sentinel worker (automation entry), `Ergonaut.Core` (domain), `Ergonaut.App` (use cases), `Ergonaut.Infrastructure` (EF Core), `Ergonaut.Api` (REST/JWT), `Ergonaut.UI` (Blazor Server).
 - [ ] Default runtime context: SQLite at `data/sqlite/ergonaut.db`, Docker stack via `just run-docker`.
 - [ ] Primary user journey summarised for orientation.
-- [ ] FIGURE (high): Architecture + deployment + trust boundaries combined diagram (`docs/report/figures/architecture_topology_security.puml`).
+- [ ] FIGURE (high): Architecture + deployment + trust boundaries (`docs/report/figures/fig01_architecture_topology_security.puml`).
 - [ ] Sentinel end-to-end flow reference: see combined sequence (`docs/report/figures/flows_api_automation.puml`) for automation-first narrative.
 - [ ] Tech stack overview: .NET 6/C#, EF Core, Blazor Server, REST + JWT, OTLP for telemetry ingest, SignalR/webhooks (if used) for notifications, SQLite default (swappable DB), Docker dev stack; call out key third-party packages and why chosen.
 - [ ] Why these choices work (with evidence):
@@ -58,7 +58,7 @@
 - [ ] Core aggregates: Project, Task, AutomationRule; invariants and lifecycle rules.
 - [ ] Value objects/enums: status, priority, rule conditions; domain events if present.
 - [ ] How domain rules prevent invalid state and duplication.
-- [ ] FIGURE (high): Domain aggregates mapped to persistence (`docs/report/figures/domain_and_data.puml`).
+- [ ] FIGURE (high): Domain aggregates mapped to persistence (`docs/report/figures/fig03_domain_and_data.puml`).
 - [ ] Reference: `teaching_material/ProC10withNET6.pdf`, Chapter 4 (Domain modelling: entities vs value objects, invariants, pp. 91–130).
 
 ### 2.3 Application Layer
@@ -75,7 +75,7 @@
 - [ ] REST surface, JWT auth flow, middleware stack (auth, exception, logging, CORS if used); positioned primarily as Sentinel’s governed ingress/egress and as the UI’s backend.
 - [ ] Versioning stance and error/response conventions; exemplar endpoint shapes.
 - [ ] Input validation strategy, rate limiting posture, pagination/ filtering conventions.
-- [ ] FIGURE (medium): Combined automation vs API task flow sequence (`docs/report/figures/flows_api_automation.puml`).
+- [ ] FIGURE (medium): Combined automation vs API task flow sequence (`docs/report/figures/fig02_flows_api_automation.puml`).
 
 ### 2.6 UI Layer
 - [ ] Blazor Server topology, navigation map, data-fetch patterns, and state handling; emphasize UI as a review/override surface for Sentinel-generated tasks rather than a standalone task board product.

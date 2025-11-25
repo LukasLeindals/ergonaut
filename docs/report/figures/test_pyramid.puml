@@ -1,5 +1,8 @@
 @startuml
-title Testing Balance (current vs. target)
+title Figure 05 – Testing Balance (current vs. target)
+
+skinparam dpi 110
+skinparam defaultFontSize 12
 
 skinparam backgroundColor #ffffff
 skinparam shadowing false

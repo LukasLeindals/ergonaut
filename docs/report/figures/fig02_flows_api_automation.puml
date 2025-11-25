@@ -1,6 +1,7 @@
 @startuml
-title Flows: Sentinel Automation vs Governed API Task Creation
+title Figure 02 – Flows: Sentinel Automation vs Governed API Task Creation
 
+skinparam dpi 110
 skinparam backgroundColor #ffffff
 skinparam sequence {
   ArrowColor #444444
@@ -8,9 +9,11 @@ skinparam sequence {
   LifeLineBackgroundColor #ffffff
   BoxBorderColor #888888
   BoxBackgroundColor #f8f8f8
+  MaxMessageSize 80
+  ParticipantPadding 10
+  DefaultFontSize 12
 }
 
-== Sentinel Automation ==
 participant "Telemetry Emitter" as Emit
 participant "OTLP Collector" as Coll
 participant "Sentinel Worker" as Sen
@@ -20,6 +23,7 @@ participant "Domain" as Dom
 database "DB" as DB
 participant "API/UI (notify/review)" as Surf
 
+== Sentinel Automation ==
 Emit -> Coll : OTLP log/trace\n(messageTemplate + attrs)
 Coll -> Sen : Export batch
 Sen -> Rule : Evaluate(event)
