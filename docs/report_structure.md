@@ -1,7 +1,14 @@
-# Ergonaut Prototype Report  
+# Ergonaut Prototype Report
 *(Aligned to the six-chapter structure used in DTU 62413 course reports)*
 
 ## 01_Intro
+### 1.0 Hook: Why Ergonaut Matters (read this first)
+- [ ] One-paragraph “catch” that ties Ergonaut to real pain: scattered tasks, siloed automation, and brittle domain rules.
+- [ ] Crisp value prop: single domain core reused by API/UI/Sentinel for safe automation without bypassing business logic.
+- [ ] Short promise of evidence: point to architecture diagram, demo path, and metrics sections for proof.
+- [ ] FIGURE (medium): A before/after sketch showing chaotic workflows vs. Ergonaut’s unified, automated flow.
+- [ ] External references that validate observability-driven ticket automation (for comparison and credibility): [Automatically create a Jira Software issue from a detected problem in Dynatrace](https://www.atlassian.com/devops/observability-tutorials/jira-dynatrace-issue); [Send Dynatrace notifications to Jira](https://docs.dynatrace.com/docs/analyze-explore-automate/notifications-and-alerting/problem-notifications/jira-integration); [Rootly & Jira Integration: Auto‑Create Incident Tickets](https://rootly.com/sre/rootly-jira-integration-auto-create-incident-tickets).
+
 ### 1.1 Purpose and Problem Framing
 - [ ] State the real-world need: reliable project/task tracking with automation that respects domain rules.
 - [ ] Position this submission as a functional prototype deliverable; clarify scope vs. full product.
@@ -22,11 +29,13 @@
 - [ ] Default runtime context: SQLite at `data/sqlite/ergonaut.db`, Docker stack via `just run-docker`.
 - [ ] Primary user journey summarised for orientation.
 - [ ] FIGURE (high): Layered architecture diagram showing Core/App/Infrastructure/Api/UI/Sentinel and data/telemetry flows to give readers an immediate mental model.
+- [ ] References: README overview, `docs/uml` diagrams, and `examples/sentinel-python` for automation pattern.
 
 ### 1.5 Constraints and Assumptions
 - [ ] Time-boxed prototype deadline; dev-oriented auth tokens; dependence on an OTLP collector.
 - [ ] Tech constraints: .NET 6+, Blazor Server model, EF Core migrations, single-instance deployment during prototype.
 - [ ] Operational assumptions: dev TLS posture, log retention defaults, single-tenant expectation.
+- [ ] References: security/config guidance in `README.md` and any `.env` generation notes from `just run-docker`.
 
 ## 02_Design
 ### 2.1 Architectural Style and Quality Attributes
