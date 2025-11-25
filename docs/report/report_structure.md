@@ -29,6 +29,7 @@
 - [ ] Default runtime context: SQLite at `data/sqlite/ergonaut.db`, Docker stack via `just run-docker`.
 - [ ] Primary user journey summarised for orientation.
 - [ ] FIGURE (high): Architecture + deployment + trust boundaries combined diagram (`docs/report/figures/architecture_topology_security.puml`).
+- [ ] Sentinel end-to-end flow reference: see combined sequence (`docs/report/figures/flows_api_automation.puml`) for automation-first narrative.
 - [ ] References: README overview, `docs/uml` diagrams, and `examples/sentinel-python` for automation pattern.
 
 ### 1.5 Constraints and Assumptions
