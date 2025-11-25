@@ -21,6 +21,7 @@
 - Layer map: `Ergonaut.Core` (domain), `Ergonaut.App` (use cases), `Ergonaut.Infrastructure` (EF Core), `Ergonaut.Api` (REST/JWT), `Ergonaut.UI` (Blazor Server), Sentinel worker.
 - Default runtime context: SQLite at `data/sqlite/ergonaut.db`, Docker stack via `just run-docker`.
 - Primary user journey summarised for orientation.
+- FIGURE (high): Layered architecture diagram showing Core/App/Infrastructure/Api/UI/Sentinel and data/telemetry flows to give readers an immediate mental model.
 
 ### 1.5 Constraints and Assumptions
 - Time-boxed prototype deadline; dev-oriented auth tokens; dependence on an OTLP collector.
@@ -37,6 +38,7 @@
 - Core aggregates: Project, Task, AutomationRule; invariants and lifecycle rules.
 - Value objects/enums: status, priority, rule conditions; domain events if present.
 - How domain rules prevent invalid state and duplication.
+- FIGURE (high): UML class/aggregate diagram highlighting entities, value objects, and key relationships to anchor the domain description.
 
 ### 2.3 Application Layer
 - Command/query services, validation pipeline, transaction boundaries.
@@ -52,28 +54,33 @@
 - REST surface, JWT auth flow, middleware stack (auth, exception, logging, CORS if used).
 - Versioning stance and error/response conventions; exemplar endpoint shapes.
 - Input validation strategy, rate limiting posture, pagination/ filtering conventions.
+- FIGURE (medium): Sequence diagram for a representative API call (e.g., create task) from request through middleware to domain commit, illustrating control flow and responsibilities.
 
 ### 2.6 UI Layer
 - Blazor Server topology, navigation map, data-fetch patterns, and state handling.
 - Accessibility/UX considerations; responsive design notes; prototype-level shortcuts.
 - Client vs. server validation balance and error-handling UX.
+- FIGURE (medium): UI sitemap/wireframe collage showing main pages and navigation to contextualize the user journey.
 
 ### 2.7 Sentinel Automation
 - OTLP ingestion → rule evaluation → task creation via App services.
 - Deduplication using `messageTemplate`; throttling/flood protection strategy.
 - Deployment topology expectations and security boundaries for the worker.
+- FIGURE (high): Sequence/flow diagram from OTLP log emission to rule match to task creation, emphasizing deduplication and failure paths.
 
 ### 2.8 Cross-Cutting Concerns
 - Security: authN/Z boundaries, least-privilege defaults, secret storage approach.
 - Observability: logs/metrics/traces plan, correlation IDs, dashboard needs.
 - Performance/scalability: expected load, performance budgets, caching decisions.
 - Privacy/compliance considerations (PII handling, retention), and brief threat model.
+- FIGURE (medium): Data-flow diagram indicating where sensitive data travels and is stored, highlighting trust boundaries and controls.
 
 ## 03_Implementation
 ### 3.1 Codebase Tour
 - Layer-to-folder mapping: `src/Ergonaut.Core`, `Ergonaut.App`, `Ergonaut.Infrastructure`, `Ergonaut.Api`, `Ergonaut.UI`, `examples/sentinel-python`.
 - Location of shared contracts/DTOs/interfaces and cross-layer utilities.
 - Notable third-party dependencies and their roles.
+- FIGURE (low): Repository/package dependency graph to visualize module coupling.
 
 ### 3.2 Patterns and Key Components
 - Entities/value objects enforcing rules; repositories abstracting persistence; services orchestrating use cases.
@@ -84,6 +91,7 @@
 - Default SQLite file path, migration application, seeding/initialization behavior.
 - Steps and configuration knobs to swap to another provider; connection string patterns.
 - Backup/restore approach and migration rollback strategy.
+- FIGURE (medium): Simplified ER diagram of core tables to aid readers who follow the persistence view.
 
 ### 3.4 API Details
 - Representative requests/responses for auth and project/task CRUD; automation-related endpoints.
@@ -94,11 +102,13 @@
 - Main pages/components and their backing services; loading/error states.
 - State persistence model (server-side circuits) and any client interactions.
 - Input validation UX, form behaviors, navigation edge cases.
+- FIGURE (low): Annotated screenshot or mock of a key page (e.g., project/task board) showing data bindings and states.
 
 ### 3.6 Automation Flow
 - Sentinel worker configuration, OTLP endpoint expectations, rule match flow to App services.
 - Failure handling/retry semantics and observability hooks.
 - Minimal run instructions (`just run-docker`, environment variables).
+- FIGURE (medium): Deployment diagram placing the worker, API, DB, and collector to show network paths and ports.
 
 ### 3.7 Tooling and Commands
 - Dev ergonomics: `just run-docker`, exposed ports (5075 API, 5242 UI), generated env files.
@@ -109,6 +119,7 @@
 - Current unit/integration tests in `tests`: coverage focus, mocking approach.
 - Test data management, fixtures, isolation strategy.
 - CI pipeline status (if any) and how tests integrate; gaps to close next (auth edges, automation correctness, UI e2e).
+- FIGURE (low): Coverage dashboard or test pyramid illustration to convey testing balance.
 
 ### 3.9 Reproducibility and Environment
 - Required toolchain versions (.NET SDK, Node if used), OS assumptions.
@@ -119,15 +130,18 @@
 ### 4.1 Prototype Status
 - Working end-to-end flows and stability level; notable rough edges.
 - Defect list snapshot with severity.
+- FIGURE (medium): Kanban-style status board screenshot or table summarizing features vs. completion to visualize readiness.
 
 ### 4.2 Demonstration Path
 - Stepwise walkthrough: start stack → authenticate → create project/task → emit OTLP event → observe automated task.
 - Expected observable outputs (API responses, UI screens) and success checkpoints.
+- FIGURE (medium): Swimlane or sequence diagram of the demo flow to help presenters follow timing and actors.
 
 ### 4.3 Metrics and Evidence
 - Latency/throughput observations, error rates, coverage snapshot.
 - Resource usage notes (CPU/memory) under demo load; bottlenecks observed.
 - Missing measurements and how to gather them.
+- FIGURE (high): Charts for latency percentiles, error rates, and resource usage during the demo scenario to evidence performance claims.
 
 ### 4.4 Deferred Items
 - Items intentionally postponed with links to `FUTURE_WORK.md`.
@@ -136,6 +150,7 @@
 ### 4.5 Validation and Acceptance
 - Manual checks or scripted acceptance tests performed; pass/fail status.
 - Known failing scenarios and their severity/impact.
+- FIGURE (low): Checklist screenshot/table of acceptance criteria with pass/fail markers for quick auditability.
 
 ## 05_Discussion
 ### 5.1 Strengths
@@ -152,6 +167,7 @@
 ### 5.4 Risks and Mitigations
 - Data consistency, auth hardening, automation false positives; mitigation plans and owners.
 - Operational risks (log volume spikes, collector downtime) and fallbacks.
+- FIGURE (medium): Risk matrix heatmap plotting likelihood vs. impact to quickly communicate priorities.
 
 ### 5.5 Alternatives Considered
 - Brief rationale for rejected options (frontend tech, telemetry ingestion alternatives, database choices).
@@ -169,6 +185,7 @@
 ### 5.9 Ethical and Sustainability Considerations
 - Data/privacy handling, auditability, potential misuse risks.
 - Operational sustainability (energy/resource use) and long-term maintenance posture.
+- FIGURE (low): Data lineage diagram highlighting where personal or sensitive data flows and is retained, supporting ethical review.
 
 ## 06_Conclusion
 ### 6.1 Prototype Viability
