@@ -30,6 +30,12 @@
 - [ ] Primary user journey summarised for orientation.
 - [ ] FIGURE (high): Architecture + deployment + trust boundaries combined diagram (`docs/report/figures/architecture_topology_security.puml`).
 - [ ] Sentinel end-to-end flow reference: see combined sequence (`docs/report/figures/flows_api_automation.puml`) for automation-first narrative.
+- [ ] Tech stack overview: .NET 6/C#, EF Core, Blazor Server, REST + JWT, OTLP for telemetry ingest, SignalR/webhooks (if used) for notifications, SQLite default (swappable DB), Docker dev stack; call out key third-party packages and why chosen.
+- [ ] Why these choices work (with evidence):
+  - [ ] .NET LTS cadence: even-numbered releases get 3-year support; .NET 6 is LTS with clear upgrade path to .NET 8/10 ([.NET support policy](https://dotnet.microsoft.com/en-us/platform/support/policy), [.NET 6 lifecycle notice](https://devblogs.microsoft.com/dotnet/dotnet-6-end-of-support/)).
+  - [ ] Blazor Server: minimal download/fast first paint; code stays on the server for better governance; works on thin/older browsers ([Blazor hosting models](https://learn.microsoft.com/en-us/dotnet/architecture/blazor-for-web-forms-developers/hosting-models)).
+  - [ ] EF Core: cross-platform ORM with swappable providers (SQLite default, easily switch to SQL Server/Postgres/MySQL) and reduced data-access boilerplate ([EF Core providers list](https://learn.microsoft.com/en-us/ef/core/providers/index)).
+  - [ ] OTLP: vendor-neutral telemetry transport for logs/metrics/traces, reducing exporter sprawl and lock-in ([OTLP 1.0 release](https://www.infoq.com/news/2023/08/otlp-version-one-released/)).
 - [ ] References: README overview, `docs/uml` diagrams, and `examples/sentinel-python` for automation pattern.
 
 ### 1.5 Constraints and Assumptions
