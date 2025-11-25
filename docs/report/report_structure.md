@@ -28,7 +28,7 @@
 - [ ] Layer map (Sentinel-first): Sentinel worker (automation entry), `Ergonaut.Core` (domain), `Ergonaut.App` (use cases), `Ergonaut.Infrastructure` (EF Core), `Ergonaut.Api` (REST/JWT), `Ergonaut.UI` (Blazor Server).
 - [ ] Default runtime context: SQLite at `data/sqlite/ergonaut.db`, Docker stack via `just run-docker`.
 - [ ] Primary user journey summarised for orientation.
-- [ ] FIGURE (high): Layered architecture diagram showing Core/App/Infrastructure/Api/UI/Sentinel and data/telemetry flows to give readers an immediate mental model.
+- [ ] FIGURE (high): Architecture + deployment + trust boundaries combined diagram (`docs/report/figures/architecture_topology_security.puml`).
 - [ ] References: README overview, `docs/uml` diagrams, and `examples/sentinel-python` for automation pattern.
 
 ### 1.5 Constraints and Assumptions
@@ -47,7 +47,7 @@
 - [ ] Core aggregates: Project, Task, AutomationRule; invariants and lifecycle rules.
 - [ ] Value objects/enums: status, priority, rule conditions; domain events if present.
 - [ ] How domain rules prevent invalid state and duplication.
-- [ ] FIGURE (high): UML class/aggregate diagram highlighting entities, value objects, and key relationships to anchor the domain description.
+- [ ] FIGURE (high): Domain aggregates mapped to persistence (`docs/report/figures/domain_and_data.puml`).
 
 ### 2.3 Application Layer
 - [ ] Command/query services, validation pipeline, transaction boundaries.
@@ -63,33 +63,33 @@
 - [ ] REST surface, JWT auth flow, middleware stack (auth, exception, logging, CORS if used); positioned primarily as Sentinel’s governed ingress/egress and as the UI’s backend.
 - [ ] Versioning stance and error/response conventions; exemplar endpoint shapes.
 - [ ] Input validation strategy, rate limiting posture, pagination/ filtering conventions.
-- [ ] FIGURE (medium): Sequence diagram for a representative API call (e.g., create task) from request through middleware to domain commit, illustrating control flow and responsibilities.
+- [ ] FIGURE (medium): Combined automation vs API task flow sequence (`docs/report/figures/flows_api_automation.puml`).
 
 ### 2.6 UI Layer
 - [ ] Blazor Server topology, navigation map, data-fetch patterns, and state handling; emphasize UI as a review/override surface for Sentinel-generated tasks rather than a standalone task board product.
 - [ ] Accessibility/UX considerations; responsive design notes; prototype-level shortcuts.
 - [ ] Client vs. server validation balance and error-handling UX.
-- [ ] FIGURE (medium): UI sitemap/wireframe collage showing main pages and navigation to contextualize the user journey.
+- [ ] FIGURE (medium): UI sitemap/wireframe collage (`docs/report/figures/ui_sitemap.puml`) showing main pages and navigation to contextualize the user journey.
 
 ### 2.7 Sentinel Automation
 - [ ] OTLP ingestion → rule evaluation → task creation via App services; highlight Sentinel as the primary differentiator and source of most task flow.
 - [ ] Deduplication using `messageTemplate`; throttling/flood protection strategy.
 - [ ] Deployment topology expectations and security boundaries for the worker.
-- [ ] FIGURE (high): Sequence/flow diagram from OTLP log emission to rule match to task creation, emphasizing deduplication and failure paths.
+- [ ] FIGURE (high): Automation flow is included in combined sequence (`docs/report/figures/flows_api_automation.puml`).
 
 ### 2.8 Cross-Cutting Concerns
 - [ ] Security: authN/Z boundaries, least-privilege defaults, secret storage approach.
 - [ ] Observability: logs/metrics/traces plan, correlation IDs, dashboard needs.
 - [ ] Performance/scalability: expected load, performance budgets, caching decisions.
 - [ ] Privacy/compliance considerations (PII handling, retention), and brief threat model.
-- [ ] FIGURE (medium): Data-flow diagram indicating where sensitive data travels and is stored, highlighting trust boundaries and controls.
+- [ ] FIGURE (medium): Trust boundaries and data paths consolidated in `docs/report/figures/architecture_topology_security.puml`.
 
 ## 03_Implementation
 ### 3.1 Codebase Tour
 - [ ] Layer-to-folder mapping: `src/Ergonaut.Core`, `Ergonaut.App`, `Ergonaut.Infrastructure`, `Ergonaut.Api`, `Ergonaut.UI`, `examples/sentinel-python`.
 - [ ] Location of shared contracts/DTOs/interfaces and cross-layer utilities.
 - [ ] Notable third-party dependencies and their roles.
-- [ ] FIGURE (low): Repository/package dependency graph to visualize module coupling.
+- [ ] FIGURE (low): (Optional) dependency graph — not yet drawn to keep figures lean.
 
 ### 3.2 Patterns and Key Components
 - [ ] Entities/value objects enforcing rules; repositories abstracting persistence; services orchestrating use cases.
@@ -100,7 +100,7 @@
 - [ ] Default SQLite file path, migration application, seeding/initialization behavior.
 - [ ] Steps and configuration knobs to swap to another provider; connection string patterns.
 - [ ] Backup/restore approach and migration rollback strategy.
-- [ ] FIGURE (medium): Simplified ER diagram of core tables to aid readers who follow the persistence view.
+- [ ] FIGURE (medium): Persistence view included inside `docs/report/figures/domain_and_data.puml`.
 
 ### 3.4 API Details
 - [ ] Representative requests/responses for auth and project/task CRUD; automation-related endpoints (Sentinel posting tasks/events, querying automation status).
@@ -111,13 +111,13 @@
 - [ ] Main pages/components and their backing services; loading/error states.
 - [ ] State persistence model (server-side circuits) and any client interactions.
 - [ ] Input validation UX, form behaviors, navigation edge cases; clarify UI’s role as visibility and governance over Sentinel output (not the primary capture surface).
-- [ ] FIGURE (low): Annotated screenshot or mock of a key page (e.g., project/task board) showing data bindings and states.
+- [ ] FIGURE (low): Annotated UI screenshot of the task review page (state badges, provenance labels) — use real UI capture if available; fallback to mock.
 
 ### 3.6 Automation Flow
 - [ ] Sentinel worker configuration, OTLP endpoint expectations, rule match flow to App services (central scenario for the system).
 - [ ] Failure handling/retry semantics and observability hooks.
 - [ ] Minimal run instructions (`just run-docker`, environment variables).
-- [ ] FIGURE (medium): Deployment diagram placing the worker, API, DB, and collector to show network paths and ports.
+- [ ] FIGURE (medium): Deployment covered inside `architecture_topology_security.puml`.
 
 ### 3.7 Tooling and Commands
 - [ ] Dev ergonomics: `just run-docker`, exposed ports (5075 API, 5242 UI), generated env files.
@@ -128,7 +128,7 @@
 - [ ] Current unit/integration tests in `tests`: coverage focus, mocking approach.
 - [ ] Test data management, fixtures, isolation strategy.
 - [ ] CI pipeline status (if any) and how tests integrate; gaps to close next (auth edges, automation correctness, UI e2e).
-- [ ] FIGURE (low): Coverage dashboard or test pyramid illustration to convey testing balance.
+- [ ] FIGURE (low): Test balance (`docs/report/figures/test_pyramid.puml`).
 
 ### 3.9 Reproducibility and Environment
 - [ ] Required toolchain versions (.NET SDK, Node if used), OS assumptions.
@@ -139,18 +139,18 @@
 ### 4.1 Prototype Status
 - [ ] Working end-to-end flows and stability level; notable rough edges.
 - [ ] Defect list snapshot with severity.
-- [ ] FIGURE (medium): Kanban-style status board screenshot or table summarizing features vs. completion to visualize readiness.
+- [ ] FIGURE (medium): Kanban/status board screenshot from the UI (or prototype) showing automation-tagged tasks; use live capture.
 
 ### 4.2 Demonstration Path
 - [ ] Stepwise walkthrough: start stack → authenticate → emit OTLP event → Sentinel creates/updates task → review/verify in UI/API (task CRUD as supporting flows).
 - [ ] Expected observable outputs (API responses, UI screens) and success checkpoints.
-- [ ] FIGURE (medium): Swimlane or sequence diagram of the demo flow to help presenters follow timing and actors.
+- [ ] FIGURE (medium): Demo swimlane aligns with `flows_api_automation.puml` (reuse).
 
 ### 4.3 Metrics and Evidence
 - [ ] Latency/throughput observations, error rates, coverage snapshot.
 - [ ] Resource usage notes (CPU/memory) under demo load; bottlenecks observed.
 - [ ] Missing measurements and how to gather them.
-- [ ] FIGURE (high): Charts for latency percentiles, error rates, and resource usage during the demo scenario to evidence performance claims.
+- [ ] FIGURE (high): Performance charts — generate from measurements; not UML.
 
 ### 4.4 Deferred Items
 - [ ] Items intentionally postponed with links to `FUTURE_WORK.md`.
@@ -159,7 +159,7 @@
 ### 4.5 Validation and Acceptance
 - [ ] Manual checks or scripted acceptance tests performed; pass/fail status.
 - [ ] Known failing scenarios and their severity/impact.
-- [ ] FIGURE (low): Checklist screenshot/table of acceptance criteria with pass/fail markers for quick auditability.
+- [ ] FIGURE (low): Acceptance checklist — capture as table/screenshot; not UML.
 
 ## 05_Discussion
 ### 5.1 Strengths
@@ -176,7 +176,7 @@
 ### 5.4 Risks and Mitigations
 - [ ] Data consistency, auth hardening, automation false positives; mitigation plans and owners.
 - [ ] Operational risks (log volume spikes, collector downtime) and fallbacks.
-- [ ] FIGURE (medium): Risk matrix heatmap plotting likelihood vs. impact to quickly communicate priorities.
+- [ ] FIGURE (medium): Risk matrix — to be created as chart; not UML.
 
 ### 5.5 Alternatives Considered
 - [ ] Brief rationale for rejected options (frontend tech, telemetry ingestion alternatives, database choices).
@@ -194,7 +194,7 @@
 ### 5.9 Ethical and Sustainability Considerations
 - [ ] Data/privacy handling, auditability, potential misuse risks.
 - [ ] Operational sustainability (energy/resource use) and long-term maintenance posture.
-- [ ] FIGURE (low): Data lineage diagram highlighting where personal or sensitive data flows and is retained, supporting ethical review.
+- [ ] FIGURE (low): Data lineage covered by trust/data paths in `architecture_topology_security.puml`; extend if PII scope expands.
 
 ## 06_Conclusion
 ### 6.1 Prototype Viability

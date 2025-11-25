@@ -1,0 +1,71 @@
+@startuml
+title Architecture, Deployment & Trust Boundaries (Sentinel-first)
+
+skinparam backgroundColor #ffffff
+skinparam componentStyle rectangle
+skinparam wrapWidth 180
+skinparam maxMessageSize 150
+skinparam shadowing false
+
+rectangle "OTLP Collector" as Collector #f7f7ff
+rectangle "Sentinel Worker\n(automation engine)" as Sentinel #ffe6cc
+rectangle "API\nREST + JWT\nIngress/Egress" as API #e6f2ff
+rectangle "UI\nBlazor Server\nReview/override" as UI #e6f2ff
+
+package "Application Layer\n(Ergonaut.App)" #e8ffe8 {
+  component "Use Case Services\nCommands/Queries\nValidation + Transactions" as App
+}
+
+package "Domain Layer\n(Ergonaut.Core)" #e8e8ff {
+  component "Aggregates\nProject, Task, AutomationRule\nValue Objects, Invariants" as Core
+}
+
+package "Infrastructure Layer\n(Ergonaut.Infrastructure)" #fff0f0 {
+  component "EF Core DbContext\nRepositories\nMigrations" as Infra
+  database "SQLite (default)\n/ data/sqlite/ergonaut.db" as DB
+}
+
+cloud "Identity Provider\n(JWT)" as IdP
+actor "Operator/User" as User
+rectangle "External Emitters\n(services/apps)" as Emitters
+
+Emitters -[#707070,dashed]-> Collector : OTLP (TLS)
+Collector -[#707070,dashed]-> Sentinel : OTLP export (TLS)
+Sentinel -[#707070]-> API : POST tasks/events (JWT)
+UI -[#707070]-> API : REST calls (JWT)
+API -[#707070]-> App
+App -[#707070]-> Core
+App -[#707070]-> Infra
+Infra -[#707070]-> DB
+API -[#707070,dashed]-> IdP : Token validate
+UI -[#707070,dashed]-> IdP : Token acquire
+User -[#707070]-> UI
+
+rectangle "Trust Boundary: Internal Network" #transparent {
+  Collector
+  Sentinel
+  API
+  UI
+  App
+  Core
+  Infra
+  DB
+}
+
+legend right
+  Orange: automation (Sentinel)
+  Blue: surfaces (API/UI)
+  Green: application
+  Purple: domain
+  Pink: infrastructure/data
+endlegend
+
+note right of Sentinel
+  Primary differentiator\n  Dedup + throttling\n  Writes tasks through App/API
+end note
+
+note right of DB
+  PII minimised; encrypted backups\n  Retention policy TBD
+end note
+
+@enduml

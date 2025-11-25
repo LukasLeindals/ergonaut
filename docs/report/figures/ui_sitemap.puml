@@ -1,0 +1,27 @@
+@startuml
+title UI Sitemap (Review/Governance Focus)
+
+skinparam rectangle {
+  BackgroundColor #f8fbff
+  BorderColor #2f5597
+}
+
+rectangle "Home / Dashboard\n- summary cards\n- automation alerts" as Home
+rectangle "Projects\n- list\n- filters\n- create/edit" as Projects
+rectangle "Project Detail\n- tasks list\n- automation-sourced badges\n- activity" as ProjectDetail
+rectangle "Task Detail\n- state changes\n- comments\n- provenance (Sentinel/UI/API)" as TaskDetail
+rectangle "Automation Inbox\n- recent Sentinel events\n- deduped suggestions\n- approve/override" as Inbox
+rectangle "Settings\n- tokens\n- env info (dev)\n- OTLP status" as Settings
+
+Home --> Projects
+Projects --> ProjectDetail
+ProjectDetail --> TaskDetail
+Home --> Inbox
+Inbox --> TaskDetail
+Home --> Settings
+
+note bottom
+  UI is a governed surface for reviewing\n  and overriding Sentinel-created work.\n  Traditional task board views are subordinate\n  to automation review.
+end note
+
+@enduml
