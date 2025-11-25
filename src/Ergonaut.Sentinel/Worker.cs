@@ -2,9 +2,6 @@ using Ergonaut.App.LogIngestion;
 using Ergonaut.App.LogIngestion.Kafka;
 using Ergonaut.Core.LogIngestion;
 using Ergonaut.App.Sentinel;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Caching.Memory;
 
@@ -20,7 +17,12 @@ public class Worker : BackgroundService
     private static readonly MemoryCache _recent = new(new MemoryCacheOptions { SizeLimit = 10_000 });
     private static readonly object CacheMarker = new();
 
-    public Worker(ILogger<Worker> logger, IEventConsumer<ILogEvent> logEventConsumer, ILogEventFilter logEventFilter, IServiceScopeFactory scopeFactory, IOptions<KafkaLogEventOptions> kafkaOptions)
+    public Worker(
+        ILogger<Worker> logger,
+        IEventConsumer<ILogEvent> logEventConsumer,
+        ILogEventFilter logEventFilter,
+        IServiceScopeFactory scopeFactory,
+        IOptions<KafkaLogEventOptions> kafkaOptions)
     {
         _logger = logger;
         _logEventConsumer = logEventConsumer;
@@ -56,8 +58,8 @@ public class Worker : BackgroundService
     {
 
         _logger.LogInformation("Sentinel Worker consuming from Kafka topic '{topic}' running at: {time}", _kafkaOptions.Topic, DateTimeOffset.Now);
-        await _logEventConsumer.StartConsuming(_kafkaOptions.Topic, HandleEvent, stoppingToken);
 
+        await _logEventConsumer.StartConsuming(_kafkaOptions.Topic, HandleEvent, stoppingToken);
     }
 
     private static bool IsDuplicate(ILogEvent logEvent)

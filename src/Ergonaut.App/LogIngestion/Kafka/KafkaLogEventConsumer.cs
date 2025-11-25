@@ -5,7 +5,11 @@ using Ergonaut.Core.LogIngestion;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Logging;
 using Confluent.Kafka;
+using System;
 using System.Threading;
+using System.Collections.Generic;
+using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 
 public sealed class KafkaLogEventConsumer : IEventConsumer<ILogEvent>, IDisposable
 {
@@ -37,42 +41,58 @@ public sealed class KafkaLogEventConsumer : IEventConsumer<ILogEvent>, IDisposab
 
     public async Task StartConsuming(string topic, Func<ILogEvent, CancellationToken, ValueTask> handleEvent, CancellationToken cancellationToken)
     {
+        var parallelOptions = new ParallelOptions
+        {
+            MaxDegreeOfParallelism = _options.MaxParallelism,
+            CancellationToken = cancellationToken
+        };
+
+        await Parallel.ForEachAsync(
+            ConsumeAsync(topic, cancellationToken),
+            parallelOptions,
+            async (logEvent, ct) => await handleEvent(logEvent, ct));
+    }
+
+    public async IAsyncEnumerable<ILogEvent> ConsumeAsync(string topic, [EnumeratorCancellation] CancellationToken cancellationToken = default)
+    {
         var consumer = _consumer ?? throw new ObjectDisposedException(nameof(KafkaLogEventConsumer));
         consumer.Subscribe(topic);
         _logger.LogInformation("Started consuming Kafka topic: {Topic}", topic);
 
         try
         {
-            while (!cancellationToken.IsCancellationRequested)
+            while (true)
             {
+                ConsumeResult<string?, byte[]>? consumeResult = null;
                 try
                 {
-                    var consumeResult = consumer.Consume(cancellationToken);
-                    if (consumeResult != null)
-                    {
-                        if (!KafkaLogEventEnvelope.TryUnwrap(consumeResult.Message.Value, out var envelope))
-                        {
-                            _logger.LogError("Failed to unwrap Kafka log event envelope.");
-                            continue;
-                        }
-
-                        ILogEvent logEvent = envelope!.Data;
-                        await handleEvent(logEvent, cancellationToken);
-                    }
+                    consumeResult = consumer.Consume(cancellationToken);
+                }
+                catch (OperationCanceledException)
+                {
+                    _logger.LogInformation("Kafka consumption cancelled.");
+                    yield break;
                 }
                 catch (ConsumeException ex)
                 {
                     _logger.LogError(ex, "Error consuming Kafka message: {Error}", ex.Error.Reason);
+                    continue;
                 }
-                catch (Exception ex)
+
+                if (consumeResult is null)
                 {
-                    _logger.LogError(ex, "Unexpected error during Kafka consumption: {Message}", ex.Message);
+                    continue;
                 }
+
+                if (!KafkaLogEventEnvelope.TryUnwrap(consumeResult.Message.Value, out var envelope))
+                {
+                    _logger.LogError("Failed to unwrap Kafka log event envelope.");
+                    continue;
+                }
+
+                var logEvent = envelope!.Data;
+                yield return logEvent;
             }
-        }
-        catch (OperationCanceledException)
-        {
-            _logger.LogInformation("Kafka consumption cancelled.");
         }
         finally
         {
