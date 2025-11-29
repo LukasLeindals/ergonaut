@@ -1,0 +1,53 @@
+@startuml sentinel_task_definition
+
+top to bottom direction
+scale 0.75
+
+skinparam componentStyle rectangle
+skinparam DefaultFontSize 9
+skinparam TitleFontSize 12
+skinparam ComponentFontSize 9
+skinparam PackagePadding 4
+skinparam ComponentPadding 4
+skinparam ComponentSpacing 6
+skinparam NodeSep 22
+skinparam RankSep 22
+
+cloud "Log Producers" as Producers
+
+package "Ingestion Layer" {
+  component "**Log Intake Endpoint**\n//Receives structured payload//" as Intake
+  component "**Parsing & Normalization**\n//Converts to internal LogEvent//" as Normalize
+  component "**Event Dispatcher**\n//Buffers & fans-out to queue//" as Dispatch
+}
+
+queue "**Event Stream**\n//Queue topic//" as EventStream
+
+package "Sentinel Worker" {
+  component "**Event Consumer**\n//Reads LogEvent stream//" as Consumer
+  component "**Relevance Filter**\n//Filters out irrelevant events//" as Filter
+  component "**Task Builder**\n//Builds tasks from events//" as Builder
+}
+
+package "Application Services" {
+  component "**Project Service**\n//Find/create Sentinel project//" as ProjectService
+  component "**Task Service**\n//Create backlog items//" as TaskService
+}
+
+database "**Sentinel Backlog**" as Backlog
+
+Producers --> Intake : structured log payload
+Intake --> Normalize : validate & parse
+Normalize --> Dispatch : internal LogEvent
+Dispatch --> EventStream : enqueue
+
+EventStream --> Consumer : stream LogEvents
+Consumer --> Filter : non-duplicates
+Filter ..> ProjectService : resolve target project
+Filter ..> TaskService : query open items\nby template/message
+Filter --> Builder : accepted events
+Builder ..> ProjectService : create project if missing
+Builder --> TaskService : create work item
+TaskService --> Backlog : persist
+
+@enduml

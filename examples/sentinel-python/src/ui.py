@@ -14,11 +14,11 @@ API_URL = "http://localhost:8000"
 
 
 def main() -> None:
-    st.set_page_config(page_title="Ergonaut OTLP Log Demo", page_icon="🛰️")
-    st.title("Ergonaut OTLP Log Demo")
+    st.set_page_config(page_title="Sentinel Example Demo", page_icon="🛰️")
+    st.title("Sentinel Example Demo")
     st.write(
         "Click the button below to emit a structured log record via OpenTelemetry. "
-        "Make sure the Ergonaut collector is running and forwarding to the app."
+        "Make sure the Sentinel collector is running and forwarding to the app."
     )
 
     message = st.text_input("A custom log message", value="A custom log message")

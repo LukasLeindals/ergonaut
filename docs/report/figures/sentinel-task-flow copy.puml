@@ -1,5 +1,5 @@
-@startuml sentinel_task_definition
-title Sentinel Task Generation Flow (technology-agnostic)
+@startuml sentinel_task_definition_copy
+title Sentinel Task Generation Flow
 left to right direction
 scale 0.75
 
@@ -13,20 +13,19 @@ skinparam ComponentSpacing 6
 skinparam NodeSep 22
 skinparam RankSep 22
 
-cloud "Log / Telemetry Producers" as Producers
+cloud "Log Producers" as Producers
 
 package "Ingestion Layer" {
   component "<b>Log Intake Endpoint</b>\n<i>Receives structured payload</i>" as Intake
   component "<b>Parsing & Normalization</b>\n- validate payload\n- convert to internal LogEvent\n- drop malformed records" as Normalize
-  component "<b>Event Dispatcher</b>\n<i>Buffers & fans-out to queue/bus</i>" as Dispatch
+  component "<b>Event Dispatcher</b>\n<i>Buffers & fans-out to queue</i>" as Dispatch
 }
 
-queue "<b>Event Stream</b>\n<i>Queue / Bus topic</i>" as EventStream
+queue "<b>Event Stream</b>\n<i>Queue topic</i>" as EventStream
 
 package "Sentinel Worker" {
   component "<b>Event Consumer</b>\n<i>Reads LogEvent stream</i>" as Consumer
-  component "<b>Duplicate Guard</b>\n<i>Timeboxed fingerprint cache</i>" as Deduper
-  component "<b>Relevance Filter</b>\n- drop below minimum severity\n- skip if open item matches template/message" as Filter
+  component "<b>Relevance Filter</b>\n- drop below minimum severity\n- skip if open task matches template/message" as Filter
   component "<b>Task Builder</b>\n- ensure target project exists\n- title sequencing\n- priority from severity\n- attach source data" as Builder
 }
 
@@ -43,8 +42,7 @@ Normalize --> Dispatch : internal LogEvent
 Dispatch --> EventStream : enqueue
 
 EventStream --> Consumer : stream LogEvents
-Consumer --> Deduper : fingerprint check
-Deduper --> Filter : non-duplicates
+Consumer --> Filter : non-duplicates
 Filter ..> ProjectService : resolve target project
 Filter ..> WorkItemService : query open items\nby template/message
 Filter --> Builder : accepted events
