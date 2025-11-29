@@ -118,7 +118,8 @@ WorkItem ..> WorkItemStatus : status
 WorkItem ..> WorkItemPriority : priority
 WorkItem ..> SourceLabel : source
 
-' Alignment nudges: keep repositories level with their domain counterparts, and log ingestion beneath repos
+' Alignment nudges: keep repositories level with the domain frame top, and log ingestion beneath repos
+Domain -[hidden]- Repositories
 Project -[hidden]- IProjectRepository
 WorkItem -[hidden]- IWorkItemRepository
 Repositories -[hidden]down- LogIngestion
