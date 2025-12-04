@@ -1,0 +1,127 @@
+@startuml
+' Layout tuned for readability on A4 with aligned domain/repo pairs, top-down flow.
+skinparam classAttributeIconSize 0
+skinparam classPadding 12
+skinparam classAttributeFontSize 12
+skinparam classFontSize 13
+top to bottom direction
+skinparam ranksep 1.1
+skinparam nodesep 1.0
+skinparam dpi 150
+hide circle
+hide empty methods
+hide empty fields
+scale 1.1
+
+frame "Domain" {
+  class Project {
+    +Guid Id
+    +String Title
+    +String? Description
+    +DateTime CreatedAt
+    +DateTime UpdatedAt
+    +SourceLabel? SourceLabel
+    +IProject Update(title, description, sourceLabel)
+    --
+    -String NormalizeTitle(title)
+    +void Rename(title)
+  }
+
+  class WorkItem {
+    +Guid Id
+    +Guid ProjectId
+    +String Title
+    +String Description
+    +DateTime CreatedAt
+    +DateTime UpdatedAt
+    +WorkItemStatus Status
+    +WorkItemPriority? Priority
+    +DateTime? DueDate
+    +SourceLabel? SourceLabel
+    +Dictionary<String, JsonElement?>? SourceData
+    +IWorkItem Update(title, status, description, priority, dueDate, sourceLabel, sourceData)
+    --
+    -String NormalizeTitle(title)
+    -String NormalizeDescription(description)
+  }
+
+  enum WorkItemStatus {
+    New
+    InProgress
+    Done
+  }
+  enum WorkItemPriority {
+    Low
+    Medium
+    High
+  }
+  enum SourceLabel {
+    Ergonaut
+    Sentinel
+  }
+
+  ' enforce vertical ordering inside domain (top to bottom)
+  Project -[hidden]down- WorkItem
+  WorkItem -[hidden]down- WorkItemStatus
+  WorkItemStatus -[hidden]down- WorkItemPriority
+  WorkItemPriority -[hidden]down- SourceLabel
+}
+
+frame "Repositories" {
+  interface IProjectRepository {
+    +Task<IProject?> GetAsync(id, ct)
+    +Task<IProject?> GetByNameAsync(name, ct)
+    +Task<IReadOnlyList<IProject>> ListAsync(ct)
+    +Task<IProject> AddAsync(project, ct)
+    +Task<IProject> UpdateAsync(project, ct)
+    +Task DeleteAsync(id, ct)
+  }
+
+  interface IWorkItemRepository {
+    +Task<IWorkItem?> GetAsync(id, ct)
+    +Task<IReadOnlyList<IWorkItem>> ListAsync(ct)
+    +Task<IReadOnlyList<IWorkItem>> ListByProjectAsync(projectId, ct)
+    +Task<IWorkItem> AddAsync(workItem, ct)
+    +Task<IWorkItem> UpdateAsync(workItem, ct)
+    +Task DeleteAsync(id, ct)
+  }
+
+  ' vertical ordering in repository frame
+  IProjectRepository -[hidden]down- IWorkItemRepository
+}
+
+frame LogIngestion {
+  interface ILogEvent {
+    +String Message
+    +String Source
+    +DateTimeOffset Timestamp
+    +String? MessageTemplate
+    +LogLevel Level
+    +IReadOnlyDictionary<String, JsonElement?>? Metadata
+    +IReadOnlyDictionary<String, String?>? Tags
+    +String? TraceId
+    +String? SpanId
+    +IReadOnlyDictionary<String, String?> Attributes
+    +IReadOnlyDictionary<String, String?> ResourceAttributes
+    +IReadOnlyDictionary<String, String?> ScopeAttributes
+    +String? GetFingerprint()
+  }
+}
+
+Project "1" o-- "*" WorkItem : ProjectId
+Project --> IProjectRepository : uses
+WorkItem --> IWorkItemRepository : uses
+IProjectRepository --> Project
+IWorkItemRepository --> WorkItem
+Project ..> SourceLabel : labels
+WorkItem ..> WorkItemStatus : status
+WorkItem ..> WorkItemPriority : priority
+WorkItem ..> SourceLabel : source
+
+' Alignment nudges: keep repositories level with the domain frame top, and log ingestion beneath repos
+Domain -[hidden]- Repositories
+Project -[hidden]- IProjectRepository
+WorkItem -[hidden]- IWorkItemRepository
+Repositories -[hidden]down- LogIngestion
+IWorkItemRepository -[hidden]down- ILogEvent
+@enduml

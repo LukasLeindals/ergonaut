@@ -44,7 +44,9 @@ example-sentinel-python action:
     if [ "{{ action }}" = "run-ui" ]; then \
         cd examples/sentinel-python && PYTHONPATH=. poetry run streamlit run src/ui.py; \
     elif [ "{{ action }}" = "run-api" ]; then \
-        cd examples/sentinel-python && docker compose -f docker-compose.yaml up -d --remove-orphans; \
+        cd examples/sentinel-python && docker compose -f docker-compose.yaml up -d --build --remove-orphans; \
+    elif [ "{{ action }}" = "stop-api" ]; then \
+        cd examples/sentinel-python && docker compose -f docker-compose.yaml down -v --remove-orphans; \
     else \
         echo "Unknown action '{{ action }}'. Supported actions are: run-ui, run-docker"; exit 1; \
     fi
@@ -100,3 +102,11 @@ create-docker-networks:
 
 build-proto-tools:
     docker build -f .image/proto-tools/Dockerfile -t ergonaut/proto-tools:latest .
+
+export-figures:
+    plantuml -tsvg docs/report/figures/*.puml
+
+    for svg in docs/report/figures/*.svg; do \
+        pdf="${svg%.svg}.pdf"; \
+        rsvg-convert -f pdf -o "$pdf" "$svg"; \
+    done

@@ -1,54 +1,55 @@
 @startuml domain
-title Ergonaut - Domain
+title Ergonaut - Domain (current)
 
-package "Ergonaut.Core" {
+hide circle
+hide empty methods
 
-  class Project {
-    +Id: Guid
-    +Title: string
-    +Description: string?
-    +CreatedAt: DateTime
-    +CreatedBy: Guid
-  }
-  Project "1" o-- "many" WorkItem
-  Project "many" -- "1" User : created by
-
-  class WorkItem {
-    +Id: Guid
-    +ProjectId: Guid
-    +Title: string
-    +Description: string?
-    +CreatedAt: DateTime
-    +Status: WorkItemStatus
-    +DueDate: DateTime?
-  }
-  WorkItem "many" -- "1" User : created by
-  WorkItem "many" -- "0..1" User : assigned to
-
-
-
-  class User {
-    +Id: Guid
-    +Username: string
-    +Role: UserRole
-  }
+class Project {
+  +Guid Id
+  +string Title
+  +string? Description
+  +DateTime CreatedAt
+  +DateTime UpdatedAt
+  +SourceLabel? SourceLabel
+  +IProject Update(title, description, sourceLabel)
 }
 
-package "Enums" {
+class WorkItem {
+  +Guid Id
+  +Guid ProjectId
+  +string Title
+  +string Description
+  +WorkItemStatus Status
+  +WorkItemPriority? Priority
+  +DateTime CreatedAt
+  +DateTime UpdatedAt
+  +DateTime? DueDate
+  +SourceLabel? SourceLabel
+  +Dictionary<string, JsonElement?>? SourceData
+  +IWorkItem Update(title, status, description, priority, dueDate, sourceLabel, sourceData)
+}
+
 enum WorkItemStatus {
-  Todo
+  New
   InProgress
   Done
 }
 
-enum UserRole {
-  Member
-  Admin
+enum WorkItemPriority {
+  Low
+  Medium
+  High
 }
+
+enum SourceLabel {
+  Ergonaut
+  Sentinel
 }
 
-
-
-
+Project "1" o-- "*" WorkItem : ProjectId
+WorkItem ..> WorkItemStatus
+WorkItem ..> WorkItemPriority
+Project ..> SourceLabel
+WorkItem ..> SourceLabel
 
 @enduml

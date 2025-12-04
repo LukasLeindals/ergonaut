@@ -1,30 +1,34 @@
 @startuml components
-title Ergonaut Components
+title Ergonaut Components (current implementation)
 
 top to bottom direction
+skinparam componentStyle rectangle
+skinparam dpi 150
 
-
-
-component "<b>Ergonaut.UI</b>\n<i>Blazor Web UI</i>" as UI
-component "<b>Auth Token Handler</b>" as Auth
-component "<b>Ergonaut.Api</b>\n<i>HTTP Endpoints</i>" as API
+component "<b>Ergonaut.UI</b>\n<i>Blazor Server</i>" as UI
+component "<b>ApiTokenHandler</b>\n<i>per-service JWT fetcher</i>" as Auth
+component "<b>Ergonaut.Api</b>\n<i>REST + OTLP ingest</i>" as API
+component "<b>Log Ingestion</b>\n<i>OTLP parser + Kafka producer</i>" as Ingest
+component "<b>Kafka Topic</b>\n<i>ergonaut-logingestion</i>" as Kafka
+component "<b>Sentinel Worker</b>\n<i>Kafka consumer + filters</i>" as Sentinel
 component "<b>Ergonaut.App</b>\n<i>Application Services</i>" as AppLayer
-component "<b>Ergonaut.Core</b>\n<i>Domain Models</i>" as Core
+component "<b>Ergonaut.Core</b>\n<i>Domain</i>" as Core
 component "<b>Ergonaut.Infrastructure</b>\n<i>Repositories & EF</i>" as Infra
-component "<b>SQLite Database</b>" as Db
+database "<b>SQLite DB</b>\n<i>data/sqlite/ergonaut.db</i>" as Db
+cloud "<b>Log Producers</b>\n<i>OTLP HTTP</i>" as Logs
 
-component "<b>Sentinel Worker</b>\n<i>(Log-driven automation)</i>" as Sentinel
-cloud "<b>Log Sources</b>" as Logs
-
-UI --> Auth : request token
+UI --> Auth : POST /api/v1/auth/token
 Auth --> API : attach JWT
-UI --> API : REST
-API --> AppLayer : call use cases
-AppLayer --> Core : manipulate
-AppLayer --> Infra : data access
-Infra --> Db : EF Core CRUD
+UI --> API : REST CRUD
+API --> AppLayer : use cases
+AppLayer --> Core
+AppLayer --> Infra
+Infra --> Db
 
-Logs --> Sentinel : stream entries
+Logs --> API : POST /api/otlp/v1/logs\nx-api-key or Bearer
+API --> Ingest
+Ingest --> Kafka
+Kafka --> Sentinel : consume
 Sentinel --> AppLayer : create work items
 
 @enduml
