@@ -106,5 +106,7 @@ build-proto-tools:
 export-figures:
     plantuml -tsvg docs/report/figures/*.puml
 
-    rsvg-convert -f pdf -o docs/report/figures/core_models.pdf docs/report/figures/core_models.svg
-    rsvg-convert -f pdf -o docs/report/figures/sentinel_task_definition.pdf docs/report/figures/sentinel_task_definition.svg
+    for svg in docs/report/figures/*.svg; do \
+        pdf="${svg%.svg}.pdf"; \
+        rsvg-convert -f pdf -o "$pdf" "$svg"; \
+    done

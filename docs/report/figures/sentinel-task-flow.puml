@@ -17,7 +17,7 @@ cloud "Log Producers" as Producers
 package "Ingestion Layer" {
   component "**OTLP HTTP Endpoint**\n//POST /api/otlp/v1/logs//" as Intake
   component "**Parser + Normalizer**\n//protobuf|json → LogEvent//" as Normalize
-  component "**Kafka Producer**\n//topic eronaut-logingestion//" as Dispatch
+  component "**Kafka Producer**\n//topic ergonaut-logingestion//" as Dispatch
 }
 
 queue "**Kafka Topic**\n//ergonaut-logingestion//" as EventStream
@@ -36,7 +36,7 @@ package "Application Services" {
 
 database "**SQLite Backlog**" as Backlog
 
-Producers --> Intake : OTLP payload
+Producers --> Intake : structured log payload
 Intake --> Normalize : validate + parse
 Normalize --> Dispatch : LogEvent
 Dispatch --> EventStream : enqueue
