@@ -1,4 +1,5 @@
 @startuml sentinel_task_definition
+
 top to bottom direction
 scale 0.75
 
@@ -15,37 +16,35 @@ skinparam RankSep 22
 cloud "Log Producers" as Producers
 
 package "Ingestion Layer" {
-  component "**OTLP HTTP Endpoint**\n//POST /api/otlp/v1/logs//" as Intake
-  component "**Parser + Normalizer**\n//protobuf|json → LogEvent//" as Normalize
-  component "**Kafka Producer**\n//topic ergonaut-logingestion//" as Dispatch
+  component "**Log Intake Endpoint**\n//Receives structured payload//" as Intake
+  component "**Parsing & Normalization**\n//Converts to internal LogEvent//" as Normalize
+  component "**Event Dispatcher**\n//Buffers & fans-out to queue//" as Dispatch
 }
 
-queue "**Kafka Topic**\n//ergonaut-logingestion//" as EventStream
+queue "**Event Stream**\n//Queue topic//" as EventStream
 
 package "Sentinel Worker" {
-  component "**Kafka Consumer**\n//MaxParallelism = LogIngestion:Kafka:MaxParallelism//" as Consumer
-  component "**Duplicate Guard**\n//5-minute fingerprint cache//" as Deduper
-  component "**Relevance Filter**\n//>= Sentinel.MinimumLevel\nskip if open item matches template/message//" as Filter
-  component "**Task Builder**\n//ensure project exists\nSentinel Alert #n\nmap log level → priority\nattach SourceData//" as Builder
+  component "**Event Consumer**\n//Reads LogEvent stream//" as Consumer
+  component "**Relevance Filter**\n//Filters out irrelevant events//" as Filter
+  component "**Task Builder**\n//Builds tasks from events//" as Builder
 }
 
 package "Application Services" {
-  component "**Project Service**" as ProjectService
-  component "**Work Item Service**" as TaskService
+  component "**Project Service**\n//Find/create Sentinel project//" as ProjectService
+  component "**Task Service**\n//Create backlog items//" as TaskService
 }
 
-database "**SQLite Backlog**" as Backlog
+database "**Sentinel Backlog**" as Backlog
 
 Producers --> Intake : structured log payload
-Intake --> Normalize : validate + parse
-Normalize --> Dispatch : LogEvent
+Intake --> Normalize : validate & parse
+Normalize --> Dispatch : internal LogEvent
 Dispatch --> EventStream : enqueue
 
 EventStream --> Consumer : stream LogEvents
-Consumer --> Deduper : fingerprint check
-Deduper --> Filter : non-duplicates
+Consumer --> Filter : non-duplicates
 Filter ..> ProjectService : resolve target project
-Filter ..> TaskService : query open items
+Filter ..> TaskService : query open items\nby template/message
 Filter --> Builder : accepted events
 Builder ..> ProjectService : create project if missing
 Builder --> TaskService : create work item
